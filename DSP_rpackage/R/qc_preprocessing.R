@@ -1,9 +1,14 @@
 
-####This code comes from http://www.bioconductor.org/packages/release/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html#4_QC__Pre-processing
+####This code comes from 
+#http://www.bioconductor.org/packages/release/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html#4_QC__Pre-processing
 
 
 # Shift counts to one
 demoData <- shiftCountsOne(demoData, useDALogic = TRUE)
+
+###4.1Segment QC
+
+#4.1.1Select Segment QC
 
 QC_params <-
   list(minSegmentReads = 1000, # Minimum number of reads (1000)
@@ -30,6 +35,9 @@ QCResults$QCStatus <- apply(QCResults, 1L, function(x) {
 QC_Summary["TOTAL FLAGS", ] <-
   c(sum(QCResults[, "QCStatus"] == "PASS"),
     sum(QCResults[, "QCStatus"] == "WARNING"))
+
+
+#4.1.2Visualize Segment QC
 
 library(ggplot2)
 
@@ -95,12 +103,17 @@ kable(table(NTC_Count = sData(demoData)$NTC),
 
 kable(QC_Summary, caption = "QC Summary Table for each Segment")
 
+#4.1.3Remove flagged segments
+
 demoData <- demoData[, QCResults$QCStatus == "PASS"]
 
 # Subsetting our dataset has removed samples which did not pass QC
 dim(demoData)
 #> Features  Samples 
 #>    18642      229
+
+
+#4.2.1Set Probe QC Flags
 
 # Generally keep the qcCutoffs parameters unchanged. Set removeLocalOutliers to 
 # FALSE if you do not want to remove local outliers
@@ -126,6 +139,8 @@ dim(ProbeQCPassed)
 #> Features  Samples 
 #>    18641      229
 demoData <- ProbeQCPassed 
+
+##4.3Create Gene-level Count Data
 
 # Check how many unique targets the object has
 length(unique(featureData(demoData)[["TargetName"]]))
