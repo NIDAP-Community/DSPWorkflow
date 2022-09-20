@@ -11,12 +11,16 @@
 #' @param protocolDataColNames  Character list of column names from phenoDataFile containing data about the experimental protocol or sequencing data.
 #' @param experimentDataColNames  Character list of column names from phenoDataFile containing data about the experiment's meta-data.
 #'
+#' @importFrom GeomxTools readNanoStringGeoMxSet
+#' @importFrom knitr kable
+#' @importFrom dplyr count
+#' @importFrom ggforce gather_set_data
 #' @export
 #' @return A list containing the NanoString Object and the Sankey plot.
 
 
 
-study_design <- function(dccFiles, pkcFiles, phenoDataFile, phenoDataSheet = "Template",
+StudyDesign <- function(dccFiles, pkcFiles, phenoDataFile, phenoDataSheet = "Template",
                          phenoDataDccColName = "Sample_ID",
                          protocolDataColNames = c("aoi", "roi"),
                          experimentDataColNames = c("panel")) {
