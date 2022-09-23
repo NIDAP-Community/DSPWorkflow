@@ -1,6 +1,3 @@
-load_all()
-library(DSPWorkflow)
-
 test_that("Normalization Success", {
   load("/rstudio-files/ccr-dceg-data/users/Chad/target_demoData.Rdata") 
   
