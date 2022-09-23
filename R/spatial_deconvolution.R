@@ -25,7 +25,7 @@
 
 spatial_deconvolution <- function(dsp_qnorm, dsp_negnorm, ref_mtx, ref_annot,
                                   CellID = "CellID",
-                                  celltypeCol = "LabeledCellType",
+                                  cellTypeCol = "LabeledCellType",
                                   normalize = FALSE,
                                   minCellNum = 0,
                                   minGenes = 10
@@ -51,7 +51,7 @@ spatial_deconvolution <- function(dsp_qnorm, dsp_negnorm, ref_mtx, ref_annot,
     cellNameCol = CellID,           
     matrixName = "custom_DSP_mtx", # name of final profile matrix
     outDir = NULL,                  # path to desired output directory, set to NULL if matrix should not be written
-    normalize = FALSE,                
+    normalize = normalize,                
     minCellNum = minCellNum,                  
     minGenes = minGenes,              
     scalingFactor = 1,              # what should all values be multiplied by for final matrix
@@ -70,7 +70,7 @@ spatial_deconvolution <- function(dsp_qnorm, dsp_negnorm, ref_mtx, ref_annot,
   print(heatmap(sweep(res$X, 1, apply(res$X, 1, max), "/"), labRow = NA, margins = c(10, 5)))
   
   # Abundance Barplot - draws legend in a new page 
-  print(TIL_barplot(res$beta, draw_legend = TRUE, cex.names = 0.3))
+  print(TIL_barplot(res$prop_of_all, draw_legend = TRUE, cex.names = 0.3))
   
   return(res)
 }
