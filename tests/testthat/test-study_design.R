@@ -7,10 +7,10 @@ test_that("Load Kidney dataset", {
   SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
                               full.names = TRUE, recursive = TRUE)
 
-  dsp.list <- study_design(dccFiles = DCCFiles, pkcFiles = PKCFiles,
+  dsp.list <- StudyDesign(dccFiles = DCCFiles, pkcFiles = PKCFiles,
                            phenoDataFile = SampleAnnotationFile)
   print(dsp.list$plot)
   expected.elements = c("plot", "dsp.obj")
-  expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
-
+  expect_setequal(names(dsp.list), expected.elements)
+  #expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
 })
