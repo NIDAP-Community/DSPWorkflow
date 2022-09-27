@@ -1,6 +1,8 @@
+#devtools::load_all()
+
 test_that("DSP object and dimension reduction plots returned", {
   
-  load("/rstudio-files/ccr-dceg-data/users/aleksandra/DSPWorkflow/target.Data.rda")
+  load("/rstudio-files/ccr-dceg-data/users/aleksandra/DSPWorkflow/tests/testthat/fixtures/target.Data.rda")
   output <-
     DimReduct(
       Object = target.Data,
@@ -14,8 +16,7 @@ test_that("DSP object and dimension reduction plots returned", {
 })
 
 test_that("dimension reductions present in DSP object", {
-  
-  load("/rstudio-files/ccr-dceg-data/users/aleksandra/DSPWorkflow/target.Data.rda")
+  load("/rstudio-files/ccr-dceg-data/users/aleksandra/DSPWorkflow/tests/testthat/fixtures/target.Data.rda")
   output <-
     DimReduct(
       Object = target.Data,

@@ -9,6 +9,8 @@
 #' @importFrom Biobase assayDataElement pData
 #' @importFrom umap umap
 #' @importFrom Rtsne Rtsne
+#' @importFrom ggplot2 ggplot geom_point theme theme_bw ggtitle labs
+#' @importFrom patchwork plot_layout plot_annotation
 #'
 #' @export
 #' @return A list containing the NanoStringGeoMxSet Object with the dimensional reduction plots
