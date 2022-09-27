@@ -6,19 +6,15 @@
 #' @param point.alpha point color transparency
 #' @param color.variable categorical variable to be used for coloring points
 #'
-#' @importFrom GeomxTools assayDataElement
-#' @importFrom Biobase pData
+#' @importFrom Biobase assayDataElement pData
 #' @importFrom umap umap
 #' @importFrom Rtsne Rtsne
-#' @import ggplot2
-#' @import patchwork
-#'
 #'
 #' @export
-#' @invisible A list containing the NanoStringGeoMxSet Object with the dimensional reduction plots
+#' @return A list containing the NanoStringGeoMxSet Object with the dimensional reduction plots
 
 
-GeomxDimensionReduction <-
+DimReduct <-
   function(Object,
            point.size = 1,
            point.alpha = 1,
@@ -80,11 +76,20 @@ GeomxDimensionReduction <-
       labs(x = "PCA 1", y = "PCA 2", colour = color.variable)
     
     # plot
-    plot.list = list(UMAP = umap.plot, tSNE = tsne.plot, PCA = pca.plot)
+    plot.list = list(PCA = pca.plot, tSNE = tsne.plot, UMAP = umap.plot )
     
     print(
       pca.plot + tsne.plot + umap.plot + guide_area() +
-        plot_layout(ncol = 2, guides = "collect") + plot_annotation(tag_levels = "A")
+        plot_layout(ncol = 2, guides = "collect") + plot_annotation(
+          title = "Unsupervised Analysis",
+          subtitle = "Dimension Reduction",
+          tag_levels = "A",
+          caption = "DSPWorkflow::DimReduct()",
+          theme = theme(
+            text = element_text(color = 'gray50'),
+            plot.caption = element_text(face = 'italic')
+          )
+        )
     )
     
     # return
