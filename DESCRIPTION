@@ -11,7 +11,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Suggests: 
     testthat (>= 3.0.0)
-Depends:
+Imports:
     Biobase (>= 2.54.0),
     dplyr (>= 1.0.9),
     GeomxTools (>= 3.1.1),
