@@ -22,5 +22,6 @@ Imports:
     patchwork (>= 1.1.2),
     Rtsne (>= 0.16),
     umap (>= 0.2.9.0),
+    SpatialDecon (>= 1.4.3),
     tidyverse (>= 1.3.2)
 Config/testthat/edition: 3
