@@ -17,8 +17,10 @@ Imports:
     GeomxTools (>= 3.1.1),
     ggforce (>= 0.3.4),
     ggplot2 (>= 3.3.6),
+    gridExtra (>= 2.3),
     knitr (>= 1.40),
     patchwork (>= 1.1.2),
     Rtsne (>= 0.16),
-    umap (>= 0.2.9.0)
+    umap (>= 0.2.9.0),
+    tidyverse (>= 1.3.2)
 Config/testthat/edition: 3
