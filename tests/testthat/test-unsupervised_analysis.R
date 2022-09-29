@@ -1,14 +1,13 @@
-#devtools::load_all()
-
 test_that("DSP object and dimension reduction plots returned", {
   
   load(test_path("fixtures", "target.Data.rda"))
   output <-
     DimReduct(
-      Object = target.Data,
+      object = target.Data,
       point.size = 1,
       point.alpha = 1,
-      color.variable = "region"
+      color.variable1 = "region",
+      shape.variable = "class"
     )
   expected.elements = c("dsp.object", "plot.list")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
@@ -19,10 +18,11 @@ test_that("dimension reductions present in DSP object", {
   load(test_path("fixtures", "target.Data.rda"))
   output <-
     DimReduct(
-      Object = target.Data,
+      object = target.Data,
       point.size = 1,
       point.alpha = 1,
-      color.variable = "region"
+      color.variable1 = "region",
+      shape.variable = "class"
     )
   
   expect_true(sum(grepl("PC1|PC2", colnames(
