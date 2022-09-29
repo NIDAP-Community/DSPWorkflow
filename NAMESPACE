@@ -20,13 +20,10 @@ importFrom(ggforce,geom_parallel_sets)
 importFrom(ggforce,geom_parallel_sets_axes)
 importFrom(ggforce,geom_parallel_sets_labels)
 importFrom(ggplot2,aes)
-<<<<<<< HEAD
 importFrom(ggplot2,element_text)
-=======
 importFrom(ggplot2,annotate)
 importFrom(ggplot2,element_blank)
 importFrom(ggplot2,expansion)
->>>>>>> 4858feada0ae8c15f69da72287d6f801148609e3
 importFrom(ggplot2,geom_point)
 importFrom(ggplot2,ggplot)
 importFrom(ggplot2,ggtitle)
