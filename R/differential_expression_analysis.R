@@ -25,9 +25,7 @@
 #' @import tidyverse 
 #' @import grid
 #' @import gridExtra
-#' @importFrom knitr kable
 #' @importFrom dplyr count
-#' @importFrom ggforce gather_set_data
 #' @export
 #' 
 #' @return a list containing mixed model output data frame, grid tables for samples and summary of genelists
