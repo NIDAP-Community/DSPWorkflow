@@ -15,13 +15,15 @@
 #' @importFrom Biobase pData
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 geom_point
-#' @importFrom ggplot2 ggplot theme
-#' @importFrom ggplot2 theme_bw
+#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 element_text
 #' @importFrom ggplot2 ggtitle
 #' @importFrom ggplot2 labs
-#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 ggplot theme
+#' @importFrom ggplot2 theme_bw
 #' @importFrom patchwork plot_layout
 #' @importFrom patchwork plot_annotation
+#' @importFrom patchwork guide_area
 #' @importFrom Rtsne Rtsne
 #' @importFrom umap umap
 #'
