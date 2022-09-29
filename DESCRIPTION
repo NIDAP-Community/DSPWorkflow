@@ -14,11 +14,7 @@ Suggests:
 Depends:
     R (>= 3.6), Biobase (>= 2.54.0)
 Imports:
-<<<<<<< HEAD
-=======
-    Biobase (>= 2.54.0),
     BiocGenerics (>= 0.40.0),
->>>>>>> 4858feada0ae8c15f69da72287d6f801148609e3
     dplyr (>= 1.0.9),
     GeomxTools (>= 3.1.1),
     ggforce (>= 0.3.4),
