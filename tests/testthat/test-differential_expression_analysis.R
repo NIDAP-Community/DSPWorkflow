@@ -2,13 +2,13 @@ test_that("Run Diff Exp Analysis", {
     
     load("/rstudio-files/ccr-dceg-data/users/maggie/DSPWorkflow/tests/testthat/fixtures/target.Data.rda")
     data <- target.Data
-    data <- normalize(data, norm_method="quant")
+    data <- GeomxTools::normalize(data, norm_method="quant")
     goi <- c("CD274", "CD8A", "CD68", "EPCAM",
              "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     data <- target.Data[goi,]
     groups <- c("DKD", "normal")
     element = "log_q"
-    nCores = parallel::detectCores()
+    nCores = 4
     regions <- c("glomerulus", "tubule")
     slideCol <- "slide name"
     classCol <- "class"
@@ -27,8 +27,8 @@ test_that("Run Diff Exp Analysis", {
     expected.elements <- c("results","sample_table","summary_table")
     expect_setequal(names(reslist.1),expected.elements)
     
-    lfc.1 <- reslist.1$result %>% filter(Gene == "CALB1") %>% filter(Subset == "normal") %>% pull(Log_Fold_Change)
-    pval.1 <- reslist.1$result %>% filter(Gene == "CALB1") %>% filter(Subset == "normal") %>% pull(Pval)
+    lfc.1 <- reslist.1$result %>% filter(Gene == "CALB1") %>% filter(Subset == "normal") %>% pull(.data[[colnames(reslist.1$result)[grepl("logFC",colnames(reslist.1$result))]]])
+    pval.1 <- reslist.1$result %>% filter(Gene == "CALB1") %>% filter(Subset == "normal") %>% pull(.data[[colnames(reslist.1$result)[grepl("_pval",colnames(reslist.1$result))]]])
     expect_equal(lfc.1, -2.014,tolerance=1e-3)
     expect_equal(pval.1, 0.0274,tolerance=1e-3)
     
@@ -42,8 +42,8 @@ test_that("Run Diff Exp Analysis", {
     expected.elements <- c("results","sample_table","summary_table")
     expect_setequal(names(reslist.2),expected.elements)
     
-    lfc.2 <- reslist.2$result %>% filter(Gene == "CALB1") %>% filter(Subset == "tubule") %>% pull(Log_Fold_Change)
-    pval.2 <- reslist.2$result %>% filter(Gene == "CALB1") %>% filter(Subset == "tubule") %>% pull(Pval)
+    lfc.2 <- reslist.2$result %>% filter(Gene == "CALB1") %>% filter(Subset == "tubule") %>% pull(.data[[colnames(reslist.2$result)[grepl("logFC",colnames(reslist.2$result))]]])
+    pval.2 <- reslist.2$result %>% filter(Gene == "CALB1") %>% filter(Subset == "tubule") %>% pull(.data[[colnames(reslist.2$result)[grepl("_pval",colnames(reslist.2$result))]]])
     expect_equal(lfc.2, -1.408,tolerance=1e-3)
     expect_equal(pval.2, 0.01268,tolerance=1e-3)
 })
