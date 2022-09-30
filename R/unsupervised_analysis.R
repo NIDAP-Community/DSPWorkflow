@@ -12,19 +12,9 @@
 #' @param color.variable2 categorical variable to be used for coloring points (optional)
 #' @param shape.variable categorical variable to be used for the shape of points (optional)
 #' 
-#' @importFrom Biobase assayDataElement
-#' @importFrom Biobase pData
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 geom_point
-#' @importFrom ggplot2 aes
-#' @importFrom ggplot2 element_text
-#' @importFrom ggplot2 ggtitle
-#' @importFrom ggplot2 labs
-#' @importFrom ggplot2 ggplot theme
-#' @importFrom ggplot2 theme_bw
-#' @importFrom patchwork plot_layout
-#' @importFrom patchwork plot_annotation
-#' @importFrom patchwork guide_area
+#' @importFrom Biobase pData assayDataElement
+#' @importFrom ggplot2 ggplot aes geom_point element_text ggtitle labs theme theme_bw
+#' @importFrom patchwork plot_layout plot_annotation guide_area
 #' @importFrom stats prcomp
 #' @importFrom Rtsne Rtsne
 #' @importFrom umap umap
@@ -50,7 +40,7 @@ DimReduct <-
     # add PCA
     pca.out <-
       prcomp(t(log2(
-        assayDataElement(object , elt = "q_norm")
+        Biobase::assayDataElement(object , elt = "q_norm")
       )), scale. = TRUE)
     Biobase::pData(object)[, c("PC1", "PC2")] <- pca.out$"x"[, c(1, 2)]
     
@@ -58,7 +48,7 @@ DimReduct <-
     set.seed(42) # set the seed for tSNE as well
     tsne.out <-
       Rtsne(t(log2(
-        assayDataElement(object , elt = "q_norm")
+        Biobase::assayDataElement(object , elt = "q_norm")
       )),
       perplexity = ncol(object) * .15)
     Biobase::pData(object)[, c("tSNE1", "tSNE2")] <- tsne.out$Y[, c(1, 2)]
@@ -69,7 +59,7 @@ DimReduct <-
     custom.umap$random_state <- 42
     umap.out <-
       umap(t(log2(
-        assayDataElement(object , elt = "q_norm")
+        Biobase::assayDataElement(object , elt = "q_norm")
       )),
       config = custom.umap)
     Biobase::pData(object)[, c("UMAP1", "UMAP2")] <-
