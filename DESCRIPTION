@@ -11,9 +11,12 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Suggests: 
     testthat (>= 3.0.0)
+Depends:
+    R (>= 3.6)
 Imports:
     Biobase (>= 2.54.0),
     BiocGenerics (>= 0.40.0),
+    cowplot (>= 1.1.1),
     dplyr (>= 1.0.9),
     GeomxTools (>= 3.1.1),
     ggforce (>= 0.3.4),
@@ -21,10 +24,10 @@ Imports:
     gridExtra (>= 2.3),
     knitr (>= 1.40),
     patchwork (>= 1.1.2),
+    reshape2 (>= 1.4.4),
     Rtsne (>= 0.16),
-    umap (>= 0.2.9.0),
+    stats (>= 4.1.3),
     SpatialDecon (>= 1.4.3),
     tidyverse (>= 1.3.2),
-    reshape2 (>= 1.4.4),
-    cowplot (>= 1.1.1)
+    umap (>= 0.2.9.0)
 Config/testthat/edition: 3
