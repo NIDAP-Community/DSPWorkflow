@@ -4,10 +4,25 @@
 #' Normalize Nano String Digital Spatial Profile
 #' @param Data A NanoStringGeoMxSet dataset
 #' @param Norm A vector with options of c(quant or neg)
-#' 
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 geom_histogram
+#' @importFrom ggplot2 scale_x_continuous
+#' @importFrom ggplot2 facet_wrap
+#' @importFrom ggplot2 scale_fill_brewer
+#' @importFrom ggplot2 geom_abline
+#' @importFrom ggplot2 geom_hline
+#' @importFrom ggplot2 guides
+#' @importFrom reshape2 melt
+#' @importFrom cowplot plot_grid
+#' @importFrom Biobase exprs
+#' @importFrom Biobase pData
+#' @importFrom graphics boxplot
+#' @importFrom stats quantile
+#' @importFrom utils head
+#' @importFrom GeomxTools normalize
+#'
 #' @export
 #' @return A list containing the ggplot grid and the boxplot.
-
 
 
 # target_deoData will need to be changed at some point
@@ -15,14 +30,14 @@
 GeoMxNorm <- function(Data, Norm) {
   ann_of_interest <- "region"
   
-  Stat_data <<- data.frame(row.names = colnames(exprs(target_demoData)),
-                           Segment = colnames(exprs(target_demoData)),
-                           Annotation = pData(target_demoData)[, ann_of_interest],
-                           Q3 = unlist(apply(exprs(target_demoData), 2,
+  Stat_data <<- base::data.frame(row.names = colnames(exprs(Data)),
+                           Segment = colnames(exprs(Data)),
+                           Annotation = Biobase::pData(Data)[, ann_of_interest],
+                           Q3 = unlist(apply(exprs(Data), 2,
                                              quantile, 0.75, na.rm = TRUE)),
-                           NegProbe = exprs(target_demoData)[neg_probes, ])
+                           NegProbe = exprs(Data)[neg_probes, ])
   
-  Stat_data_m <<- melt(Stat_data, measure.vars = c("Q3", "NegProbe"),
+  Stat_data_m <<- melt(Stat_data, measures.vars = c("Q3", "NegProbe"),
                        variable.name = "Statistic", value.name = "Value")
   
   plt1 <- ggplot(Stat_data_m,
@@ -57,7 +72,7 @@ GeoMxNorm <- function(Data, Norm) {
   
   if(Norm == "quant"){
     # Q3 norm (75th percentile) for WTA/CTA  with or without custom spike-ins
-    target_demoData <<- normalize(target_demoData,
+    target_demoData <<- normalize(Data,
                                   norm_method = "quant", 
                                   desiredQuantile = .75,
                                   toElt = "q_norm")
@@ -70,7 +85,7 @@ GeoMxNorm <- function(Data, Norm) {
   }
   if(Norm == "neg"){
     # Background normalization for WTA/CTA without custom spike-in
-    target_demoData <<- normalize(target_demoData,
+    target_demoData <<- normalize(Data,
                                   norm_method = "neg", 
                                   fromElt = "exprs",
                                   toElt = "neg_norm")
