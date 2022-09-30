@@ -9,8 +9,6 @@
 #' 4. We plot the results using unsupervised hierarchical clustering, displayed as a heatmap.
 
 #' @param target.data Normalized targetData S4 object input file.
-####### filename file path where to save the heatmap plot as "heatmap.pdf" by default. 
-#'
 #' @importFrom NanoStringNCTools assayDataApply
 #' @importFrom Biobase assayDataElement
 #' @import pheatmap
@@ -18,8 +16,8 @@
 #' @export
 #' 
 #' @return A list containing the plot genes data matrix, and the heatmap plot.
-
-## target_demoData is the output S4 obj from normalization step
+##
+## target.data is the output S4 obj from normalization step
 ##
 HeatMap <- function(target.data) {
 
