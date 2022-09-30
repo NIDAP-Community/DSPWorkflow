@@ -15,6 +15,16 @@
 #' @importFrom knitr kable
 #' @importFrom dplyr count
 #' @importFrom ggforce gather_set_data
+#' @importFrom BiocGenerics annotation
+#' @importFrom ggforce geom_parallel_sets
+#' @importFrom ggforce geom_parallel_sets_axes
+#' @importFrom ggforce geom_parallel_sets_labels
+#' @importFrom ggplot2 theme_classic
+#' @importFrom ggplot2 element_blank
+#' @importFrom ggplot2 scale_y_continuous
+#' @importFrom ggplot2 expansion
+#' @importFrom ggplot2 scale_x_discrete
+#' @importFrom ggplot2 annotate
 #' @export
 #' @return A list containing the NanoString Object and the Sankey plot.
 
@@ -25,6 +35,7 @@ StudyDesign <- function(dccFiles, pkcFiles, phenoDataFile, phenoDataSheet = "Tem
                          protocolDataColNames = c("aoi", "roi"),
                          experimentDataColNames = c("panel")) {
 
+  region <- segment <- x <- id <- y <- n <-NULL
   # load data
   study.data <-
     readNanoStringGeoMxSet(dccFiles = dccFiles,
