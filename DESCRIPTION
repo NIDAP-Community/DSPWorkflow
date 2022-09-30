@@ -11,6 +11,8 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Suggests: 
     testthat (>= 3.0.0)
+Depends:
+    R (>= 3.6)
 Imports:
     Biobase (>= 2.54.0),
     BiocGenerics (>= 0.40.0),
@@ -24,9 +26,10 @@ Imports:
     NanoStringNCTools (>= 1.4.0),
     patchwork (>= 1.1.2),
     Rtsne (>= 0.16),
+    stats (>= 4.1.3),
+    SpatialDecon (>= 1.4.3),
     tibble (>= 3.1.8),
     tidyr (>= 1.2.1),
-    umap (>= 0.2.9.0),
-    SpatialDecon (>= 1.4.3),
-    tidyverse (>= 1.3.2)
+    tidyverse (>= 1.3.2),
+    umap (>= 0.2.9.0)
 Config/testthat/edition: 3
