@@ -11,6 +11,7 @@
 #' @param color.variable1 categorical variable to be used for coloring points (required)
 #' @param color.variable2 categorical variable to be used for coloring points (optional)
 #' @param shape.variable categorical variable to be used for the shape of points (optional)
+#' 
 #' @importFrom Biobase assayDataElement
 #' @importFrom Biobase pData
 #' @importFrom ggplot2 ggplot
@@ -24,9 +25,10 @@
 #' @importFrom patchwork plot_layout
 #' @importFrom patchwork plot_annotation
 #' @importFrom patchwork guide_area
+#' @importFrom stats prcomp
 #' @importFrom Rtsne Rtsne
 #' @importFrom umap umap
-#'
+#' 
 #' @export
 #' @seealso \link[stats]{prcomp} \link[Rtsne]{Rtsne}  \link[umap]{umap}
 #' @return A named list containing the NanoStringGeoMxSet-class object with the dimensional reduction coordinates ("dsp.object") and ggplot2 plots ("plot.list")
@@ -39,14 +41,18 @@ DimReduct <-
            shape.variable = NULL,
            point.size = 1,
            point.alpha = 1) {
+    
     # run reductions ====
+    
+    color.variable <-
+      PC1 <- PC2 <- tSNE1 <- tSNE2 <- UMAP1 <- UMAP2 <- NULL
     
     # add PCA
     pca.out <-
       prcomp(t(log2(
         assayDataElement(object , elt = "q_norm")
       )), scale. = TRUE)
-    pData(object)[, c("PC1", "PC2")] <- pca.out$"x"[, c(1, 2)]
+    Biobase::pData(object)[, c("PC1", "PC2")] <- pca.out$"x"[, c(1, 2)]
     
     # add tSNE
     set.seed(42) # set the seed for tSNE as well
@@ -55,7 +61,7 @@ DimReduct <-
         assayDataElement(object , elt = "q_norm")
       )),
       perplexity = ncol(object) * .15)
-    pData(object)[, c("tSNE1", "tSNE2")] <- tsne.out$Y[, c(1, 2)]
+    Biobase::pData(object)[, c("tSNE1", "tSNE2")] <- tsne.out$Y[, c(1, 2)]
     
     
     # add UMAP
@@ -66,11 +72,11 @@ DimReduct <-
         assayDataElement(object , elt = "q_norm")
       )),
       config = custom.umap)
-    pData(object)[, c("UMAP1", "UMAP2")] <-
+    Biobase::pData(object)[, c("UMAP1", "UMAP2")] <-
       umap.out$layout[, c(1, 2)]
     
     
-    df <- pData(object)
+    df <- Biobase::pData(object)
     if (is.null(color.variable2)) {
       df$color.variable <- factor(df[, color.variable1])
       color.label <- color.variable1
