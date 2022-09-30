@@ -13,6 +13,13 @@
 #' @param normalize scale profile matrix gene expression according to gene count
 #' @param minCellNum minimum number of cells (within a type) required to generate signature matrix
 #' @param minGenes filters cells according to minimum number of genes expressed 
+#' 
+#' @import SpatialDecon
+#' @import GeomxTools
+#' @import stats
+#' @importFrom SpatialDecon spatialdecon
+#' @importFrom stats heatmap
+#' @importFrom SpatialDecon TIL_barplot
 
 #' @export
 #' 
@@ -30,8 +37,6 @@ spatial_deconvolution <- function(dsp_qnorm, dsp_negnorm, ref_mtx, ref_annot,
                                   minCellNum = 0,
                                   minGenes = 10
                                   ){
-  library(SpatialDecon)
-  library(GeomxTools)
   
   norm <- dsp_qnorm
   
