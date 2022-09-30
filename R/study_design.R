@@ -35,6 +35,7 @@ StudyDesign <- function(dccFiles, pkcFiles, phenoDataFile, phenoDataSheet = "Tem
                          protocolDataColNames = c("aoi", "roi"),
                          experimentDataColNames = c("panel")) {
 
+  region <- segment <- x <- id <- y <- n <-NULL
   # load data
   study.data <-
     readNanoStringGeoMxSet(dccFiles = dccFiles,

@@ -4,11 +4,7 @@
 
 #' Run a linear mixed model on GeoMxSet
 #'
-#' @param object name of the object class to perform QC on
-#' \enumerate{
-#'     \item{NanoStringGeoMxSet, use the NanoStringGeoMxSet class}
-#' }
-#' 
+#' @param object name of the NanoStringGeoMxSet to perform DE analysis on
 #' @param element assayDataElement of the geoMxSet object to run the DE on
 #' @param analysisType Analysis type either "Between Groups" or "Within Groups"
 #' @param regions vector of regions of interest  
