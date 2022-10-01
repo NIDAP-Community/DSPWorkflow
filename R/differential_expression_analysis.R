@@ -4,11 +4,7 @@
 
 #' Run a linear mixed model on GeoMxSet
 #'
-#' @param object name of the object class to perform QC on
-#' \enumerate{
-#'     \item{NanoStringGeoMxSet, use the NanoStringGeoMxSet class}
-#' }
-#' 
+#' @param object name of the NanoStringGeoMxSet to perform DE analysis on
 #' @param element assayDataElement of the geoMxSet object to run the DE on
 #' @param analysisType Analysis type either "Between Groups" or "Within Groups"
 #' @param regions vector of regions of interest  
@@ -21,18 +17,25 @@
 #' @param pAdjust = "BY" method for p-value adjustment
 #' @param pairwise boolean to calculate least-square means pairwise differences
 #'
-#' @importFrom GeomxTools mixedModelDE
+#' @import GeomxTools 
+#' @import NanoStringNCTools
+#' @import Biobase 
+#' @importFrom tibble rownames_to_column 
 #' @import tidyverse 
 #' @import grid
-#' @import gridExtra
-#' @importFrom dplyr count
+#' @import gtable
+#' @importFrom gridExtra tableGrob ttheme_default
+#' @import dplyr 
+#' @import tidyr
 #' @export
 #' 
 #' @return a list containing mixed model output data frame, grid tables for samples and summary of genelists
 
-DiffExpr <- function(data, element, analysisType, regions, 
+DiffExpr <- function(object, element, analysisType, regions, 
                      groups, slideCol, classCol, fclim,
                      multiCore , nCores, pAdjust, pairwise) {
+  
+  testClass <- testRegion <- slide <- p.adjust <- Gene <- Subset <- Gene <- NULL
   
   # convert test variables to factors
   pData(data)$testRegion <- factor(pData(data)$region, regions)
@@ -117,17 +120,24 @@ DiffExpr <- function(data, element, analysisType, regions,
 
   
   #Change the names of columns for table:
-  colnames(results) <- sub("Pr\\(>\\|t\\|\\)","Pval",colnames(results))
-  colnames(results) <- sub("Estimate","Log_Fold_Change",colnames(results))
-  FC <- 2^(results$Log_Fold_Change)
+  conname <- gsub(" ","",unique(results$Contrast))
+  logFC.colname <- paste0(conname,"_logFC")
+  FC.colname <- paste0(conname,"_FC")
+  pval.colname <- paste0(conname,"_pval")
+  fdr.colname <- paste0(conname,"_adjpval")
+  colnames(results) <- sub("Pr\\(>\\|t\\|\\)",pval.colname,colnames(results))
+  colnames(results) <- sub("Estimate",logFC.colname,colnames(results))
+  colnames(results) <- sub("FDR",fdr.colname,colnames(results))
+  FC <- 2^(results[[logFC.colname]])
   FC = ifelse(FC<1,-1/FC,FC)
-  results$Fold_Change <- FC
-  results %>% select(Gene,Subset,Contrast,Fold_Change,Log_Fold_Change,Pval,FDR) -> results
-  results %>% arrange(Pval) -> results
-  results$Fold_Change <- as.numeric(format(results$Fold_Change, digits = 3))
-  results$Log_Fold_Change <- as.numeric(format(results$Log_Fold_Change, digits = 3))
-  results$Pval <- as.numeric(format(results$Pval, digits = 3))
-  results$FDR <- as.numeric(format(results$FDR, digits = 3))
+  results[[FC.colname]] <- FC
+  results %>% select(Gene,Subset,.data[[FC.colname]],.data[[logFC.colname]],
+                     .data[[pval.colname]],.data[[fdr.colname]]) -> results
+  results %>% arrange(.data[[pval.colname]]) -> results
+  results[[FC.colname]] <- as.numeric(format(results[[FC.colname]], digits = 3))
+  results[[logFC.colname]] <- as.numeric(format(results[[logFC.colname]], digits = 3))
+  results[[pval.colname]] <- as.numeric(format(results[[pval.colname]], digits = 3))
+  results[[fdr.colname]] <- as.numeric(format(results[[fdr.colname]], digits = 3))
   
   #Run Summary Lists:
   getgenelists <- function(groups,FClimit,pvallimit,pval){
@@ -135,11 +145,11 @@ DiffExpr <- function(data, element, analysisType, regions,
     downreggenes <- list()  
     for(i in 1:length(groups)){
       if(pval == "pval"){
-        results %>% dplyr::filter(Subset == groups[i] & Fold_Change > FClimit & Pval < pvallimit) %>% pull(Gene) %>% length() -> upreggenes[[i]] 
-        results %>% dplyr::filter(Subset == groups[i] & Fold_Change < -FClimit & Pval < pvallimit) %>% pull(Gene) %>% length() -> downreggenes[[i]]        
+        results %>% dplyr::filter(Subset == groups[i] & .data[[FC.colname]] > FClimit & .data[[pval.colname]] < pvallimit) %>% pull(Gene) %>% length() -> upreggenes[[i]] 
+        results %>% dplyr::filter(Subset == groups[i] & .data[[FC.colname]] < -FClimit & .data[[pval.colname]] < pvallimit) %>% pull(Gene) %>% length() -> downreggenes[[i]]        
       } else {
-        results %>% dplyr::filter(Subset == groups[i] & Fold_Change > FClimit & FDR < pvallimit) %>% pull(Gene) %>% length() -> upreggenes[[i]] 
-        results %>% dplyr::filter(Subset == groups[i] & Fold_Change < -FClimit & FDR < pvallimit) %>% pull(Gene) %>% length() -> downreggenes[[i]] 
+        results %>% dplyr::filter(Subset == groups[i] & .data[[FC.colname]] > FClimit & .data[[fdr.colname]] < pvallimit) %>% pull(Gene) %>% length() -> upreggenes[[i]] 
+        results %>% dplyr::filter(Subset == groups[i] & .data[[FC.colname]] < -FClimit & .data[[fdr.colname]] < pvallimit) %>% pull(Gene) %>% length() -> downreggenes[[i]] 
       }
     }
     names(upreggenes) <- groups
