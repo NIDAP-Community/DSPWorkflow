@@ -28,16 +28,23 @@
 # target_deoData will need to be changed at some point
 # To call function, must have Data = data; Norm = c(quant or neg)
 GeoMxNorm <- function(Data, Norm) {
+  
+  # run reductions ====
+  color.variable <-
+    Value <- Statistic <- NegProbe <- Q3 <- Annotation <- NULL
+  
+  # Start Function
+  neg_probes<- "NegProbe-WTX"
   ann_of_interest <- "region"
   
-  Stat_data <<- base::data.frame(row.names = colnames(exprs(Data)),
+  Stat_data <- base::data.frame(row.names = colnames(exprs(Data)),
                            Segment = colnames(exprs(Data)),
                            Annotation = Biobase::pData(Data)[, ann_of_interest],
                            Q3 = unlist(apply(exprs(Data), 2,
                                              quantile, 0.75, na.rm = TRUE)),
                            NegProbe = exprs(Data)[neg_probes, ])
   
-  Stat_data_m <<- melt(Stat_data, measures.vars = c("Q3", "NegProbe"),
+  Stat_data_m <- melt(Stat_data, measures.vars = c("Q3", "NegProbe"),
                        variable.name = "Statistic", value.name = "Value")
   
   plt1 <- ggplot(Stat_data_m,
