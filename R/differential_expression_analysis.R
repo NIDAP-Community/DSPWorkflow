@@ -24,16 +24,18 @@
 #' @import tidyverse 
 #' @import grid
 #' @import gtable
-#' @import gridExtra 
+#' @importFrom gridExtra tableGrob ttheme_default
 #' @import dplyr 
 #' @import tidyr
 #' @export
 #' 
 #' @return a list containing mixed model output data frame, grid tables for samples and summary of genelists
 
-DiffExpr <- function(data, element, analysisType, regions, 
+DiffExpr <- function(object, element, analysisType, regions, 
                      groups, slideCol, classCol, fclim,
                      multiCore , nCores, pAdjust, pairwise) {
+  
+  testClass <- testRegion <- slide <- p.adjust <- Gene <- Subset <- Gene <- NULL
   
   # convert test variables to factors
   pData(data)$testRegion <- factor(pData(data)$region, regions)

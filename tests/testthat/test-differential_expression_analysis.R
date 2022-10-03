@@ -1,14 +1,12 @@
 test_that("Run Diff Exp Analysis", {
     
-    load("/rstudio-files/ccr-dceg-data/users/maggie/DSPWorkflow/tests/testthat/fixtures/target.Data.rda")
-    data <- target.Data
-    data <- GeomxTools::normalize(data, norm_method="quant")
+    data <- readRDS(test_path("fixtures","NSdataNorm.rds"))
     goi <- c("CD274", "CD8A", "CD68", "EPCAM",
              "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
-    data <- target.Data[goi,]
+    data <- data[goi,]
     groups <- c("DKD", "normal")
     element = "log_q"
-    nCores = 4
+    nCores = 1
     regions <- c("glomerulus", "tubule")
     slideCol <- "slide name"
     classCol <- "class"

@@ -1,6 +1,6 @@
 test_that("DSP object and dimension reduction plots returned", {
   
-  load(test_path("fixtures", "target.Data.rda"))
+  target.Data <- readRDS(test_path("fixtures", "target.Data.rds"))
   output <-
     DimReduct(
       object = target.Data,
