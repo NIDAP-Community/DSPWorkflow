@@ -38,14 +38,14 @@ DiffExpr <- function(object, element, analysisType, regions,
   testClass <- testRegion <- slide <- p.adjust <- Gene <- Subset <- Gene <- NULL
   
   # convert test variables to factors
-  pData(data)$testRegion <- factor(pData(data)$region, regions)
-  pData(data)$slide <- factor(pData(data)[[slideCol]])
-  pData(data)$testClass <- factor(pData(data)[[classCol]])
-  assayDataElement(object = data, elt = element) <-
-    assayDataApply(data, 2, FUN = log, base = 2, elt = "q_norm")
+  pData(object)$testRegion <- factor(pData(object)$region, regions)
+  pData(object)$slide <- factor(pData(object)[[slideCol]])
+  pData(object)$testClass <- factor(pData(object)[[classCol]])
+  assayDataElement(object = object, elt = element) <-
+    assayDataApply(object, 2, FUN = log, base = 2, elt = "q_norm")
   
   #Print Metadata Pivot Table
-  metadata <- pData(data) %>% rownames_to_column("sample")
+  metadata <- pData(object) %>% rownames_to_column("sample")
   metadata %>% select(testClass,testRegion,sample,slide) -> met.tab
   met.tab %>% group_by(testClass,testRegion,slide) %>% count() -> met.sum
   met.sum %>% pivot_wider(names_from= slide,values_from = n) -> met.pivot
@@ -61,8 +61,8 @@ DiffExpr <- function(object, element, analysisType, regions,
     title1 <- "DEG lists from within slide contrast:"
     results <- c()
     for(status in groups) {
-      ind <- pData(data)$class == status
-      mixedOutmc <- mixedModelDE(data[,ind],
+      ind <- pData(object)$class == status
+      mixedOutmc <- mixedModelDE(object[,ind],
                                  elt = element,
                                  modelFormula = ~ testRegion + (1 + testRegion | slide),
                                  groupVar = "testRegion",
@@ -87,12 +87,12 @@ DiffExpr <- function(object, element, analysisType, regions,
     cat("Running Between Group Analysis for Regions")
     title1 <- "DEG lists from Between Slides contrast:"
     # convert test variables to factors
-    pData(data)$testClass <- factor(pData(data)$class, groups)
+    pData(object)$testClass <- factor(pData(object)$class, groups)
     results <- c()
     for(region in regions) {
-      ind <- pData(data)$region == region
+      ind <- pData(object)$region == region
       mixedOutmc <-
-        mixedModelDE(data[,ind],
+        mixedModelDE(object[,ind],
                      elt = element,
                      modelFormula = ~ testClass + (1 | slide),
                      groupVar = "testClass",
