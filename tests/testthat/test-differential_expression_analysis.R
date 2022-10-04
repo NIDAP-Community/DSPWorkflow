@@ -16,6 +16,8 @@ test_that("Run Diff Exp Analysis", {
     analysisType <- "Within Groups" 
     fclim <- 1.5
     
+    Gene <- Subset <- NULL
+    
     reslist.1 <- DiffExpr(data, element, analysisType, regions, 
                           groups, slideCol, classCol, fclim,
                           multiCore , nCores, pAdjust, pairwise)
@@ -25,8 +27,11 @@ test_that("Run Diff Exp Analysis", {
     expected.elements <- c("results","sample_table","summary_table")
     expect_setequal(names(reslist.1),expected.elements)
     
-    lfc.1 <- reslist.1$result %>% filter(Gene == "CALB1") %>% filter(Subset == "normal") %>% pull(.data[[colnames(reslist.1$result)[grepl("logFC",colnames(reslist.1$result))]]])
-    pval.1 <- reslist.1$result %>% filter(Gene == "CALB1") %>% filter(Subset == "normal") %>% pull(.data[[colnames(reslist.1$result)[grepl("_pval",colnames(reslist.1$result))]]])
+    lfc_col1 <- colnames(reslist.1$result)[grepl("logFC",colnames(reslist.1$result))]
+    pval_col1 <- colnames(reslist.1$result)[grepl("_pval",colnames(reslist.1$result))]
+
+    lfc.1 <- reslist.1$result %>% dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% select(lfc_col1) %>% as.numeric()
+    pval.1 <- reslist.1$result %>% dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% select(pval_col1) %>% as.numeric()
     expect_equal(lfc.1, -2.014,tolerance=1e-3)
     expect_equal(pval.1, 0.0274,tolerance=1e-3)
     
@@ -40,8 +45,11 @@ test_that("Run Diff Exp Analysis", {
     expected.elements <- c("results","sample_table","summary_table")
     expect_setequal(names(reslist.2),expected.elements)
     
-    lfc.2 <- reslist.2$result %>% filter(Gene == "CALB1") %>% filter(Subset == "tubule") %>% pull(.data[[colnames(reslist.2$result)[grepl("logFC",colnames(reslist.2$result))]]])
-    pval.2 <- reslist.2$result %>% filter(Gene == "CALB1") %>% filter(Subset == "tubule") %>% pull(.data[[colnames(reslist.2$result)[grepl("_pval",colnames(reslist.2$result))]]])
+    lfc_col2 <- colnames(reslist.2$result)[grepl("logFC",colnames(reslist.2$result))]
+    pval_col2 <- colnames(reslist.2$result)[grepl("_pval",colnames(reslist.2$result))]
+     
+    lfc.2 <- reslist.2$result %>% dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% select(lfc_col2) %>% as.numeric()
+    pval.2 <- reslist.2$result %>% dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% select(pval_col2) %>% as.numeric()
     expect_equal(lfc.2, -1.408,tolerance=1e-3)
     expect_equal(pval.2, 0.01268,tolerance=1e-3)
 })
