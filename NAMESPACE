@@ -15,8 +15,11 @@ import(dplyr)
 import(grid)
 import(gtable)
 import(pheatmap)
+<<<<<<< HEAD
+=======
 import(Rmpfr)
 import(scales)
+>>>>>>> 6b15fbd4b08e0dbc2a8c623959ea6c036606b5f4
 import(stats)
 import(tidyr)
 import(tidyverse)
@@ -28,7 +31,10 @@ importFrom(BiocGenerics,annotation)
 importFrom(GeomxTools,normalize)
 importFrom(GeomxTools,readNanoStringGeoMxSet)
 importFrom(NanoStringNCTools,assayDataApply)
+<<<<<<< HEAD
+=======
 importFrom(Rmpfr,pmax)
+>>>>>>> 6b15fbd4b08e0dbc2a8c623959ea6c036606b5f4
 importFrom(Rtsne,Rtsne)
 importFrom(SpatialDecon,TIL_barplot)
 importFrom(SpatialDecon,spatialdecon)
