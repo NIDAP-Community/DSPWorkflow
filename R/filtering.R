@@ -7,12 +7,12 @@
 #' @importFrom Biobase pData
 #' @importFrom Biobase fData
 #' @importFrom ggplot2 ggplot
-#' @importFrom Rmpfr pmax
 #'
 #' @export
 #' @return A list containing the ....
 
-
+# Function I dropped
+#importFrom Rmpfr pmax
 
 
 # To call function, must have Data = raw target_demoData, dsp.obj = QC demoData, 
