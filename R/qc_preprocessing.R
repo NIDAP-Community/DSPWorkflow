@@ -158,6 +158,13 @@ QcProc <- function(object,
   segments.plot <- patchworkGrob(segments.plot)
   segments.plot <- gridExtra::grid.arrange(segments.plot, left = "Segments, #")
   
+<<<<<<< Updated upstream
+=======
+  pdf("QC_Seqments.pdf", width=14, height=7)
+  plot(segments.plot)
+  dev.off()
+  
+>>>>>>> Stashed changes
   pData(object) <-
     pData(object)[, !colnames(pData(object)) %in% neg.cols]
   
