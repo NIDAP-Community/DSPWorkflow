@@ -132,7 +132,7 @@ QcProc <- function(object,
   color.by <- "segment"
   trimmed <- QcHist(sData(object), "Trimmed (%)", color.by, percentTrimmed)
   aligned <- QcHist(sData(object), "Aligned (%)", color.by, percentAligned)
-  stitched <- QcHist(sData(object), "Stitched (%)", color.by, percentSaturation)
+  stitched <- QcHist(sData(object), "Stitched (%)", color.by, percentStitched)
   saturated <-
     QcHist(sData(object), "Saturated (%)", color.by, percentSaturation) +
     labs(x = "sequencing\nsaturation (%)")
@@ -165,8 +165,8 @@ QcProc <- function(object,
   
   segments.plot = trimmed + aligned + stitched + saturated + nuclei + area + neg.plot +
     plot_layout(nrow=1) + plot_annotation(
-      title = "Quality Control",
-      subtitle = "Seqments",
+      title = "Quality Control (QC)",
+      subtitle = "ROI/AOI Seqments",
       tag_levels = "A",
       caption = "DSPWorkflow::QcProc()",
       theme = theme(
@@ -192,11 +192,6 @@ QcProc <- function(object,
   
   
   # Probe QC Flags (4.2) ====
-  # 
-  ## A probe is removed globally from the dataset if either of the following is true:
-  ## the geometric mean of that probe’s counts from all segments divided by the geometric mean of all probe counts representing the target from all segments is less than 0.1
-  ## the probe is an outlier according to the Grubb’s test in at least 20% of the segments
-  ## A probe is removed locally (from a given segment) if the probe is an outlier according to the Grubb’s test in that segment.
 
   ## Generally keep the qcCutoffs parameters unchanged
   
