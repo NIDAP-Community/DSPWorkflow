@@ -4,7 +4,13 @@
 
 #' QcProc: Quality Control and Preprocessing
 #'
-#' @param object object of class NanoStringGeoMxSet with raw data and metadata supplied
+#' Selects ROI/AOI segments and target probes based on quality control and then generates gene-level count data.
+#' 
+#' A probe is removed globally from the dataset if either it does not reach the *minProbeRatio* threshold or the probe is an outlier according to Grubb’s test in at least *percentFailGrubbs* of segments. A probe is removed locally (from a given segment) if the probe is an outlier in that segment and *removeLocalOtliers* is set to TRUE (default).
+#' 
+#' The count for any gene with multiple probes per segment is calculated as the geometric mean of those probes.
+#'
+#' @param object object of class *NanoStringGeoMxSet* with raw data and metadata supplied
 #' @param minSegmentReads minimum number of reads
 #' @param percentTrimmed minimum % of reads trimmed
 #' @param percentStitched minimum % of reads stitched
@@ -15,15 +21,21 @@
 #' @param minNuclei minimum # of nuclei estimated
 #' @param minArea minimum segment area
 #' @param minProbeRatio numeric between 0 and 1 to flag probes that have (geomean probe in all segments) / (geomean probes within target) less than or equal to this ratio
+#' @param outlierTestAlpha significance cut-off for Grubb's test to flag outlier probes
 #' @param percentFailGrubbs numeric to flag probes that fail Grubb's test in greater than or equal this percent of segments
 #' @param removeLocalOutliers boolean to determine if local outliers should be excluded from exprs matrix
-#'
 #' 
-#' @importFrom ggplot2 ggplot aes geom_histogram geom_vline facet_wrap element_text ggtitle labs theme theme_bw
+#' @importFrom Biobase protocolData pData fData featureData
+#' @importFrom BiocGenerics annotation
+#' @importFrom GeomxTools shiftCountsOne setSegmentQCFlags setBioProbeQCFlags aggregateCounts
+#' @importFrom ggplot2 ggplot aes_string geom_histogram geom_vline facet_wrap element_text ggtitle labs theme theme_bw guides scale_x_continuous
+#' @importFrom gridExtra grid.arrange
+#' @importFrom knitr kable
+#' @importFrom NanoStringNCTools esBy negativeControlSubset assayDataApply sData
 #' @importFrom patchwork plot_layout plot_annotation patchworkGrob
 #'
 #' @export
-#' @return QC filtered NanoStringGeoMxSet object with targets as features and QCFlags data frame appended to protocolData
+#' @return QC-filtered *NanoStringGeoMxSet* object with gene-level targets as features and the *QCFlags* data frame appended to *protocolData*
 #' 
 #' 
 #' 
@@ -31,16 +43,24 @@ QcProc <- function(object,
                    minSegmentReads = 1000,
                    percentTrimmed = 80,
                    percentStitched = 80,
-                   percentAligned = 75,
+                   percentAligned = 80,
                    percentSaturation = 50,
-                   minNegativeCount = 1,
-                   maxNTCCount = 9000,
-                   minNuclei = 20,
-                   minArea = 1000,
+                   minNegativeCount = 10,
+                   maxNTCCount = 1000,         # DIF 60
+                   minNuclei = 100,            # DIF 200
+                   minArea = 5000,             # DIF 16000
                    minProbeRatio = 0.1,
+                   outlierTestAlpha = 0.01,    # MIS
                    percentFailGrubbs = 20,
-                   removeLocalOutliers = TRUE)
+                   removeLocalOutliers = TRUE
+                   )
 {
+  # DEFAULTS <- list() #from https://github.com/Nanostring-Biostats/GeomxTools/blob/master/R/NanoStringGeoMxSet-qc.R
+  # #loqCutoff = 1.0,            # MIS
+  # highCountCutoff = 10000     # MIS
+                 
+                  
+                  
   # Functions ====
   
   ## graphical summaries of QC statistics plot function
@@ -156,7 +176,7 @@ QcProc <- function(object,
     )
       
   segments.plot <- patchworkGrob(segments.plot)
-  segments.plot <- gridExtra::grid.arrange(segments.plot, left = "Segments, #")
+  segments.plot <- grid.arrange(segments.plot, left = "Segments, #")
   
   pData(object) <-
     pData(object)[, !colnames(pData(object)) %in% neg.cols]
@@ -171,8 +191,13 @@ QcProc <- function(object,
   dim(object)
   
   
-  # Probe QC Flags ====
-  
+  # Probe QC Flags (4.2) ====
+  # 
+  ## A probe is removed globally from the dataset if either of the following is true:
+  ## the geometric mean of that probe’s counts from all segments divided by the geometric mean of all probe counts representing the target from all segments is less than 0.1
+  ## the probe is an outlier according to the Grubb’s test in at least 20% of the segments
+  ## A probe is removed locally (from a given segment) if the probe is an outlier according to the Grubb’s test in that segment.
+
   ## Generally keep the qcCutoffs parameters unchanged
   
   object <-
@@ -207,7 +232,7 @@ QcProc <- function(object,
   object <- probe.qc.passed
   
   
-  # Gene-level Counts ====
+  # Gene-level Counts (4.3) ====
   
   ## Check how many unique targets the object has
   length(unique(featureData(object)[["TargetName"]]))
