@@ -1,9 +1,9 @@
 test_that("Load Kidney dataset", {
-  datadir <- "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset/"
+  datadir <- "/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example"
   DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
                   full.names = TRUE, recursive = TRUE)
-  PKCFiles <- dir(file.path(datadir, "pkcs"), pattern = ".pkc",
-                  full.names = TRUE, recursive = TRUE)
+  PKCFiles <- unzip(dir(file.path(datadir, "pkcs"), pattern = ".pkc*",
+                  full.names = TRUE, recursive = TRUE))
   SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
                               full.names = TRUE, recursive = TRUE)
 
