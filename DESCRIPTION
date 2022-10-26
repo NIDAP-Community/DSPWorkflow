@@ -37,3 +37,4 @@ Imports:
     umap (>= 0.2.9.0),
     pheatmap (>= 1.0.12)
 Config/testthat/edition: 3
+
