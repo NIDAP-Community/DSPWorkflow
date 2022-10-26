@@ -36,6 +36,7 @@ StudyDesign <- function(dccFiles, pkcFiles, phenoDataFile, phenoDataSheet = "Tem
                          experimentDataColNames = c("panel")) {
 
   region <- segment <- x <- id <- y <- n <-NULL
+  `slide name` <- NULL
   # load data
   study.data <-
     readNanoStringGeoMxSet(dccFiles = dccFiles,

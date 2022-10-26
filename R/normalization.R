@@ -22,7 +22,7 @@
 #' @importFrom GeomxTools normalize
 #'
 #' @export
-#' @return A list containing the ggplot grid and the boxplot.
+#' @return A list containing the ggplot grid, a boxplot, an normalized dataframe.
 
 
 # target_deoData will need to be changed at some point
@@ -79,7 +79,7 @@ GeoMxNorm <- function(Data, Norm) {
   
   if(Norm == "quant"){
     # Q3 norm (75th percentile) for WTA/CTA  with or without custom spike-ins
-    target_demoData <<- normalize(Data,
+    target_demoData <- normalize(Data,
                                   norm_method = "quant", 
                                   desiredQuantile = .75,
                                   toElt = "q_norm")
@@ -92,7 +92,7 @@ GeoMxNorm <- function(Data, Norm) {
   }
   if(Norm == "neg"){
     # Background normalization for WTA/CTA without custom spike-in
-    target_demoData <<- normalize(Data,
+    target_demoData <- normalize(Data,
                                   norm_method = "neg", 
                                   fromElt = "exprs",
                                   toElt = "neg_norm")
@@ -104,5 +104,5 @@ GeoMxNorm <- function(Data, Norm) {
                  ylab = "Counts, Neg. Normalized")
   }
   
-  return(list("plot" = p, "boxplot" = b))
+  return(list("plot" = p, "boxplot" = b, "Normalized Dataframe" = target_demoData))
 }
