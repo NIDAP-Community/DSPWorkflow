@@ -11,7 +11,19 @@ HeatMap(
   image.height,
   image.resolution,
   image.filename,
-  heatmap.color
+  scale.by.row.or.col,
+  show.rownames,
+  show.colnames,
+  clustering.method,
+  cluster.rows,
+  cluster.cols,
+  clustering.distance.rows,
+  clustering.distance.cols,
+  annotation.row,
+  annotation.col,
+  breaks.by.values,
+  heatmap.color,
+  norm.method
 )
 }
 \arguments{
@@ -27,9 +39,31 @@ HeatMap(
 
 \item{image.filename}{image filename}
 
-\item{heatmap.color}{colors of heatmap
+\item{scale.by.row.or.col}{scale by row or by col ("row", "column" and "none")}
 
-#' @importFrom NanoStringNCTools assayDataApply}
+\item{show.rownames}{boolean specifying if row names are be shown.}
+
+\item{show.colnames}{boolean specifying if column names are be shown.}
+
+\item{clustering.method}{clustering method used. Accepts the same values as hclust. e.g "ward.D", "ward.D2", "single", "complete", "average"}
+
+\item{cluster.rows}{boolean values determining if rows should be clustered or hclust object,}
+
+\item{cluster.cols}{boolean values determining if cols should be clustered or hclust object,}
+
+\item{clustering.distance.rows}{distance for clustering by rows (correlation, or euclidean)}
+
+\item{clustering.distance.cols}{distance for clustering by cols (correlation, or euclidean)}
+
+\item{annotation.row}{the annotations shown on left side of the heatmap}
+
+\item{annotation.col}{the annotations shown on right side of the heatmap}
+
+\item{breaks.by.values}{a sequence of numbers that covers the range of values in mat e.g seq(-3, 3, 0.05), 6/0.05=120 colors.}
+
+\item{heatmap.color}{colors of heatmap colorRampPalette(c("blue", "white", "red"))(120), here 120 is consistent with 120 above.}
+
+\item{norm.method}{normalization method quant: Upper quartile (Q3) normalization and neg: background normalization}
 }
 \value{
 A list containing the plot genes data matrix, and the heatmap plot.
