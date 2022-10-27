@@ -4,6 +4,7 @@ test_that("Load Kidney dataset", {
                   full.names = TRUE, recursive = TRUE)
   PKCFiles <- dir(file.path(datadir, "pkcs"), pattern = ".pkc",
                   full.names = TRUE, recursive = TRUE)
+  PKCFiles <- "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset//pkcs/TAP_H_WTA_v1.0.pkc"
   SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
                               full.names = TRUE, recursive = TRUE)
 
