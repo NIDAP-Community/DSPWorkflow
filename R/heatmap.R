@@ -14,9 +14,21 @@
 #' @param image.height image height
 #' @param image.resolution image resolution
 #' @param image.filename image filename
-#' @param heatmap.color colors of heatmap
+#' @param scale.by.row.or.col scale by row or by col ("row", "column" and "none")
+#' @param show.rownames boolean specifying if row names are be shown.
+#' @param show.colnames boolean specifying if column names are be shown.
+#' @param clustering.method clustering method used. Accepts the same values as hclust. e.g "ward.D", "ward.D2", "single", "complete", "average"
+#' @param cluster.rows boolean values determining if rows should be clustered or hclust object,
+#' @param cluster.cols boolean values determining if cols should be clustered or hclust object,
+#' @param clustering.distance.rows distance for clustering by rows (correlation, or euclidean)
+#' @param clustering.distance.cols distance for clustering by cols (correlation, or euclidean)
+#' @param annotation.row the annotations shown on left side of the heatmap
+#' @param annotation.col the annotations shown on right side of the heatmap
+#' @param breaks.by.values a sequence of numbers that covers the range of values in mat e.g seq(-3, 3, 0.05), 6/0.05=120 colors. 
+#' @param heatmap.color colors of heatmap colorRampPalette(c("blue", "white", "red"))(120), here 120 is consistent with 120 above.
+#' @param norm.method normalization method quant: Upper quartile (Q3) normalization and neg: background normalization
 #' 
-#'#' @importFrom NanoStringNCTools assayDataApply
+#' @importFrom NanoStringNCTools assayDataApply
 #' @importFrom Biobase assayDataElement
 #' @import pheatmap
 #' 
@@ -99,14 +111,20 @@
 # na_col                        specify the color of the NA cell in the matrix.
 # ...                           graphical parameters for the text used in plot. Parameters passed to grid.text,see gpar.
 
-HeatMap <- function(target.data, ngenes, image.width, image.height, image.resolution, image.filename, heatmap.color) {
+HeatMap <- function(target.data, ngenes, image.width, image.height, image.resolution, image.filename,
+                    scale.by.row.or.col, show.rownames, show.colnames, clustering.method, cluster.rows, cluster.cols,
+                    clustering.distance.rows, clustering.distance.cols, annotation.row, annotation.col, 
+                    breaks.by.values, heatmap.color, norm.method) {
 
 ## log2 transformation
 #log2.data <- assayDataElement(object = target.data, elt = "log_q") <- 
 #  assayDataApply(target.data, 2, FUN = log, base = 2, elt = "q_norm")
 
+if(norm.method == "quant") elt.value <- "q_norm"  # Upper quartile (Q3) normalization
+if(norm.method == "neg") elt.value <- "neg_norm"  # background normalization
+
 assayDataElement(object = target.data, elt = "log_q") <- 
-     assayDataApply(target.data, 2, FUN = log, base = 2, elt = "q_norm")
+     assayDataApply(target.data, 2, FUN = log, base = 2, elt = elt.value)
   
 # create CV function
 calc.cv <- function(x) {sd(x) / mean(x)}
@@ -125,29 +143,30 @@ goi <- names(cv.dat)[cv.dat > quantile(cv.dat, 0.8)]
 plot.genes <- assayDataElement(target.data[goi, ], elt = "log_q")
 
 ## image params
-width <- image.width
-height <- image.height
-resolution <- image.resolution
-filename <- image.filename
+# width <- image.width
+# height <- image.height
+# resolution <- image.resolution
+# filename <- image.filename
 
 ## heatmap color
 col.palette <- heatmap.color  # color = colorRampPalette(c("blue", "white", "red"))(120)
 
 p <- pheatmap(plot.genes[1:ngenes,],
          main ="Clustering high CV genes",
-         scale = "row",
-         show_rownames = FALSE, show_colnames = FALSE,
+         scale = scale.by.row.or.col, # "row",
+         show_rownames = show.rownames, # FALSE, 
+         show_colnames = show.colnames, # FALSE,
          border_color = NA,
-         clustering_method = "average",
-         cluster_rows = T,
-         cluster_cols = T,
-         clustering_distance_rows = "correlation",
-         clustering_distance_cols = "correlation",
-         breaks = seq(-3, 3, 0.05),
+         clustering_method = clustering.method, # "average"
+         cluster_rows = cluster.rows, ## T
+         cluster_cols = cluster.cols, ## T
+         clustering_distance_rows = clustering.distance.rows, ## "correlation",
+         clustering_distance_cols = clustering.distance.cols, ## "correlation",
+         breaks = breaks.by.values, # seq(-3, 3, 0.05),
          color = col.palette,
          annotation_col = pData(target.data)[, c("class", "segment", "region")])
 
-png(filename=filename, width=width, height=height, units="px", pointsize=4, bg="white", res=resolution, type="cairo")
+png(filename=image.filename, width=image.width, height=image.height, units="px", pointsize=4, bg="white", res=image.resolution, type="cairo")
  print(p)
 dev.off()
 
