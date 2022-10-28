@@ -35,7 +35,7 @@
 #' @importFrom patchwork plot_layout plot_annotation patchworkGrob
 #'
 #' @export
-#' @return QC-filtered *NanoStringGeoMxSet* object with gene-level targets as features and the *QCFlags* data frame appended to *protocolData*
+#' @return A list of two objects: QC-filtered *NanoStringGeoMxSet* object with gene-level targets as features and the *QCFlags* data frame appended to *protocolData* and QC plots
 #' 
 #' 
 #' 

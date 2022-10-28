@@ -51,7 +51,7 @@ QcProc(
 \item{removeLocalOutliers}{boolean to determine if local outliers should be excluded from exprs matrix}
 }
 \value{
-QC-filtered \emph{NanoStringGeoMxSet} object with gene-level targets as features and the \emph{QCFlags} data frame appended to \emph{protocolData}
+A list of two objects: QC-filtered \emph{NanoStringGeoMxSet} object with gene-level targets as features and the \emph{QCFlags} data frame appended to \emph{protocolData} and QC plots
 }
 \description{
 Selects ROI/AOI segments and target probes based on quality control and then generates gene-level count data.
