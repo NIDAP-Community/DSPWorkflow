@@ -4,23 +4,15 @@ test_that("Run Diff Exp Analysis", {
     goi <- c("CD274", "CD8A", "CD68", "EPCAM",
              "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     data <- data[goi,]
-    groups <- c("DKD", "normal")
-    element = "log_q"
-    nCores = 1
-    regions <- c("glomerulus", "tubule")
-    slideCol <- "slide name"
-    classCol <- "class"
-    multiCore = TRUE
-    pAdjust = NULL
-    pairwise = NULL
-    analysisType <- "Within Groups" 
-    fclim <- 1.5
-    
     Gene <- Subset <- NULL
     
-    reslist.1 <- DiffExpr(data, element, analysisType, regions, 
-                          groups, slideCol, classCol, fclim,
-                          multiCore , nCores, pAdjust, pairwise)
+    reslist.1 <- DiffExpr(object = data, 
+                          analysisType = "Within Groups",
+                          regions = c("glomerulus", "tubule"), 
+                          groups = c("DKD", "normal"), 
+                          slideCol = "slide name",
+                          classCol = "class")
+
     grid.draw(reslist.1$sample_table)
     grid.newpage()
     grid.draw(reslist.1$summary_table)
@@ -35,10 +27,13 @@ test_that("Run Diff Exp Analysis", {
     expect_equal(lfc.1, -2.014,tolerance=1e-3)
     expect_equal(pval.1, 0.0274,tolerance=1e-3)
     
-    analysisType <- "Between Groups" 
-    reslist.2 <- DiffExpr(data, element, analysisType, regions, 
-                      groups, slideCol, classCol, fclim,
-                     multiCore , nCores, pAdjust, pairwise)
+    reslist.2 <- DiffExpr(object = data, 
+                          analysisType = "Between Groups",
+                          regions = c("glomerulus", "tubule"), 
+                          groups = c("DKD", "normal"), 
+                          slideCol = "slide name",
+                          classCol = "class")
+      
     grid.draw(reslist.2$sample_table)
     grid.newpage()
     grid.draw(reslist.2$summary_table)

@@ -1,4 +1,4 @@
-####This code comes from
+####This code derives from
 #http://www.bioconductor.org/packages/release/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html#7_Differential_Expression
 #https://rdrr.io/github/Nanostring-Biostats/GeomxTools/src/R/NanoStringGeoMxSet-de.R
 
@@ -17,23 +17,33 @@
 #' @param pAdjust = "BY" method for p-value adjustment
 #' @param pairwise boolean to calculate least-square means pairwise differences
 #'
-#' @import GeomxTools 
+#' @importFrom GeomxTools mixedModelDE
 #' @import NanoStringNCTools
-#' @import Biobase 
-#' @importFrom tibble rownames_to_column 
-#' @import tidyverse 
-#' @import grid
-#' @import gtable
-#' @importFrom gridExtra tableGrob ttheme_default
-#' @import dplyr 
-#' @import tidyr
+#' @importFrom Biobase pData
+#' @importFrom stats p.adjust
+#' @importFrom dplyr group_by select filter
+#' @importFrom tidyr pivot_wider
+#' @importFrom backports paste0
+#' @import gridExtra tableGrob
+#' @importFrom BiocGenerics rownames colnames rbind
 #' @export
 #' 
 #' @return a list containing mixed model output data frame, grid tables for samples and summary of genelists
 
-DiffExpr <- function(object, element, analysisType, regions, 
-                     groups, slideCol, classCol, fclim,
-                     multiCore , nCores, pAdjust, pairwise) {
+DiffExpr <- function(object, 
+                     analysisType,
+                     regions, 
+                     groups, 
+                     slideCol = "slide name", 
+                     classCol = "class", 
+                     element = "log_q", 
+                     multiCore = TRUE, 
+                     nCores = 1, 
+                     pAdjust = BY, 
+                     pairwise = NULL,
+                     fclim = 1.2,
+                     pvallim1 = 0.05,
+                     pvallim2 = 0.01) {
   
   testClass <- testRegion <- slide <- p.adjust <- Gene <- Subset <- Gene <- NULL
   
@@ -168,10 +178,10 @@ DiffExpr <- function(object, element, analysisType, regions,
   
   #Return genelists using different fold change and pvalue thresholds:
   runSummary <- function(selectGroups){
-    FCpval1 <- getgenelists(selectGroups,FClimit = fclim, pvallimit = 0.05,"pval")
-    FCpval2 <- getgenelists(selectGroups,FClimit = fclim, pvallimit = 0.01,"pval")
-    FCadjpval1 <- getgenelists(selectGroups,FClimit = fclim, pvallimit = 0.05,"adjpval")
-    FCadjpval2 <- getgenelists(selectGroups,FClimit = fclim, pvallimit = 0.01,"adjpval")
+    FCpval1 <- getgenelists(selectGroups,FClimit = fclim, pvallimit = pvallim1,"pval")
+    FCpval2 <- getgenelists(selectGroups,FClimit = fclim, pvallimit = pvallim2,"pval")
+    FCadjpval1 <- getgenelists(selectGroups,FClimit = fclim, pvallimit = pvallim1,"adjpval")
+    FCadjpval2 <- getgenelists(selectGroups,FClimit = fclim, pvallimit = pvallim2,"adjpval")
     pvaltab <- rbind(FCpval1,FCpval2,FCadjpval1,FCadjpval2)
     colnames(pvaltab) <- sapply(colnames(pvaltab), function(x) wraplines(x))
     table <- tableGrob(pvaltab, theme=ttheme_default(base_size = 10))

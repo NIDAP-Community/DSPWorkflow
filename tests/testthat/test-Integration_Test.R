@@ -1,8 +1,7 @@
 test_that("DSP object and qc plots are returned", {
   
     datadir <- "/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example" #For Human
-    datadir <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset" #For Mouse 
-    
+    #datadir <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset" #For Mouse 
     
     ####################################
     #  Test Study Design:           ####
@@ -15,8 +14,10 @@ test_that("DSP object and qc plots are returned", {
     SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
                               full.names = TRUE, recursive = TRUE)
   
-    sdesign.list <- StudyDesign(dccFiles = DCCFiles, pkcFiles = PKCFiles,
-                          phenoDataFile = SampleAnnotationFile)
+    sdesign.list <- StudyDesign(dccFiles = DCCFiles, 
+                                pkcFiles = PKCFiles,
+                                phenoDataFile = SampleAnnotationFile)
+    
     print(sdesign.list$plot)
     print("Study Design Test Done")
     
@@ -42,10 +43,6 @@ test_that("DSP object and qc plots are returned", {
     ####################################
     #####    Test Filtering:        ####
     ####################################
-    
-    #target_demoDataFil<- readRDS(test_path("fixtures", "target_demoDataFiltering.rds"))
-    #demoDataFil <- readRDS(test_path("fixtures", "demoDataFiltering.rds"))
-    #PKFil <- readRDS(test_path("fixtures", "pkcsFiltering.rds"))
     
     PKFil <- annotation(QCoutput$dsp.target)
     target_demoDataFil <- QCoutput$dsp.target
@@ -76,7 +73,7 @@ test_that("DSP object and qc plots are returned", {
     target_demoDataNorm <- FiltOutput$`target_demoData Dataset`
     
     NormOut.list <- GeoMxNorm(target_demoDataNorm, "quant")
-    #dsp.list <- GeoMxNorm(Data = target_demoData, Norm = "quant")
+  
     print(NormOut.list$plot)
     print(NormOut.list$boxplot)
     print(NormOut.list$`Normalized Dataframe`)
@@ -103,15 +100,25 @@ test_that("DSP object and qc plots are returned", {
     
     target.Data <- UnSupervisedoutput$dsp.object  
     
-    # HeatMap <- function(target.data, ngenes, image.width, image.height, image.filename, image.resolution, heatmap.color)
-    color <- colorRampPalette(c("blue", "white", "red"))(120)
-    dsp.list <- HeatMap(target.Data, 
+    dsp.list <- HeatMap(target.data = target.Data, 
                         ngenes = 200, 
                         image.width = 3600, 
                         image.height = 1800, 
                         image.resolution = 300, 
-                        image.filename = "heatmap.clust.highCVgenes.png", 
-                        heatmap.color = color)
+                        image.filename = "heatmap.clust.highCVgenes.png",
+                        scale.by.row.or.col = "row", 
+                        show.rownames = FALSE, 
+                        show.colnames = FALSE, 
+                        clustering.method = "average", 
+                        cluster.rows = TRUE, 
+                        cluster.cols = TRUE,
+                        clustering.distance.rows = "correlation", 
+                        clustering.distance.cols = "correlation", 
+                        annotation.row = NA, 
+                        annotation.col = pData(target.Data)[, c("class", "segment", "region")], 
+                        breaks.by.values = seq(-3, 3, 0.05), 
+                        heatmap.color = colorRampPalette(c("blue", "white", "red"))(120), 
+                        norm.method = "quant")
 
     print(dsp.list$plot.genes)
     print(dsp.list$plot)
@@ -127,25 +134,15 @@ test_that("DSP object and qc plots are returned", {
     goi <- c("CD274", "CD8A", "CD68", "EPCAM",
              "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     data <- data[goi,]
-    groups <- c("DKD", "normal")
-    element = "log_q"
-    nCores = 1
-    regions <- c("glomerulus", "tubule")
-    slideCol <- "slide name"
-    classCol <- "class"
-    multiCore = TRUE
-    pAdjust = NULL
-    pairwise = NULL
-    fclim <- 1.5
-    
     Gene <- Subset <- NULL
     
-    #First type of analysis:
-    analysisType <- "Within Groups" 
-    
-    reslist.1 <- DiffExpr(data, element, analysisType, regions, 
-                          groups, slideCol, classCol, fclim,
-                          multiCore , nCores, pAdjust, pairwise)
+    #First analysis:
+    reslist.1 <- DiffExpr(object = data, 
+                          analysisType = "Within Groups",
+                          regions = c("glomerulus", "tubule"), 
+                          groups = c("DKD", "normal"), 
+                          slideCol = "slide name",
+                          classCol = "class")
     grid.draw(reslist.1$sample_table)
     grid.newpage()
     grid.draw(reslist.1$summary_table)
@@ -153,17 +150,25 @@ test_that("DSP object and qc plots are returned", {
     lfc_col1 <- colnames(reslist.1$result)[grepl("logFC",colnames(reslist.1$result))]
     pval_col1 <- colnames(reslist.1$result)[grepl("_pval",colnames(reslist.1$result))]
     
-    lfc.1 <- reslist.1$result %>% dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% select(all_of(lfc_col1)) %>% as.numeric()
-    pval.1 <- reslist.1$result %>% dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% select(all_of(pval_col1)) %>% as.numeric()
+    lfc.1 <- reslist.1$result %>% 
+                        dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% 
+                        select(all_of(lfc_col1)) %>% 
+                        as.numeric()
+    pval.1 <- reslist.1$result %>% 
+                        dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% 
+                        select(all_of(pval_col1)) %>% 
+                        as.numeric()
     
     expect_equal(lfc.1, -2.014,tolerance=1e-3)
     expect_equal(pval.1, 0.0274,tolerance=1e-3)
     
-    #Second type of analysis:
-    analysisType <- "Between Groups" 
-    reslist.2 <- DiffExpr(data, element, analysisType, regions, 
-                          groups, slideCol, classCol, fclim,
-                          multiCore , nCores, pAdjust, pairwise)
+    #Second analysis:
+    reslist.2 <- DiffExpr(object = data, 
+                          analysisType = "Between Groups",
+                          regions = c("glomerulus", "tubule"), 
+                          groups = c("DKD", "normal"), 
+                          slideCol = "slide name",
+                          classCol = "class")
     grid.draw(reslist.2$sample_table)
     grid.newpage()
     grid.draw(reslist.2$summary_table)
@@ -171,8 +176,14 @@ test_that("DSP object and qc plots are returned", {
     lfc_col2 <- colnames(reslist.2$result)[grepl("logFC",colnames(reslist.2$result))]
     pval_col2 <- colnames(reslist.2$result)[grepl("_pval",colnames(reslist.2$result))]
     
-    lfc.2 <- reslist.2$result %>% dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% select(all_of(lfc_col2)) %>% as.numeric()
-    pval.2 <- reslist.2$result %>% dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% select(all_of(pval_col2)) %>% as.numeric()
+    lfc.2 <- reslist.2$result %>% 
+                          dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% 
+                          select(all_of(lfc_col2)) %>% 
+                          as.numeric()
+    pval.2 <- reslist.2$result %>% 
+                          dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% 
+                          select(all_of(pval_col2)) %>% 
+                          as.numeric()
     expect_equal(lfc.2, -1.408,tolerance=1e-3)
     expect_equal(pval.2, 0.01268,tolerance=1e-3)
     
@@ -198,15 +209,16 @@ test_that("DSP object and qc plots are returned", {
     ####################################
     
     #For Mouse Thymus data:
-    load(test_path("fixtures", "target_demoData.RData"))
-    ref_mtx_test <- read.csv("tests/testthat/fixtures/sample_spatial_deconv_mtx.csv", row.names=1, check.names=FALSE)
-    annot_1 = read.csv("tests/testthat/fixtures/ref_annot.csv")
+    #load(test_path("fixtures", "target_demoData.RData"))
+    #ref_mtx_test <- read.csv("tests/testthat/fixtures/sample_spatial_deconv_mtx.csv", row.names=1, check.names=FALSE)
+    #annot_1 = read.csv("tests/testthat/fixtures/ref_annot.csv")
   
-    dsp_qnorm_test = target_demoData@assayData$q_norm
-    dsp_negnorm_test = target_demoData@assayData$neg_norm
+    #dsp_qnorm_test = target_demoData@assayData$q_norm
+    #dsp_negnorm_test = target_demoData@assayData$neg_norm
     
     #For Human Kidney data:
-    load("../../../data/CellProfileLibrary/Human/Adult/Kidney_HCA.RData")
+    refdir <- "/rstudio-files/ccr-dceg-data/data/CellProfileLibrary/Human/Adult/"
+    load(paste0(refdir,"Kidney_HCA.RData"))
     ref_mtx_test <- profile_matrix
     annot_1 <- data.frame(CellID = colnames(ref_mtx_test),LabeledCellType = colnames(ref_mtx_test))
     
