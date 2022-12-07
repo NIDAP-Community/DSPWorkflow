@@ -14,6 +14,7 @@ Suggests:
 Depends:
     R (>= 3.6)
 Imports:
+    backports (>= 1.4.1),
     Biobase (>= 2.54.0),
     BiocGenerics (>= 0.40.0),
     cowplot (>= 1.1.1),
