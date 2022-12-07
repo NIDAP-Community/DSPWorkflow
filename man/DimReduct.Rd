@@ -10,7 +10,9 @@ DimReduct(
   color.variable2 = NULL,
   shape.variable = NULL,
   point.size = 1,
-  point.alpha = 1
+  point.alpha = 1,
+  symbol.size = 2,
+  text.size = 16
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ DimReduct(
 \item{point.size}{point size}
 
 \item{point.alpha}{point color transparency}
+
+\item{symbol.size}{symbols size in legends}
+
+\item{text.size}{base font size}
 }
 \value{
 A named list containing the NanoStringGeoMxSet-class object with the dimensional reduction coordinates ("dsp.object") and ggplot2 plots ("plot.list")
