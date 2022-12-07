@@ -23,8 +23,8 @@ test_that("Run Diff Exp Analysis", {
     lfc_col1 <- colnames(reslist.1$result)[grepl("logFC",colnames(reslist.1$result))]
     pval_col1 <- colnames(reslist.1$result)[grepl("_pval",colnames(reslist.1$result))]
 
-    lfc.1 <- reslist.1$result %>% dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% select(lfc_col1) %>% as.numeric()
-    pval.1 <- reslist.1$result %>% dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% select(pval_col1) %>% as.numeric()
+    lfc.1 <- reslist.1$result %>% dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% pull(lfc_col1) %>% as.numeric()
+    pval.1 <- reslist.1$result %>% dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% pull(pval_col1) %>% as.numeric()
     expect_equal(lfc.1, -2.014,tolerance=1e-3)
     expect_equal(pval.1, 0.0274,tolerance=1e-3)
     
@@ -44,8 +44,8 @@ test_that("Run Diff Exp Analysis", {
     lfc_col2 <- colnames(reslist.2$result)[grepl("logFC",colnames(reslist.2$result))]
     pval_col2 <- colnames(reslist.2$result)[grepl("_pval",colnames(reslist.2$result))]
      
-    lfc.2 <- reslist.2$result %>% dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% select(lfc_col2) %>% as.numeric()
-    pval.2 <- reslist.2$result %>% dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% select(pval_col2) %>% as.numeric()
+    lfc.2 <- reslist.2$result %>% dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% pull(lfc_col2) %>% as.numeric()
+    pval.2 <- reslist.2$result %>% dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% pull(pval_col2) %>% as.numeric()
     expect_equal(lfc.2, -1.408,tolerance=1e-3)
     expect_equal(pval.2, 0.01268,tolerance=1e-3)
 })

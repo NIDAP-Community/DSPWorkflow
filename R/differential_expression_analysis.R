@@ -21,10 +21,12 @@
 #' @import NanoStringNCTools
 #' @importFrom Biobase pData
 #' @importFrom stats p.adjust
-#' @importFrom dplyr group_by select filter
+#' @importFrom dplyr group_by select filter arrange pull
 #' @importFrom tidyr pivot_wider
-#' @importFrom backports paste0
-#' @import gridExtra tableGrob
+#' @importFrom grid grid.newpage textGrob gpar grobHeight grid.draw
+#' @importFrom gtable gtable_add_rows gtable_add_grob
+#' @importFrom tibble rownames_to_column
+#' @importFrom gridExtra tableGrob 
 #' @importFrom BiocGenerics rownames colnames rbind
 #' @export
 #' 
