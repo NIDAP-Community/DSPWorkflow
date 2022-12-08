@@ -7,10 +7,11 @@
 #' @param object name of the NanoStringGeoMxSet to perform DE analysis on
 #' @param element assayDataElement of the geoMxSet object to run the DE on
 #' @param analysisType Analysis type either "Between Groups" or "Within Groups"
-#' @param regions vector of regions of interest  
-#' @param groups vector of groups to compare
+#' @param regions One or more regions of interest (needs to be variables within regionCol)
+#' @param groups One or more groups of interest (needs to be variables within groupCol)
 #' @param slideCol column for slide name
-#' @param classCol column for class
+#' @param groupCol column for group (groups are usually found in different slides)
+#' @param regionCol column for region (regions are usually found within a slide)  
 #' @param fclim = 1.2, Fold Change limit for summarizing genes of interest
 #' @param nCores = 1, number of cores to use, set to 1 if running in serial mode
 #' @param multiCore = TRUE, set to TRUE to use multiCore, FALSE to run in cluster mode
@@ -37,7 +38,8 @@ DiffExpr <- function(object,
                      regions, 
                      groups, 
                      slideCol = "slide name", 
-                     classCol = "class", 
+                     groupCol = "class",
+                     regionCol = "region",
                      element = "log_q", 
                      multiCore = TRUE, 
                      nCores = 1, 
@@ -47,12 +49,12 @@ DiffExpr <- function(object,
                      pvallim1 = 0.05,
                      pvallim2 = 0.01) {
   
-  testClass <- testRegion <- slide <- p.adjust <- Gene <- Subset <- Gene <- NULL
+  testGroup <- testRegion <- slide <- p.adjust <- Gene <- Subset <- Gene <- NULL
   
   # convert test variables to factors
-  pData(object)$testRegion <- factor(pData(object)$region, regions)
+  pData(object)$testRegion <- factor(pData(object)[[regionCol]], regions)
   pData(object)$slide <- factor(pData(object)[[slideCol]])
-  pData(object)$testClass <- factor(pData(object)[[classCol]])
+  pData(object)$testClass <- factor(pData(object)[[groupCol]])
   assayDataElement(object = object, elt = element) <-
     assayDataApply(object, 2, FUN = log, base = 2, elt = "q_norm")
   

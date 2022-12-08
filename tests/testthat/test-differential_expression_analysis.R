@@ -11,8 +11,9 @@ test_that("Run Diff Exp Analysis", {
                           regions = c("glomerulus", "tubule"), 
                           groups = c("DKD", "normal"), 
                           slideCol = "slide name",
-                          nCores = 4,
-                          classCol = "class")
+                          regionCol = "region",
+                          groupCol = "class",
+                          nCores = 4)
 
     grid.draw(reslist.1$sample_table)
     grid.newpage()
@@ -33,7 +34,7 @@ test_that("Run Diff Exp Analysis", {
                           regions = c("glomerulus", "tubule"), 
                           groups = c("DKD", "normal"), 
                           slideCol = "slide name",
-                          classCol = "class")
+                          groupCol = "class")
       
     grid.draw(reslist.2$sample_table)
     grid.newpage()
