@@ -11,6 +11,8 @@
 #' @param color.variable1 categorical variable to be used for coloring points (required)
 #' @param color.variable2 categorical variable to be used for coloring points (optional)
 #' @param shape.variable categorical variable to be used for the shape of points (optional)
+#' @param symbol.size symbols size in legends
+#' @param text.size base font size
 #' 
 #' @importFrom Biobase pData assayDataElement
 #' @importFrom ggplot2 ggplot aes geom_point element_text ggtitle labs theme theme_bw
@@ -30,13 +32,27 @@ DimReduct <-
            color.variable2 = NULL,
            shape.variable = NULL,
            point.size = 1,
-           point.alpha = 1) {
+           point.alpha = 1,
+           symbol.size = 2,
+           text.size = 16
+           )
+    {
     
-    # run reductions ====
+    # warn when dimension reductions already present and will be replaced 
     
+    if (any(c("PC1", "PC2", "tSNE1", "UMAP1", "UMAP2") %in% colnames(pData(object)))) {
+      reductions = colnames(pData(object))[grepl("PC|tSNE|UMAP", colnames(pData(object)))]
+      cat(
+        sprintf(
+          "\nWarning: %s found in the input DSP object and will be replaced by this calculation",
+          reductions
+        )
+      )
+    }
     color.variable <-
       PC1 <- PC2 <- tSNE1 <- tSNE2 <- UMAP1 <- UMAP2 <- NULL
     
+    # run reductions ====
     # add PCA
     pca.out <-
       prcomp(t(log2(
@@ -154,7 +170,11 @@ DimReduct <-
     # print plots ====
     print(
       pca.plot + tsne.plot + umap.plot + guide_area() +
-        plot_layout(ncol = 2, guides = "collect") + plot_annotation(
+        plot_layout(ncol = 2, guides = "collect")  & 
+        theme_bw(base_size = text.size) &
+        guides(colour = guide_legend(override.aes = list(size=symbol.size))) &
+        guides(shape = guide_legend(override.aes = list(size=symbol.size))) &
+        plot_annotation(
           title = "Unsupervised Analysis",
           subtitle = "Dimensional Reduction",
           tag_levels = "A",

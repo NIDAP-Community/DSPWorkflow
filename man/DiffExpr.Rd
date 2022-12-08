@@ -6,23 +6,23 @@
 \usage{
 DiffExpr(
   object,
-  element,
   analysisType,
   regions,
   groups,
-  slideCol,
-  classCol,
-  fclim,
-  multiCore,
-  nCores,
-  pAdjust,
-  pairwise
+  slideCol = "slide name",
+  classCol = "class",
+  element = "log_q",
+  multiCore = TRUE,
+  nCores = 1,
+  pAdjust = BY,
+  pairwise = NULL,
+  fclim = 1.2,
+  pvallim1 = 0.05,
+  pvallim2 = 0.01
 )
 }
 \arguments{
 \item{object}{name of the NanoStringGeoMxSet to perform DE analysis on}
-
-\item{element}{assayDataElement of the geoMxSet object to run the DE on}
 
 \item{analysisType}{Analysis type either "Between Groups" or "Within Groups"}
 
@@ -34,7 +34,7 @@ DiffExpr(
 
 \item{classCol}{column for class}
 
-\item{fclim}{= 1.2, Fold Change limit for summarizing genes of interest}
+\item{element}{assayDataElement of the geoMxSet object to run the DE on}
 
 \item{multiCore}{= TRUE, set to TRUE to use multiCore, FALSE to run in cluster mode}
 
@@ -43,6 +43,8 @@ DiffExpr(
 \item{pAdjust}{= "BY" method for p-value adjustment}
 
 \item{pairwise}{boolean to calculate least-square means pairwise differences}
+
+\item{fclim}{= 1.2, Fold Change limit for summarizing genes of interest}
 }
 \value{
 a list containing mixed model output data frame, grid tables for samples and summary of genelists
