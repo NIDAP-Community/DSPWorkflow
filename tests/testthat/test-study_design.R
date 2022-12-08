@@ -6,10 +6,10 @@ test_that("Load Kidney dataset", {
                   full.names = TRUE, recursive = TRUE)
   
   # Multiple PKC file grabber currently not functional
-  #PKCFiles <- dir(file.path(datadir, "pkcs"), pattern = ".pkc",
-  #            full.names = TRUE, recursive = TRUE)
+  PKCFiles <- unzip(dir(file.path(datadir, "pkcs"), pattern = ".pkc*",
+              full.names = TRUE, recursive = TRUE))
   
-  PKCFiles <- "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset//pkcs/TAP_H_WTA_v1.0.pkc"
+  #PKCFiles <- "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset//pkcs/TAP_H_WTA_v1.0.pkc"
   
   SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
                               full.names = TRUE, recursive = TRUE)
@@ -18,10 +18,12 @@ test_that("Load Kidney dataset", {
   DccColName <- "Sample_ID"
   ProtocolColNames <- c("aoi", "roi")
   ExperimentColNames = c("panel")
+  AnnotationSheetName = "Template"
   
 
   dsp.list <- StudyDesign(dccFiles = DCCFiles, pkcFiles = PKCFiles,
                            phenoDataFile = SampleAnnotationFile,
+                           phenoDataSheet = AnnotationSheetName,
                            phenoDataDccColName = DccColName,
                            protocolDataColNames = ProtocolColNames,
                            experimentDataColNames = ExperimentColNames)
