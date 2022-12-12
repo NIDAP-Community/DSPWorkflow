@@ -28,6 +28,7 @@ Imports:
     NanoStringNCTools (>= 1.4.0),
     patchwork (>= 1.1.2),
     reshape2 (>= 1.4.4),
+    Rmpfr (>= 0.8-9),
     Rtsne (>= 0.16),
     scales (>= 1.2.1),
     stats (>= 4.1.3),
