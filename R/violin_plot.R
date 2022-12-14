@@ -8,6 +8,7 @@
 #' @import GeomxTools
 #' @import ggplot2
 #' @import gridExtra
+#' @import Rmpfr
 
 #' @export
 #' 
@@ -22,7 +23,25 @@ violin_function <- function(data = target_demoData,
                             facet_by = NULL,
                             expr_type = "q_norm"){
   
-  library(gridExtra)
+  ## -------------------------------- ##
+  ## Parameter Misspecifation Errors  ##
+  ## -------------------------------- ##
+  
+  check_errors <- function(obj){
+    if (all(!genes %in% rownames(obj@assayData$q_norm))){
+      stop("no genes were found in DSP data")}
+    else if (!group %in% colnames(pData(obj))){
+      stop("grouping parameter was not found in DSP data")
+    } else if (!is.null(facet_by)){
+       if (!facet_by %in% colnames(pData(obj))){
+      stop("facet parameter was not found in DSP data")
+        }
+    } else if (!expr_type %in% names(obj@assayData)){
+      stop("expression data type was not found in DSP data")
+    }
+  }
+  
+  check_errors(obj = data)
   
   violin <- list()
   
@@ -53,7 +72,7 @@ violin_function <- function(data = target_demoData,
                            legend.title=element_blank(), axis.title.x = element_blank())
   }}
   
-  final_plot <- do.call(grid.arrange, violin)
+  final_plot <- do.call(arrangeGrob, violin)
   
   return(final_plot)
 }
