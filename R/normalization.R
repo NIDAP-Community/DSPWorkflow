@@ -83,9 +83,8 @@ GeoMxNorm <- function(Data, Norm) {
                                   norm_method = "quant", 
                                   desiredQuantile = .75,
                                   toElt = "q_norm")
-    print(head(target_demoData))
     
-    b <- boxplot(assayDataElement(target_demoData[,1:10], elt = "q_norm"),
+    ggplot(assayDataElement(target_demoData[,1:10], elt = "q_norm"),
                  col = "#2CA02C", main = "Q3 Norm Counts",
                  log = "y", names = 1:10, xlab = "Segment",
                  ylab = "Counts, Q3 Normalized")
@@ -96,13 +95,12 @@ GeoMxNorm <- function(Data, Norm) {
                                   norm_method = "neg", 
                                   fromElt = "exprs",
                                   toElt = "neg_norm")
-    print(head(target_demoData))
     
-    b <- boxplot(assayDataElement(target_demoData[,1:10], elt = "neg_norm"),
+    boxplot(assayDataElement(target_demoData[,1:10], elt = "neg_norm"),
                  col = "#FF7F0E", main = "Neg Norm Counts",
                  log = "y", names = 1:10, xlab = "Segment",
                  ylab = "Counts, Neg. Normalized")
   }
   
-  return(list("plot" = p, "boxplot" = b, "Normalized Dataframe" = target_demoData))
+  return(list("plot" = p, "Normalized Dataframe" = target_demoData))
 }
