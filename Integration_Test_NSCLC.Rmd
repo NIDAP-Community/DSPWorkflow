@@ -25,7 +25,8 @@ This runs the DSPworkflow package to completion using the Non Small Cell Lung Ca
   datadir <- "/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset"
   DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
                   full.names = TRUE, recursive = TRUE)
-  PKCFiles <- unzip("/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset/pkcs/Hsa_WTA_v1.0.pkc.zip")
+  #PKCFiles <- unzip("/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset/pkcs/Hsa_WTA_v1.0.pkc.zip")
+  PKCFiles <- "/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset/pkcs/TAP_H_WTA_v1.0.pkc"
   SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
                               full.names = TRUE, recursive = TRUE)
   
@@ -41,6 +42,9 @@ This runs the DSPworkflow package to completion using the Non Small Cell Lung Ca
                       protocolDataColNames = ProtocolColNames,
                       experimentDataColNames = ExperimentColNames)
   
+  #studyDesignHumanNSCLC <- sdesign.list$dsp.obj
+  
+  #saveRDS(studyDesignHumanNSCLC, file = "studyDesignHumanNSCLC.RDS")
   
   print(sdesign.list$plot)
   print("Created GeoMx Object\n\n")
@@ -64,6 +68,10 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                         minNuclei = 200,         
                         minArea = 16000)
     print(QCoutput$segments.qc)
+    
+    #qcHumanNSCLC <- QCoutput$dsp.target
+    
+    #saveRDS(qcHumanNSCLC, file = "qcHumanNSCLC.RDS")
 
 ```
 
@@ -88,6 +96,10 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     print(FiltOutput$`Table of Cuts`)
     print(FiltOutput$`Sankey Plot`)
     print(FiltOutput$`Genes Deccted Plot`)
+    
+    #filteringHumanNSCLC <- FiltOutput$`target_demoData Dataset`
+    
+    #saveRDS(filteringHumanNSCLC, file = "filteringHumanNSCLC.RDS")
 
 ```
 
@@ -101,6 +113,10 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     NormOut.list <- GeoMxNorm(target_demoDataNorm, "quant")
     
     bp <- recordPlot() 
+    
+    #normalizationHumanNSCLC <- NormOut.list$`Normalized Dataframe`
+    
+    #saveRDS(normalizationHumanNSCLC, file = "normalizationHumanNSCLC.RDS")
   
     
     print(NormOut.list$plot)
@@ -122,6 +138,10 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                         color.variable1 = "region",
                         shape.variable = "class"
     )
+    
+    #unsupervisedAnalysisHumanNSCLC <- UnSupervisedoutput$dsp.object
+    
+    #saveRDS(unsupervisedAnalysisHumanNSCLC, file = "unsupervisedAnalysisHumanNSCLC.RDS")
     
     print(UnSupervisedoutput$plot.list$PCA)
     print(UnSupervisedoutput$plot.list$tSNE)

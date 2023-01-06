@@ -1,5 +1,5 @@
 ---
-title: "Integration_Test_Kidney"
+title: "Integration_Test_Human_Colon"
 output: html_document
 date: '2022-11-30'
 
@@ -16,7 +16,7 @@ knitr::opts_chunk$set(fig.width=12, fig.height=8, out.width = '100%')
 
 ## R Markdown
 
-This runs the DSPworkflow package to completion using the Human Kidney Dataset:
+This runs the DSPworkflow package to completion using the Human Colon Dataset:
 
 ## 1. Study Design:
 
@@ -25,8 +25,7 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
   datadir <- "/rstudio-files/ccr-dceg-data/data/Colon_Dataset"
   DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
                   full.names = TRUE, recursive = TRUE)
-  PKCFiles <- unzip(zipfile = dir(file.path(datadir, "pkcs"), pattern = ".zip$",
-                                full.names = TRUE, recursive = TRUE))
+  PKCFiles <- "/rstudio-files/ccr-dceg-data/data/Colon_Dataset/pkcs/Hs_R_NGS_WTA_v1.0.pkc"
   SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
                               full.names = TRUE, recursive = TRUE)
   
@@ -42,6 +41,9 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
                       protocolDataColNames = ProtocolColNames,
                       experimentDataColNames = ExperimentColNames)
   
+  #studyDesignHumanColon <- sdesign.list$dsp.obj
+  
+  #saveRDS(studyDesignHumanColon, file = "studyDesignHumanColon.RDS")
   
   print(sdesign.list$plot)
   print("Created GeoMx Object\n\n")
@@ -65,6 +67,10 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                         minNuclei = 200,         
                         minArea = 16000)
     print(QCoutput$segments.qc)
+    
+    #qcHumanColon <- QCoutput$dsp.target
+    
+    #saveRDS(qcHumanColon, file = "qcHumanColon.RDS")
 
 ```
 
@@ -85,11 +91,14 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                             LOQmin = 2, 
                             CutSegment = .05, 
                             GOI = genes)
-    
     print(FiltOutput$`Stacked Bar Plot`)
     print(FiltOutput$`Table of Cuts`)
     print(FiltOutput$`Sankey Plot`)
     print(FiltOutput$`Genes Deccted Plot`)
+    
+    #filteringHumanColon <- FiltOutput$`target_demoData Dataset`
+    
+    #saveRDS(filteringHumanColon, file = "filteringHumanColon.RDS")
 
 ```
 
@@ -104,6 +113,9 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     
     bp <- recordPlot() 
   
+    #normalizationHumanColon <- NormOut.list$`Normalized Dataframe`
+    
+    #saveRDS(normalizationHumanColon, file = "normalizationHumanColon.RDS")
     
     print(NormOut.list$plot)
     #print(NormOut.list$boxplot)
@@ -124,6 +136,10 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                         color.variable1 = "region",
                         shape.variable = "class"
     )
+    
+    #unsupervisedAnalysisHumanColon <- UnSupervisedoutput$dsp.object
+    
+    #saveRDS(unsupervisedAnalysisHumanColon, file = "unsupervisedAnalysisHumanColon.RDS")
     
     print(UnSupervisedoutput$plot.list$PCA)
     print(UnSupervisedoutput$plot.list$tSNE)

@@ -44,7 +44,9 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
                       protocolDataColNames = ProtocolColNames,
                       experimentDataColNames = ExperimentColNames)
   
+  #studyDesignMouseThymus <- sdesign.list$dsp.obj
   
+  #saveRDS(studyDesignMouseThymus, file = "studyDesignMouseThymus.RDS")
   
   print(sdesign.list$plot)
   print("Created GeoMx Object\n\n")
@@ -61,13 +63,17 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                         minSegmentReads = 1000, 
                         percentTrimmed = 80,    
                         percentStitched = 80,   
-                        percentAligned = 75,    
+                        percentAligned = 80,    
                         percentSaturation = 50, 
-                        minNegativeCount = 1,   
-                        maxNTCCount = 9000,     
-                        minNuclei = 20,         
-                        minArea = 1000)
+                        minNegativeCount = 10,   
+                        maxNTCCount = 1000,     
+                        minNuclei = 200,         
+                        minArea = 16000)
     print(QCoutput$segments.qc)
+    
+    #qcMouseThymus <- QCoutput$dsp.target
+    
+    #saveRDS(qcMouseThymus, file = "qcMouseThymus.RDS")
 
 ```
 
@@ -86,13 +92,17 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                             PKCS = PKFil, 
                             LOQcutoff = 2, 
                             LOQmin = 2, 
-                            CutSegment = .1, 
+                            CutSegment = .05, 
                             GOI = genes)
     
     print(FiltOutput$`Stacked Bar Plot`)
     print(FiltOutput$`Table of Cuts`)
     print(FiltOutput$`Sankey Plot`)
     print(FiltOutput$`Genes Deccted Plot`)
+    
+    #filteringMouseThymus <- FiltOutput$`target_demoData Dataset`
+    
+    #saveRDS(filteringMouseThymus, file = "filteringMouseThymus.RDS")
 
 ```
 
@@ -110,6 +120,10 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     print(NormOut.list$plot)
     #print(NormOut.list$boxplot)
     print(bp)
+    
+    #normalizationMouseThymus <- NormOut.list$`Normalized Dataframe`
+    
+    #saveRDS(normalizationMouseThymus, file = "normalizationMouseThymus.RDS")
     
 ```
 
@@ -130,6 +144,10 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     print(UnSupervisedoutput$plot.list$PCA)
     print(UnSupervisedoutput$plot.list$tSNE)
     print(UnSupervisedoutput$plot.list$UMAP)
+    
+    #unsupervisedAnalysisMouseThymus <- UnSupervisedoutput$dsp.object
+    
+    #saveRDS(unsupervisedAnalysisMouseThymus, file = "unsupervisedAnalysisMouseThymus.RDS")
 
 ```
 
@@ -156,7 +174,7 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                         clustering.distance.rows = "correlation", 
                         clustering.distance.cols = "correlation", 
                         annotation.row = NA, 
-                        annotation.col = c("class", "segment", "region"), 
+                        annotation.col = c("class", "segment", "region"),
                         breaks.by.values = seq(-3, 3, 0.05), 
                         heatmap.color = colorRampPalette(c("blue", "white", "red"))(120), 
                         norm.method = "quant")
@@ -215,7 +233,7 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                           regionCol = "segment", 
                           regions = c("PanCK"), 
                           groupCol = "region", 
-                          groups = c("Medullar", "Tumor"), 
+                          groups = c("Tumor", "Medullar"), 
                           slideCol = "slide name")
     grid.draw(reslist.2$sample_table)
     grid.newpage()
@@ -250,14 +268,18 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 
     test_data <- UnSupervisedoutput$dsp.object
     
-    test_genes <- head(rownames(test_data@assayData$q_norm),5)
+    #test_genes <- head(rownames(test_data@assayData$q_norm),5)
+    
+    #test_genes <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
+
+    test_genes <- c("")
     
     violin_plot_test <- violin_function(data = test_data, 
                                         genes = test_genes,
                                         group = "region")
     grid.arrange(violin_plot_test)
     
-    #print("Violin Plot Done")
+    print("Violin Plot Done")
 
 ```
 
@@ -265,8 +287,8 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 
 ```{r Spatial Deconvolution, echo=FALSE}
 
-refdir <- "/rstudio-files/ccr-dceg-data/data/CellProfileLibrary/Human/Adult/"
-    load(paste0(refdir,"Kidney_HCA.RData"))
+refdir <- "/rstudio-files/ccr-dceg-data/data/CellProfileLibrary/Mouse/Adult/"
+    load(paste0(refdir,"Thymus_MCA.RData"))
     ref_mtx_test <- profile_matrix
     annot_1 <- data.frame(CellID = colnames(ref_mtx_test),LabeledCellType = colnames(ref_mtx_test))
     
@@ -281,16 +303,11 @@ refdir <- "/rstudio-files/ccr-dceg-data/data/CellProfileLibrary/Human/Adult/"
                                  probepool = fData(target_demoData)$Module,
                                  negnames = c("NegProbe-WTX"))
     
-    invisible(capture.output(res <- spatial_deconvolution(dsp_qnorm = dsp_qnorm_test, 
-                                                          dsp_negnorm = dsp_negnorm_test, 
-                                                          ref_mtx = ref_mtx_test, ref_annot = annot_1)))
+    spatial_output <- spatial_deconvolution(dsp_qnorm = dsp_qnorm_test, 
+                                  dsp_negnorm = dsp_negnorm_test, 
+                                  ref_mtx = ref_mtx_test, ref_annot = annot_1)
     
-    # Heatmap of estimated cell fraction ~ res$beta
-    print(heatmap(t(res$beta), cexCol = 0.5, cexRow = 0.7, margins = c(10,7)))
-    # Heatmap of cell profile matrix used ~ res$X
-    print(heatmap(sweep(res$X, 1, apply(res$X, 1, max), "/"), labRow = NA, margins = c(10, 5)))
-    # Abundance Barplot - draws legend in a new page 
-    print(TIL_barplot(res$prop_of_all, draw_legend = TRUE, cex.names = 0.3))
+    print(spatial_output$figures)
 
     print("Spatial Deconvolution Done")
 

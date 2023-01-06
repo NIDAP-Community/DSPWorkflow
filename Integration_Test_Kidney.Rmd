@@ -24,7 +24,7 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
   
   datadir <- "/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example"
   DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
-                  full.names = TRUE, recursive = TRUE)
+                  full.names = TRUE, recursive = TRUE) 
   PKCFiles <- "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset//pkcs/TAP_H_WTA_v1.0.pkc"
   SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
                               full.names = TRUE, recursive = TRUE)
@@ -33,6 +33,9 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
                                 pkcFiles = PKCFiles,
                                 phenoDataFile = SampleAnnotationFile)
   
+  #studyDesignHumanKidney <- sdesign.list$dsp.obj
+  
+  #saveRDS(studyDesignHumanKidney, file = "studyDesignHumanKidney.RDS")
   
   print(sdesign.list$plot)
   print("Created GeoMx Object\n\n")
@@ -56,6 +59,10 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                         minNuclei = 20,         
                         minArea = 1000)
     print(QCoutput$segments.qc)
+    
+    #qcHumanKidney <- QCoutput$dsp.target
+    
+    #saveRDS(qcHumanKidney, file = "qcHumanKidney.RDS")
 
 ```
 
@@ -81,6 +88,10 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     print(FiltOutput$`Table of Cuts`)
     print(FiltOutput$`Sankey Plot`)
     print(FiltOutput$`Genes Deccted Plot`)
+    
+    #filteringHumanKidney <- FiltOutput$`target_demoData Dataset`
+    
+    #saveRDS(filteringHumanKidney, file = "filteringHumanKidney.RDS")
 
 ```
 
@@ -92,9 +103,17 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     target_demoDataNorm <- FiltOutput$`target_demoData Dataset`
     
     NormOut.list <- GeoMxNorm(target_demoDataNorm, "quant")
+    
+    bp <- recordPlot() 
+    
+    #normalizationHumanKidney <- NormOut.list$`Normalized Dataframe`
+    
+    #saveRDS(normalizationHumanKidney, file = "normalizationHumanKidney.RDS")
   
+    
     print(NormOut.list$plot)
-    print(NormOut.list$boxplot)
+    #print(NormOut.list$boxplot)
+    print(bp)
     
 ```
 
@@ -106,11 +125,15 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     #Test Unsupervised Analysis:
     target.Data <- NormOut.list$`Normalized Dataframe`
     UnSupervisedoutput <- DimReduct(object = target.Data,
-                        point.size = 1,
+                        point.size = 3,
                         point.alpha = 1,
                         color.variable1 = "region",
                         shape.variable = "class"
     )
+    
+    #unsupervisedAnalysisHumanKidney <- UnSupervisedoutput$dsp.object
+    
+    #saveRDS(unsupervisedAnalysisHumanKidney, file = "unsupervisedAnalysisHumanKidney.RDS")
     
     print(UnSupervisedoutput$plot.list$PCA)
     print(UnSupervisedoutput$plot.list$tSNE)
@@ -166,11 +189,12 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     
     #First analysis:
     reslist.1 <- DiffExpr(object = data, 
-                          analysisType = "Within Groups",
+                          analysisType = "Within Groups", 
+                          regionCol = "region", 
                           regions = c("glomerulus", "tubule"), 
+                          groupCol = "class", 
                           groups = c("DKD", "normal"), 
-                          slideCol = "slide name",
-                          classCol = "class")
+                          slideCol = "slide name")
     grid.draw(reslist.1$sample_table)
     grid.newpage()
     grid.draw(reslist.1$summary_table)
@@ -195,11 +219,12 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     
     #Second analysis:
     reslist.2 <- DiffExpr(object = data, 
-                          analysisType = "Between Groups",
+                          analysisType = "Between Groups", 
+                          regionCol = "region", 
                           regions = c("glomerulus", "tubule"), 
-                          groups = c("DKD", "normal"), 
-                          slideCol = "slide name",
-                          classCol = "class")
+                          groupCol = "class", 
+                          groups = c("normal", "DKD"), 
+                          slideCol = "slide name")
     grid.draw(reslist.2$sample_table)
     grid.newpage()
     grid.draw(reslist.2$summary_table)
@@ -233,7 +258,9 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 
     test_data <- UnSupervisedoutput$dsp.object
     
-    test_genes <- head(rownames(test_data@assayData$q_norm),5)
+    #test_genes <- head(rownames(test_data@assayData$q_norm),5)
+    
+    test_genes <- c("PDHA1")
     
     violin_plot_test <- violin_function(data = test_data, 
                                         genes = test_genes,
@@ -248,7 +275,7 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 
 ```{r Spatial Deconvolution, echo=FALSE}
 
-refdir <- "/rstudio-files/ccr-dceg-data/data/CellProfileLibrary/Human/Adult/"
+    refdir <- "/rstudio-files/ccr-dceg-data/data/CellProfileLibrary/Human/Adult/"
     load(paste0(refdir,"Kidney_HCA.RData"))
     ref_mtx_test <- profile_matrix
     annot_1 <- data.frame(CellID = colnames(ref_mtx_test),LabeledCellType = colnames(ref_mtx_test))
@@ -264,16 +291,11 @@ refdir <- "/rstudio-files/ccr-dceg-data/data/CellProfileLibrary/Human/Adult/"
                                  probepool = fData(target_demoData)$Module,
                                  negnames = c("NegProbe-WTX"))
     
-    invisible(capture.output(res <- spatial_deconvolution(dsp_qnorm = dsp_qnorm_test, 
-                                                          dsp_negnorm = dsp_negnorm_test, 
-                                                          ref_mtx = ref_mtx_test, ref_annot = annot_1)))
+    spatial_output <- spatial_deconvolution(dsp_qnorm = dsp_qnorm_test, 
+                                  dsp_negnorm = dsp_negnorm_test, 
+                                  ref_mtx = ref_mtx_test, ref_annot = annot_1)
     
-    # Heatmap of estimated cell fraction ~ res$beta
-    print(heatmap(t(res$beta), cexCol = 0.5, cexRow = 0.7, margins = c(10,7)))
-    # Heatmap of cell profile matrix used ~ res$X
-    print(heatmap(sweep(res$X, 1, apply(res$X, 1, max), "/"), labRow = NA, margins = c(10, 5)))
-    # Abundance Barplot - draws legend in a new page 
-    print(TIL_barplot(res$prop_of_all, draw_legend = TRUE, cex.names = 0.3))
+    print(spatial_output$figures)
 
     print("Spatial Deconvolution Done")
 
