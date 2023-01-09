@@ -83,11 +83,18 @@ GeoMxNorm <- function(Data, Norm) {
                                   norm_method = "quant", 
                                   desiredQuantile = .75,
                                   toElt = "q_norm")
-    
-    ggplot(assayDataElement(target_demoData[,1:10], elt = "q_norm"),
-                 col = "#2CA02C", main = "Q3 Norm Counts",
-                 log = "y", names = 1:10, xlab = "Segment",
-                 ylab = "Counts, Q3 Normalized")
+    # take old boxplot assayDataElement(target_demoData[,1:10], elt = "q_norm")
+    transform1<- assayDataElement(target_demoData[,1:10], elt = "q_norm")
+    transform2<- as.data.frame(transform1)
+    transform3<- melt(transform2)
+    b<- ggplot(transform3, aes(variable, value)) +
+         stat_boxplot(geom = "errorbar") +
+         geom_boxplot(fill="#2CA02C") +
+         scale_y_log10() +
+         xlab("Segment") + 
+         ylab("Counts, Quant. Normailzed") +
+         ggtitle("Quant Norm Counts") +
+         scale_x_discrete(labels=c(1:10))
   }
   if(Norm == "neg"){
     # Background normalization for WTA/CTA without custom spike-in
@@ -95,12 +102,19 @@ GeoMxNorm <- function(Data, Norm) {
                                   norm_method = "neg", 
                                   fromElt = "exprs",
                                   toElt = "neg_norm")
-    
-    boxplot(assayDataElement(target_demoData[,1:10], elt = "neg_norm"),
-                 col = "#FF7F0E", main = "Neg Norm Counts",
-                 log = "y", names = 1:10, xlab = "Segment",
-                 ylab = "Counts, Neg. Normalized")
+    # take old boxplot assayDataElement(target_demoData[,1:10], elt = "q_norm")
+    transform1<- assayDataElement(target_demoData[,1:10], elt = "neg_norm")
+    transform2<- as.data.frame(transform1)
+    transform3<- melt(transform2)
+    b<- ggplot(transform3, aes(variable, value)) +
+         stat_boxplot(geom = "errorbar") +
+         geom_boxplot(fill="#FF7F0E") +
+         scale_y_log10() +
+         xlab("Segment") + 
+         ylab("Counts, Neg. Normailzed") +
+         ggtitle("Neg Norm Counts") +
+         scale_x_discrete(labels=c(1:10))
   }
   
-  return(list("plot" = p, "Normalized Dataframe" = target_demoData))
+  return(list("plot" = p, "Boxplot" = b, "Normalized Dataframe" = target_demoData))
 }
