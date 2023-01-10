@@ -35,11 +35,11 @@
 
 DiffExpr <- function(object, 
                      analysisType,
-                     regions, 
                      groups, 
+                     groupCol,
+                     regions,
+                     regionCol,
                      slideCol = "slide name", 
-                     groupCol = "class",
-                     regionCol = "region",
                      element = "log_q", 
                      multiCore = TRUE, 
                      nCores = 1, 
@@ -51,12 +51,46 @@ DiffExpr <- function(object,
   
   testGroup <- testRegion <- slide <- p.adjust <- Gene <- Subset <- Gene <- NULL
   
-  # convert test variables to factors
-  pData(object)$testRegion <- factor(pData(object)[[regionCol]], regions)
+  # convert test variables to factors after checking input
+  reg.check <- regions[!regions %in% pData(object)[[regionCol]]]
+  if(length(reg.check) > 0){stop(paste0(reg.check, " is not in region column.\n" ))}
+  
+  regions <- regions[regions %in% pData(object)[[regionCol]]]
+  regions <- factor(regions,levels=c(regions[1],regions[2]))
+  pData(object)$testRegion <- factor(pData(object)[[regionCol]], levels = regions)
+  
+  grp.check <- groups[!groups %in% pData(object)[[groupCol]]]
+  grp.check
+  if(length(grp.check) > 0){stop(paste0(grp.check, " is not in group column.\n" ))}
+  
+  groups <- groups[groups %in% pData(object)[[groupCol]]]
+  groups <- factor(groups,levels=c(groups[1],groups[2]))
+  pData(object)$testClass <- factor(pData(object)[[groupCol]], levels = groups)
+  
   pData(object)$slide <- factor(pData(object)[[slideCol]])
-  pData(object)$testClass <- factor(pData(object)[[groupCol]])
   assayDataElement(object = object, elt = element) <-
     assayDataApply(object, 2, FUN = log, base = 2, elt = "q_norm")
+  pData(object)
+  
+  #Test for correct selection of parameter columns and/or filling out of factors:
+  ind.na <- colSums(is.na(pData(object)))
+  param.na <- names(ind.na[ind.na > 0])
+  param.na
+  
+  if(length(param.na) > 0){
+    if(param.na[1] == "testRegion"){
+          regdiff <- setdiff(unique(pData(object)[[regionCol]]),unique(levels(pData(object)$testRegion)))
+          message(paste0("At least one of the regions within the Region Column was not selected and is excluded: ",regdiff))
+    }
+    else if(param.na[1] == "testClass"){
+          classdiff <- setdiff(unique(pData(object)[[groupCol]]),unique(levels(pData(object)$testClass)))
+          message("At least one of the groups within the Group Column was not selected and is excluded: ", classdiff)
+    } 
+  }
+  
+  reg.length <- length(unique(pData(object)$testRegion)[!is.na(unique(pData(object)$testRegion))]) #has to be 2 for first test
+  grp.length <- length(unique(pData(object)$testClass)[!is.na(unique(pData(object)$testClass))]) #has to be 2 for second test
+  reg.length
   
   #Print Metadata Pivot Table
   metadata <- pData(object) %>% rownames_to_column("sample")
@@ -72,6 +106,11 @@ DiffExpr <- function(object,
   
   if(analysisType == "Within Groups") {
     cat("Running Within Group Analysis between Regions")
+    if(reg.length < 2){
+      if("testRegion" %in% param.na){
+        stop("Cannot run Within Group Analysis with 1 Region.\n")
+        }
+    } 
     title1 <- "DEG lists from within slide contrast:"
     results <- c()
     for(status in groups) {
@@ -99,14 +138,16 @@ DiffExpr <- function(object,
     }
   } else {
     cat("Running Between Group Analysis for Regions")
+    if(grp.length < 2){
+      if("testClass" %in% param.na){
+        stop("Cannot run Between Group Analysis with 1 Group.\n")
+        }
+    }
     title1 <- "DEG lists from Between Slides contrast:"
-    # convert test variables to factors
-    pData(object)$testClass <- factor(pData(object)$class, groups)
     results <- c()
     for(region in regions) {
-      ind <- pData(object)$region == region
-      mixedOutmc <-
-        mixedModelDE(object[,ind],
+      ind <- pData(object)[[regionCol]] == region
+      mixedOutmc <- mixedModelDE(object[,ind],
                      elt = element,
                      modelFormula = ~ testClass + (1 | slide),
                      groupVar = "testClass",
