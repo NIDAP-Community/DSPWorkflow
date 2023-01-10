@@ -114,8 +114,9 @@ DiffExpr <- function(object,
     title1 <- "DEG lists from within slide contrast:"
     results <- c()
     for(status in groups) {
-      ind <- pData(object)$class == status
-      mixedOutmc <- mixedModelDE(object[,ind],
+      ind <- pData(object)$testClass == status
+      ind2 <- pData(object)$testRegion %in% regions
+      mixedOutmc <- mixedModelDE(object[,ind & ind2],
                                  elt = element,
                                  modelFormula = ~ testRegion + (1 + testRegion | slide),
                                  groupVar = "testRegion",
@@ -146,8 +147,10 @@ DiffExpr <- function(object,
     title1 <- "DEG lists from Between Slides contrast:"
     results <- c()
     for(region in regions) {
-      ind <- pData(object)[[regionCol]] == region
-      mixedOutmc <- mixedModelDE(object[,ind],
+      ind <- pData(object)$testRegion == region
+      ind2 <- pData(object)$testClass %in% groups
+      mixedOutmc <-
+        mixedModelDE(object[,ind & ind2],
                      elt = element,
                      modelFormula = ~ testClass + (1 | slide),
                      groupVar = "testClass",

@@ -136,9 +136,9 @@ QcProc <- function(object,
   saturated <-
     QcHist(sData(object), "Saturated (%)", color.by, percentSaturation) +
     labs(x = "sequencing\nsaturation (%)")
-  area <-
-    QcHist(sData(object), "area", color.by, minArea, scale_trans = "log10")
-  nuclei <- QcHist(sData(object), "nuclei", color.by, minNuclei)
+  #area <-
+  #  QcHist(sData(object), "area", color.by, minArea, scale_trans = "log10")
+  #nuclei <- QcHist(sData(object), "nuclei", color.by, minNuclei)
   
   neg.gm <-
     esBy(
@@ -163,7 +163,19 @@ QcProc <- function(object,
       QcHist(pData(object), ann, color.by, 2, scale_trans = "log10")
   }
   
-  segments.plot = trimmed + aligned + stitched + saturated + nuclei + area + neg.plot +
+  #segments.plot = trimmed + aligned + stitched + saturated + nuclei + area + neg.plot +
+  #  plot_layout(nrow=1) + plot_annotation(
+  #    title = "Quality Control (QC)",
+  #    subtitle = "ROI/AOI Seqments",
+  #    tag_levels = "A",
+  #    caption = "DSPWorkflow::QcProc()",
+  #    theme = theme(
+  #      text = element_text(color = 'gray50'),
+  #      plot.caption = element_text(face = 'italic')
+  #    )
+  #  )
+  
+  segments.plot = trimmed + aligned + stitched + saturated + neg.plot +
     plot_layout(nrow=1) + plot_annotation(
       title = "Quality Control (QC)",
       subtitle = "ROI/AOI Seqments",
@@ -182,8 +194,8 @@ QcProc <- function(object,
     pData(object)[, !colnames(pData(object)) %in% neg.cols]
   
   #show all NTC values, Freq =  of Segments with a given NTC count:
-  kable(table(NTC_Count = sData(object)$NTC),
-        col.names = c("NTC Count", " of Segments"))
+  #kable(table(NTC_Count = sData(object)$NTC),
+  #      col.names = c("NTC Count", " of Segments"))
   kable(seg.qc.summary, caption = "QC Summary Table for each Segment")
   
   ## Remove flagged segments

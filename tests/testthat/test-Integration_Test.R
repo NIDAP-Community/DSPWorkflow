@@ -1,25 +1,89 @@
 test_that("DSP object and qc plots are returned", {
+
+    # Choose the dataset to test
+    ############################
+    # Current Options:
+    # 1: WTA NGS Example
+    # 2: Mouse Thymus
   
-    datadir <- "/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example" #For Human
-    #datadir <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset" #For Mouse 
+    datasetChoice <- 1
     
+    # Choose a stopping point in the pipeline
+    ############################
+    # Current Options:
+    # 0: No stopping point
+    # 1: Study Design
+    # 2: QC Preprocessing
+    # 3: Filtering
+    # 4: Normalization
+    # 5: Clustering CV Genes and Heatmap
+    # 6: Differential Analysis
+    # 7: Violin Plot
+    # 8: Spatial Deconvolution
+    
+    stoppingPoint <- 3
+  
     ####################################
     #  Test Study Design:           ####
     ####################################
     
+    # Define parameters specific to the test datasets
+    if (datasetChoice == 1) {
+      # WTA NGS Example Dataset (from the vignette)
+      # Required parameters
+      print("Running integration test for the WTA NGS Example dataset")
+      datadir <- "/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example"
+      PKCFiles <- unzip(dir(file.path(datadir, "pkcs"), pattern = ".pkc*",
+                            full.names = TRUE, recursive = TRUE))
+      SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
+                                  full.names = TRUE, recursive = TRUE)
+      
+      # Optional parameters for selecting annotation column names that are used by the GeoMX object
+      DccColName <- "Sample_ID"
+      ProtocolColNames <- c("aoi", "roi")
+      ExperimentColNames = c("panel")
+      AnnotationSheetName = "Template"
+      
+    } else if (datasetChoice == 2) {
+      # Mouse Thymus dataset
+      print("Running integration test for the Mouse Thymus dataset")
+      # Required parameters
+      datadir <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset"
+      PKCFiles <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset/pkcs/Mm_R_NGS_WTA_v1.0.pkc"
+      SampleAnnotationFile <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset/annotations/Thymus_Annotation_updated_3.xlsx"
+      
+      # Optional parameters for selecting annotation column names that are used by the GeoMX object
+      DccColName <- "Sample_ID"
+      ProtocolColNames <- c("aoi", "roi")
+      ExperimentColNames = c("panel")
+      AnnotationSheetName = "Annotation"
+      
+    } else {
+      print("Please choose a valid test dataset from the options list. Exiting...")
+      stop()
+    }
+    
+    
     DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
-                  full.names = TRUE, recursive = TRUE)
-    PKCFiles <- unzip(dir(file.path(datadir, "pkcs"), pattern = ".pkc*",
-                        full.names = TRUE, recursive = TRUE))
-    SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
-                              full.names = TRUE, recursive = TRUE)
-  
-    sdesign.list <- StudyDesign(dccFiles = DCCFiles, 
-                                pkcFiles = PKCFiles,
-                                phenoDataFile = SampleAnnotationFile)
+                    full.names = TRUE, recursive = TRUE)
+    
+    # PKC File grabber, does not work for example datasets
+    #PKCFiles <- unzip(dir(file.path(datadir, "pkcs"), pattern = ".pkc*",
+    #                      full.names = TRUE, recursive = TRUE))
+    
+    sdesign.list <- StudyDesign(dccFiles = DCCFiles, pkcFiles = PKCFiles,
+                            phenoDataFile = SampleAnnotationFile,
+                            phenoDataSheet = AnnotationSheetName,
+                            phenoDataDccColName = DccColName,
+                            protocolDataColNames = ProtocolColNames,
+                            experimentDataColNames = ExperimentColNames)
     
     print(sdesign.list$plot)
     print("Study Design Test Done")
+    
+    if (stoppingPoint == 1){
+      stop("Integration test halted")
+    }
     
     ####################################
     ##     Test QC Preprocessing:   ####
@@ -39,6 +103,10 @@ test_that("DSP object and qc plots are returned", {
     QCoutput$dsp.target
     
     print("QC Processing Test Done")
+    
+    if (stoppingPoint == 2){
+      stop("Integration test halted")
+    }
   
     ####################################
     #####    Test Filtering:        ####
@@ -48,7 +116,22 @@ test_that("DSP object and qc plots are returned", {
     target_demoDataFil <- QCoutput$dsp.target
     demoDataFil <- QCoutput$dsp.target
     
-    genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+    if (datasetChoice == 1) {
+      # WTA NGS Example Dataset (from the vignette)
+      # Test gene list
+      genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+      
+      
+    } else if (datasetChoice == 2) {
+      # Mouse Thymus dataset
+      # Test gene list
+      genes <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
+      
+    } else {
+      print("Please choose a valid test dataset from the options list. Exiting...")
+      stop()
+    }
+    
     
     FiltOutput <- filtering(Data = target_demoDataFil, 
                             dsp_obj = demoDataFil, 
@@ -65,6 +148,10 @@ test_that("DSP object and qc plots are returned", {
     print(FiltOutput$`target_demoData Dataset`)
     
     print("Filtering Test Done")
+    
+    if (stoppingPoint == 3){
+      stop("Integration test halted")
+    }
     
     ####################################
     ##   Test Normalization:        ###
@@ -91,6 +178,10 @@ test_that("DSP object and qc plots are returned", {
     print(UnSupervisedoutput$plot.list$tSNE)
     print(UnSupervisedoutput$plot.list$UMAP)
     print(UnSupervisedoutput$dsp.object)
+    
+    if (stoppingPoint == 4){
+      stop("Integration test halted")
+    }
     
     print("Unsupervised Analysis Done")
     
@@ -125,24 +216,61 @@ test_that("DSP object and qc plots are returned", {
     
     print("Clustering and heatmap Done")
     
+    if (stoppingPoint == 5){
+      stop("Integration test halted")
+    }
+    
     ########################################
     #Test Differential Expression Analysis:#
     ########################################
     
+    data <- UnSupervisedoutput$dsp.object
     
-    data <- UnSupervisedoutput$dsp.object 
-    goi <- c("CD274", "CD8A", "CD68", "EPCAM",
-             "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+    if (datasetChoice == 1) {
+      # WTA NGS Example Dataset (from the vignette)
+      # Genes of interest list
+      goi <- c("CD274", "CD8A", "CD68", "EPCAM",
+               "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+      
+      # Annotation column names
+      regions <- c("glomerulus", "tubule")
+      groups <- c("DKD", "normal")
+      slideCol <- "slide name"
+      classCol <- "class"
+    
+      testGene <- "CALB1"
+      testRegion <- "tubule"
+      
+    } else if (datasetChoice == 2) {
+      # Mouse Thymus dataset
+      # Genes of interest list
+      goi <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
+      
+      # Annotation column names
+      regions <- c("Cortical", "Medullar", "Tumor", "Unspecified")
+      groups <- c("Thymus", "Thymoma")
+      slideCol <- "slide name"
+      classCol <- "class"
+      
+      testGene <- "Ccr7"
+      testRegion <- "Cortical"
+      
+    } else {
+      print("Please choose a valid test dataset from the options list. Exiting...")
+      stop()
+    }
+    
+    
     data <- data[goi,]
     Gene <- Subset <- NULL
     
     #First analysis:
     reslist.1 <- DiffExpr(object = data, 
                           analysisType = "Within Groups",
-                          regions = c("glomerulus", "tubule"), 
-                          groups = c("DKD", "normal"), 
-                          slideCol = "slide name",
-                          classCol = "class")
+                          regions = regions, 
+                          groups = groups, 
+                          slideCol = slideCol,
+                          classCol = classCol)
     grid.draw(reslist.1$sample_table)
     grid.newpage()
     grid.draw(reslist.1$summary_table)
@@ -165,10 +293,10 @@ test_that("DSP object and qc plots are returned", {
     #Second analysis:
     reslist.2 <- DiffExpr(object = data, 
                           analysisType = "Between Groups",
-                          regions = c("glomerulus", "tubule"), 
-                          groups = c("DKD", "normal"), 
-                          slideCol = "slide name",
-                          classCol = "class")
+                          regions = regions, 
+                          groups = groups, 
+                          slideCol = slideCol,
+                          classCol = classCol)
     grid.draw(reslist.2$sample_table)
     grid.newpage()
     grid.draw(reslist.2$summary_table)
@@ -177,17 +305,21 @@ test_that("DSP object and qc plots are returned", {
     pval_col2 <- colnames(reslist.2$result)[grepl("_pval",colnames(reslist.2$result))]
     
     lfc.2 <- reslist.2$result %>% 
-                          dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% 
+                          dplyr::filter(Gene == testGene & Subset == testRegion) %>% 
                           select(all_of(lfc_col2)) %>% 
                           as.numeric()
     pval.2 <- reslist.2$result %>% 
-                          dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% 
+                          dplyr::filter(Gene == testGene & Subset == testRegion) %>% 
                           select(all_of(pval_col2)) %>% 
                           as.numeric()
     expect_equal(lfc.2, -1.408,tolerance=1e-3)
     expect_equal(pval.2, 0.01268,tolerance=1e-3)
     
     print("Differential Expression Analysis Done")
+    
+    if (stoppingPoint == 6){
+      stop("Integration test halted")
+    }
     
     ####################################
     ##  Test Violin Plot:         ######
@@ -203,6 +335,10 @@ test_that("DSP object and qc plots are returned", {
     grid.arrange(violin_plot_test)
     
     print("Violin Plot Done")
+    
+    if (stoppingPoint == 7){
+      stop("Integration test halted")
+    }
     
     ####################################
     ## Test Spatial Deconvolution:  ###
@@ -245,5 +381,11 @@ test_that("DSP object and qc plots are returned", {
     print(TIL_barplot(res$prop_of_all, draw_legend = TRUE, cex.names = 0.3))
 
     print("Spatial Deconvolution Done")
+    
+    if (stoppingPoint == 8){
+      stop("Integration test halted")
+    }
 })
+
+
 

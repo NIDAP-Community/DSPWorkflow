@@ -17,6 +17,8 @@
 #' @import SpatialDecon
 #' @import GeomxTools
 #' @import stats
+#' @import reshape2
+#' @import pheatmap
 #' @importFrom SpatialDecon spatialdecon
 #' @importFrom stats heatmap
 #' @importFrom SpatialDecon TIL_barplot
@@ -69,17 +71,29 @@ spatial_deconvolution <- function(dsp_qnorm, dsp_negnorm, ref_mtx, ref_annot,
                       align_genes = TRUE)
   
   # Heatmap of estimated cell fraction ~ res$beta
-  print(heatmap(t(res$beta), cexCol = 0.5, cexRow = 0.7, margins = c(10,7)))
+  abund_heat <- pheatmap(t(res$beta), silent = TRUE)
   
   # Heatmap of cell profile matrix used ~ res$X
-  print(heatmap(sweep(res$X, 1, apply(res$X, 1, max), "/"), labRow = NA, margins = c(10, 5)))
+  cell_prof_heat <- pheatmap(res$X, silent = TRUE)
   
   # Abundance Barplot - draws legend in a new page 
-  print(TIL_barplot(res$prop_of_all, draw_legend = TRUE, cex.names = 0.3))
+  # Process data.frame for geom_barplot
+  cell_abund_prop <- as.data.frame(res$prop_of_all)
+  cell_abund_prop$celltype <- rownames(cell_abund_prop)
+  cell_abund_prop <- melt(cell_abund_prop)
   
-  return(res)
+  # Original SpatialDeconv Function
+  #TIL_bar <- TIL_barplot(res$prop_of_all, draw_legend = TRUE, cex.names = 0.3)
+  
+  # New ggplot barplot
+  TIL_bar <- ggplot(data = cell_abund_prop, aes(x=variable, y=value, fill=celltype)) + geom_bar(stat="identity") +
+    theme(axis.text.x=element_text(angle=90,hjust=1))
+  
+  plot_list = list(abundance_heatmap = abund_heat, cell_profile_heatmap = cell_prof_heat, Composition_barplot = TIL_bar)
+  
+  final_dsp_results <- list(dsp_data = res, figures = plot_list)
+  
+  return(final_dsp_results)
 }
-
-
 
 
