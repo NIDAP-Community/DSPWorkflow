@@ -29,6 +29,10 @@
 # To call function, must have Data = data; Norm = c(quant or neg)
 GeoMxNorm <- function(Data, Norm) {
   
+  if(class(Data)[1] != "NanoStringGeoMxSet"){
+    stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
+  }
+  
   # run reductions ====
   color.variable <-
     Value <- Statistic <- NegProbe <- Q3 <- Annotation <- NULL
@@ -96,6 +100,16 @@ GeoMxNorm <- function(Data, Norm) {
          ggtitle("Quant Norm Counts") +
          scale_x_discrete(labels=c(1:10))
   }
+  if(Norm == "Quant"){
+    stop(paste0("Error: Quant needs to be quant" ))
+  }
+  if(Norm == "quantile"){
+    stop(paste0("Error: quantile needs to be quant" ))
+  }
+  if(Norm == "Quantile"){
+    stop(paste0("Error: Quantile needs to be quant" ))
+  }
+  
   if(Norm == "neg"){
     # Background normalization for WTA/CTA without custom spike-in
     target_demoData <- normalize(Data,
@@ -114,6 +128,15 @@ GeoMxNorm <- function(Data, Norm) {
          ylab("Counts, Neg. Normailzed") +
          ggtitle("Neg Norm Counts") +
          scale_x_discrete(labels=c(1:10))
+  }
+  if(Norm == "Neg"){
+    stop(paste0("Error: Neg needs to be neg" ))
+  }
+  if(Norm == "negative"){
+    stop(paste0("Error: negative needs to be neg" ))
+  }
+  if(Norm == "Negative"){
+    stop(paste0("Error: Negative needs to be neg" ))
   }
   
   return(list("plot" = p, "Boxplot" = b, "Normalized Dataframe" = target_demoData))
