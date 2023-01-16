@@ -21,6 +21,10 @@
 # GOI = goi (genes of interest). Must be a vector of genes (i.e c("PDCD1", "CD274")),
 filtering <- function(Data, dsp_obj, PKCS, LOQcutoff, LOQmin, CutSegment, GOI) {
   
+  if(class(Data)[1] != "NanoStringGeoMxSet"){
+    stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
+  }
+  
   # run reductions ====
   color.variable <- NULL
   
@@ -28,9 +32,18 @@ filtering <- function(Data, dsp_obj, PKCS, LOQcutoff, LOQmin, CutSegment, GOI) {
   ##4.4Limit of Quantification
   # Define LOQ SD threshold and minimum value
   cutoff <- LOQcutoff
+  if(class(LOQcutoff)[1] != "numeric"){
+    stop(paste0("Error: You have the wrong data class, must be numeric" ))
+  }
   minLOQ <- LOQmin
+  if(class(LOQmin)[1] != "numeric"){
+    stop(paste0("Error: You have the wrong data class, must be numeric" ))
+  }
   # Define Modules
   pkcs <- PKCS
+  if(class(PKCS)[1] != "character"){
+    stop(paste0("Error: You have the wrong data class, must be character" ))
+  }
   modules <- gsub(".pkc", "", pkcs)
 
   # Calculate LOQ per module tested
@@ -87,11 +100,20 @@ filtering <- function(Data, dsp_obj, PKCS, LOQcutoff, LOQmin, CutSegment, GOI) {
   
   # cut percent genes detected at 1, 5, 10, 15
   tab<- kable(table(pData(Data)$DetectionThreshold, pData(Data)$class))
+  if(class(CutSegment)[1] != "numeric"){
+    stop(paste0("Error: You have the wrong data class, must be numeric" ))
+  }
   target_demoData <- Data[, pData(Data)$GeneDetectionRate >= CutSegment]
-  
+  if(CutSegment > 1 | CutSegment < 0){
+    stop(paste0("Error: You need perecentage in decimals between 0-1" ))
+  }
+
   # select the annotations we want to show, use `` to surround column names with
   # spaces or special symbols
   count_mat <- count(pData(dsp_obj), `slide name`, class, region, segment)
+  if(class(dsp_obj)[1] != "NanoStringGeoMxSet"){
+    stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
+  }
   # simplify the slide names
   count_mat$`slide name` <- gsub("disease", "d", gsub("normal", "n", count_mat$`slide name`))
   # gather the data and plot in order: class, slide name, region, segment
@@ -124,6 +146,9 @@ filtering <- function(Data, dsp_obj, PKCS, LOQcutoff, LOQmin, CutSegment, GOI) {
   
   # Gene of interest detection table
   goi <- GOI
+  if(class(GOI)[1] != "character"){
+    stop(paste0("Error: You have the wrong data class, must be character vector" ))
+  }
   goi_df <- data.frame(Gene = goi,
     Number = fData(target_demoData)[goi, "DetectedSegments"],
     DetectionRate = percent(fData(target_demoData)[goi, "DetectionRate"]))
