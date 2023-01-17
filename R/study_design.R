@@ -58,18 +58,21 @@ StudyDesign <- function(dccFiles, pkcFiles, phenoDataFile, phenoDataSheet = "Tem
   # select the annotations we want to show, use `` to surround column names with
   # spaces or special symbols
   count_mat <- count(pData(study.data), `slide name`, class, region, segment)
+  #count_mat <- count(pData(study.data), class, region, segment)
   # simplify the slide names
-  count_mat$`slide name` <- gsub("disease", "d",
-                                 gsub("normal", "n", count_mat$`slide name`))
+  #count_mat$`slide name` <- gsub("disease", "d",
+  #                               gsub("normal", "n", count_mat$`slide name`))
   # gather the data and plot in order: class, slide name, region, segment
   test_gr <- gather_set_data(count_mat, 1:4)
   test_gr$x <- factor(test_gr$x,
                       levels = c("class", "slide name", "region", "segment"))
+  #test_gr$x <- factor(test_gr$x,
+  #                    levels = c("class", "region", "segment"))
   # plot Sankey
   p <- ggplot(test_gr, aes(x, id = id, split = y, value = n)) +
     geom_parallel_sets(aes(fill = region), alpha = 0.5, axis.width = 0.1) +
     geom_parallel_sets_axes(axis.width = 0.2) +
-    geom_parallel_sets_labels(color = "white", size = 5) +
+    geom_parallel_sets_labels(color = "gray", size = 5, angle = 0) +
     theme_classic(base_size = 17) +
     theme(legend.position = "bottom",
           axis.ticks.y = element_blank(),

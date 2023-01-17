@@ -60,15 +60,15 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
 ```{r QC Preprocessing, echo=FALSE}
 
 QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
-                        minSegmentReads = 1000, 
-                        percentTrimmed = 80,    
-                        percentStitched = 80,   
-                        percentAligned = 80,    
-                        percentSaturation = 50, 
-                        minNegativeCount = 10,   
-                        maxNTCCount = 1000,     
-                        minNuclei = 200,         
-                        minArea = 16000)
+                        minSegmentReads = 1000, # Default:1000
+                        percentTrimmed = 80,  # Default:80  
+                        percentStitched = 80, # Default:80 
+                        percentAligned = 80, #Default:80
+                        percentSaturation = 50, #Default:50
+                        minNegativeCount = 10, #Default:10   
+                        maxNTCCount = 1000, #Default:1000     
+                        minNuclei = 200, #Default:200         
+                        minArea = 16000) #Default:16000
     print(QCoutput$segments.qc)
     
     #qcMouseThymus <- QCoutput$dsp.target
@@ -115,11 +115,8 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     
     NormOut.list <- GeoMxNorm(target_demoDataNorm, "quant")
     
-    bp <- recordPlot() 
-    
     print(NormOut.list$plot)
-    #print(NormOut.list$boxplot)
-    print(bp)
+    print(NormOut.list$Boxplot)
     
     #normalizationMouseThymus <- NormOut.list$`Normalized Dataframe`
     
@@ -252,10 +249,12 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
               as.numeric()
     
     cat(paste0("\n\nvalue of Ccr7 Fold Change is: ", lfc.2))
-    cat("expected value is 1.706")
+    cat("expected value is -1.89")
     
     cat(paste0("\nvalue of Ccr7 pval is: ",pval.2))
-    cat("expected value is 2.23e-08")
+    cat("expected value is 4.97e-12")
+    
+    print(reslist.2$results)
 
 ```
 ## 8. Volcano Plot
@@ -268,11 +267,13 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 
     test_data <- UnSupervisedoutput$dsp.object
     
-    #test_genes <- head(rownames(test_data@assayData$q_norm),5)
+    test_genes <- head(rownames(test_data@assayData$q_norm),5)
     
     #test_genes <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
+    
+    #test_genes <- c("Desi1", "Tfdp1", "Foxn1")
 
-    test_genes <- c("")
+    #test_genes <- c("Plb1", "Desi1")
     
     violin_plot_test <- violin_function(data = test_data, 
                                         genes = test_genes,

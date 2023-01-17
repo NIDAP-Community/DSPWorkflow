@@ -104,16 +104,13 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     
     NormOut.list <- GeoMxNorm(target_demoDataNorm, "quant")
     
-    bp <- recordPlot() 
-    
     #normalizationHumanKidney <- NormOut.list$`Normalized Dataframe`
     
     #saveRDS(normalizationHumanKidney, file = "normalizationHumanKidney.RDS")
   
     
     print(NormOut.list$plot)
-    #print(NormOut.list$boxplot)
-    print(bp)
+    print(NormOut.list$Boxplot)
     
 ```
 
@@ -223,7 +220,7 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                           regionCol = "region", 
                           regions = c("glomerulus", "tubule"), 
                           groupCol = "class", 
-                          groups = c("normal", "DKD"), 
+                          groups = c("DKD", "normal"), 
                           slideCol = "slide name")
     grid.draw(reslist.2$sample_table)
     grid.newpage()
@@ -246,6 +243,7 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     
     cat(paste0("\nvalue of CALB pval is:",pval.2))
     cat("expected value is 0.01268")
+    
 
 ```
 ## 8. Volcano Plot

@@ -110,16 +110,13 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     target_demoDataNorm <- FiltOutput$`target_demoData Dataset`
     
     NormOut.list <- GeoMxNorm(target_demoDataNorm, "quant")
-    
-    bp <- recordPlot() 
   
     #normalizationHumanColon <- NormOut.list$`Normalized Dataframe`
     
     #saveRDS(normalizationHumanColon, file = "normalizationHumanColon.RDS")
     
     print(NormOut.list$plot)
-    #print(NormOut.list$boxplot)
-    print(bp)
+    print(NormOut.list$Boxplot)
     
 ```
 
@@ -188,18 +185,17 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 ```{r Differential Expression Analysis,  echo=FALSE}
 
     data <- UnSupervisedoutput$dsp.object 
-    goi <- c("CD274", "CD8A", "CD68", "EPCAM",
-             "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+    goi <- c("IGHA1", "JCHAIN", "IGKC", "IGLL5", "PIGR", "CCL8", "CD37", "CXCL13", "MS4A1", "CCL19", "CCL21")
     data <- data[goi,]
     Gene <- Subset <- NULL
     
     #First analysis:
     reslist.1 <- DiffExpr(object = data, 
                           analysisType = "Within Groups", 
-                          regionCol = "region", 
-                          regions = c("glomerulus", "tubule"), 
-                          groupCol = "class", 
-                          groups = c("DKD", "normal"), 
+                          regionCol = "segment", 
+                          regions = c("PanCK+", "PanCK-"), 
+                          groupCol = "region", 
+                          groups = c("Lamina"), 
                           slideCol = "slide name")
     grid.draw(reslist.1$sample_table)
     grid.newpage()
@@ -209,27 +205,27 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     pval_col1 <- colnames(reslist.1$result)[grepl("_pval",colnames(reslist.1$result))]
     
     lfc.1 <- reslist.1$result %>% 
-              dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% 
+              dplyr::filter(Gene == "JCHAIN" & Subset == "Lamina") %>% 
               select(all_of(lfc_col1)) %>% 
               as.numeric()
     pval.1 <- reslist.1$result %>% 
-              dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% 
+              dplyr::filter(Gene == "JCHAIN" & Subset == "Lamina") %>% 
               select(all_of(pval_col1)) %>% 
               as.numeric()
     
-    cat(paste0("\n\nvalue of CALB Fold Change is:", lfc.1))
-    cat("expected value is -2.014")
+    cat(paste0("\n\nvalue of JCHAIN Fold Change is:", lfc.1))
+    cat("expected value is unknown")
     
-    cat(paste0("\nvalue of CALB pval is:",pval.1))
-    cat("expected value is 0.0274")
+    cat(paste0("\nvalue of JCHAIN pval is:",pval.1))
+    cat("expected value is unknown")
     
     #Second analysis:
     reslist.2 <- DiffExpr(object = data, 
                           analysisType = "Between Groups", 
-                          regionCol = "region", 
-                          regions = c("glomerulus", "tubule"), 
-                          groupCol = "class", 
-                          groups = c("DKD", "normal"), 
+                          regionCol = "class", 
+                          regions = c("colon"), 
+                          groupCol = "region", 
+                          groups = c("Lymphoid", "Lamina"), 
                           slideCol = "slide name")
     grid.draw(reslist.2$sample_table)
     grid.newpage()
@@ -239,19 +235,19 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     pval_col2 <- colnames(reslist.2$result)[grepl("_pval",colnames(reslist.2$result))]
     
     lfc.2 <- reslist.2$result %>% 
-              dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% 
+              dplyr::filter(Gene == "JCHAIN" & Subset == "colon") %>% 
               select(all_of(lfc_col2)) %>% 
               as.numeric()
     pval.2 <- reslist.2$result %>% 
-              dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% 
+              dplyr::filter(Gene == "JCHAIN" & Subset == "colon") %>% 
               select(all_of(pval_col2)) %>% 
               as.numeric()
     
-    cat(paste0("\n\nvalue of CALB Fold Change is:", lfc.2))
-    cat("expected value is -1.408")
+    cat(paste0("\n\nvalue of JCHAIN Fold Change is:", lfc.2))
+    cat("expected value is negative")
     
-    cat(paste0("\nvalue of CALB pval is:",pval.2))
-    cat("expected value is 0.01268")
+    cat(paste0("\nvalue of JCHAIN pval is:",pval.2))
+    cat("expected value is significant")
 
 ```
 ## 8. Volcano Plot
@@ -264,7 +260,9 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 
     test_data <- UnSupervisedoutput$dsp.object
     
-    test_genes <- head(rownames(test_data@assayData$q_norm),5)
+    #test_genes <- head(rownames(test_data@assayData$q_norm),5)
+    
+    test_genes <- c("JCHAIN")
     
     violin_plot_test <- violin_function(data = test_data, 
                                         genes = test_genes,

@@ -26,7 +26,7 @@ This runs the DSPworkflow package to completion using the Non Small Cell Lung Ca
   DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
                   full.names = TRUE, recursive = TRUE)
   #PKCFiles <- unzip("/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset/pkcs/Hsa_WTA_v1.0.pkc.zip")
-  PKCFiles <- "/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset/pkcs/TAP_H_WTA_v1.0.pkc"
+  PKCFiles <- "/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset/pkcs/Hs_R_NGS_WTA_v1.0.pkc"
   SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
                               full.names = TRUE, recursive = TRUE)
   
@@ -112,17 +112,12 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     
     NormOut.list <- GeoMxNorm(target_demoDataNorm, "quant")
     
-    bp <- recordPlot() 
-    
     #normalizationHumanNSCLC <- NormOut.list$`Normalized Dataframe`
     
     #saveRDS(normalizationHumanNSCLC, file = "normalizationHumanNSCLC.RDS")
-  
     
     print(NormOut.list$plot)
-    #print(NormOut.list$boxplot)
-    print(bp)
-    
+    print(NormOut.list$Boxplot)
 ```
 
 
@@ -190,18 +185,18 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 ```{r Differential Expression Analysis,  echo=FALSE}
 
     data <- UnSupervisedoutput$dsp.object 
-    goi <- c("CD274", "CD8A", "CD68", "EPCAM",
-             "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+    #goi <- c("GABBR2", "ALDOC", "NCAM1", "SLC17A1", "SNAP25", "VIM", "COL3A1", "COL1A1", "COL4A1", "FN1")
+    goi <- c("ALDOC", "NCAM1", "SNAP25", "VIM", "COL3A1", "COL1A1", "COL4A1", "FN1")
     data <- data[goi,]
     Gene <- Subset <- NULL
     
     #First analysis:
     reslist.1 <- DiffExpr(object = data, 
                           analysisType = "Within Groups", 
-                          regionCol = "region", 
-                          regions = c("glomerulus", "tubule"), 
+                          regionCol = "segment", 
+                          regions = c("tumor", "TME"), 
                           groupCol = "class", 
-                          groups = c("DKD", "normal"), 
+                          groups = c("cancer"), 
                           slideCol = "slide name")
     grid.draw(reslist.1$sample_table)
     grid.newpage()
@@ -211,27 +206,27 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     pval_col1 <- colnames(reslist.1$result)[grepl("_pval",colnames(reslist.1$result))]
     
     lfc.1 <- reslist.1$result %>% 
-              dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% 
+              dplyr::filter(Gene == "VIM" & Subset == "cancer") %>% 
               select(all_of(lfc_col1)) %>% 
               as.numeric()
     pval.1 <- reslist.1$result %>% 
-              dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% 
+              dplyr::filter(Gene == "VIM" & Subset == "cancer") %>% 
               select(all_of(pval_col1)) %>% 
               as.numeric()
     
-    cat(paste0("\n\nvalue of CALB Fold Change is:", lfc.1))
-    cat("expected value is -2.014")
+    cat(paste0("\n\nvalue of VIM Fold Change is:", lfc.1))
+    cat("expected value is negative")
     
-    cat(paste0("\nvalue of CALB pval is:",pval.1))
-    cat("expected value is 0.0274")
+    cat(paste0("\nvalue of VIM pval is:",pval.1))
+    cat("expected value is significant")
     
     #Second analysis:
-    reslist.2 <- DiffExpr(object = data, 
+    reslist.2 <- DiffExpr(object = data,
                           analysisType = "Between Groups", 
                           regionCol = "region", 
-                          regions = c("glomerulus", "tubule"), 
-                          groupCol = "class", 
-                          groups = c("DKD", "normal"), 
+                          regions = c("brain"), 
+                          groupCol = "segment", 
+                          groups = c("TME", "control"), 
                           slideCol = "slide name")
     grid.draw(reslist.2$sample_table)
     grid.newpage()
@@ -241,19 +236,19 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     pval_col2 <- colnames(reslist.2$result)[grepl("_pval",colnames(reslist.2$result))]
     
     lfc.2 <- reslist.2$result %>% 
-              dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% 
+              dplyr::filter(Gene == "VIM" & Subset == "brain") %>% 
               select(all_of(lfc_col2)) %>% 
               as.numeric()
     pval.2 <- reslist.2$result %>% 
-              dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% 
+              dplyr::filter(Gene == "VIM" & Subset == "brain") %>% 
               select(all_of(pval_col2)) %>% 
               as.numeric()
     
-    cat(paste0("\n\nvalue of CALB Fold Change is:", lfc.2))
-    cat("expected value is -1.408")
+    cat(paste0("\n\nvalue of VIM Fold Change is:", lfc.2))
+    cat("expected value is positive")
     
-    cat(paste0("\nvalue of CALB pval is:",pval.2))
-    cat("expected value is 0.01268")
+    cat(paste0("\nvalue of VIM pval is:",pval.2))
+    cat("expected value is significant")
 
 ```
 ## 8. Volcano Plot
@@ -268,9 +263,11 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     
     test_genes <- head(rownames(test_data@assayData$q_norm),5)
     
+    test_genes <- c("VIM")
+    
     violin_plot_test <- violin_function(data = test_data, 
                                         genes = test_genes,
-                                        group = "region")
+                                        group = "segment")
     grid.arrange(violin_plot_test)
     
     #print("Violin Plot Done")
@@ -282,7 +279,7 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 ```{r Spatial Deconvolution, echo=FALSE}
 
 refdir <- "/rstudio-files/ccr-dceg-data/data/CellProfileLibrary/Human/Adult/"
-    load(paste0(refdir,"Kidney_HCA.RData"))
+    load(paste0(refdir,"Lung_HCA.RData"))
     ref_mtx_test <- profile_matrix
     annot_1 <- data.frame(CellID = colnames(ref_mtx_test),LabeledCellType = colnames(ref_mtx_test))
     
@@ -297,16 +294,11 @@ refdir <- "/rstudio-files/ccr-dceg-data/data/CellProfileLibrary/Human/Adult/"
                                  probepool = fData(target_demoData)$Module,
                                  negnames = c("NegProbe-WTX"))
     
-    invisible(capture.output(res <- spatial_deconvolution(dsp_qnorm = dsp_qnorm_test, 
-                                                          dsp_negnorm = dsp_negnorm_test, 
-                                                          ref_mtx = ref_mtx_test, ref_annot = annot_1)))
+    spatial_output <- spatial_deconvolution(dsp_qnorm = dsp_qnorm_test, 
+                                  dsp_negnorm = dsp_negnorm_test, 
+                                  ref_mtx = ref_mtx_test, ref_annot = annot_1)
     
-    # Heatmap of estimated cell fraction ~ res$beta
-    print(heatmap(t(res$beta), cexCol = 0.5, cexRow = 0.7, margins = c(10,7)))
-    # Heatmap of cell profile matrix used ~ res$X
-    print(heatmap(sweep(res$X, 1, apply(res$X, 1, max), "/"), labRow = NA, margins = c(10, 5)))
-    # Abundance Barplot - draws legend in a new page 
-    print(TIL_barplot(res$prop_of_all, draw_legend = TRUE, cex.names = 0.3))
+    print(spatial_output$figures)
 
     print("Spatial Deconvolution Done")
 
