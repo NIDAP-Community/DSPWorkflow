@@ -4,6 +4,48 @@ test_that("Normalization Success", {
  
   dsp.list <- GeoMxNorm(target_demoDataNorm, "quant")
   #dsp.list <- GeoMxNorm(Data = target_demoData, Norm = "quant")
-  expected.elements = c("plot", "boxplot")
+  expected.elements = c("plot", "boxplot", "Normalized Dataframe")
   expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
+})
+
+test_that("Normalization Success", {
+  target_demoDataNorm <- c(1,2,3,5)
+  
+  expect_error(GeoMxNorm(target_demoDataNorm, "quant"), "Error: You have the wrong data class, must be NanoStringGeoMxSet")
+})
+
+test_that("Normalization Success", {
+  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
+  
+  expect_error(GeoMxNorm(target_demoDataNorm, "Quant"), "Error: Quant needs to be quant")
+})
+
+test_that("Normalization Success", {
+  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
+  
+  expect_error(GeoMxNorm(target_demoDataNorm, "quantile"), "Error: quantile needs to be quant")
+})
+
+test_that("Normalization Success", {
+  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
+  
+  expect_error(GeoMxNorm(target_demoDataNorm, "Quantile"), "Error: Quantile needs to be quant")
+})
+
+test_that("Normalization Success", {
+  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
+  
+  expect_error(GeoMxNorm(target_demoDataNorm, "Neg"), "Error: Neg needs to be neg")
+})
+
+test_that("Normalization Success", {
+  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
+  
+  expect_error(GeoMxNorm(target_demoDataNorm, "negative"), "Error: negative needs to be neg")
+})
+
+test_that("Normalization Success", {
+  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
+  
+  expect_error(GeoMxNorm(target_demoDataNorm, "Negative"), "Error: Negative needs to be neg")
 })
