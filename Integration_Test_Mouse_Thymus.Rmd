@@ -61,9 +61,9 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
 
 QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                         minSegmentReads = 1000, # Default:1000
-                        percentTrimmed = 80,  # Default:80  
-                        percentStitched = 80, # Default:80 
-                        percentAligned = 80, #Default:80
+                        percentTrimmed = 65,  # Default:80  
+                        percentStitched = 65, # Default:80 
+                        percentAligned = 65, #Default:80
                         percentSaturation = 50, #Default:50
                         minNegativeCount = 10, #Default:10   
                         maxNTCCount = 1000, #Default:1000     

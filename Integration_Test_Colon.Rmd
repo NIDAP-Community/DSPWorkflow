@@ -262,7 +262,7 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     
     #test_genes <- head(rownames(test_data@assayData$q_norm),5)
     
-    test_genes <- c("JCHAIN")
+    test_genes <- c("PIGR")
     
     violin_plot_test <- violin_function(data = test_data, 
                                         genes = test_genes,
@@ -278,7 +278,7 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 ```{r Spatial Deconvolution, echo=FALSE}
 
 refdir <- "/rstudio-files/ccr-dceg-data/data/CellProfileLibrary/Human/Adult/"
-    load(paste0(refdir,"Kidney_HCA.RData"))
+    load(paste0(refdir,"Colon_HCA.RData"))
     ref_mtx_test <- profile_matrix
     annot_1 <- data.frame(CellID = colnames(ref_mtx_test),LabeledCellType = colnames(ref_mtx_test))
     
@@ -293,16 +293,11 @@ refdir <- "/rstudio-files/ccr-dceg-data/data/CellProfileLibrary/Human/Adult/"
                                  probepool = fData(target_demoData)$Module,
                                  negnames = c("NegProbe-WTX"))
     
-    invisible(capture.output(res <- spatial_deconvolution(dsp_qnorm = dsp_qnorm_test, 
-                                                          dsp_negnorm = dsp_negnorm_test, 
-                                                          ref_mtx = ref_mtx_test, ref_annot = annot_1)))
+    spatial_output <- spatial_deconvolution(dsp_qnorm = dsp_qnorm_test, 
+                                  dsp_negnorm = dsp_negnorm_test, 
+                                  ref_mtx = ref_mtx_test, ref_annot = annot_1)
     
-    # Heatmap of estimated cell fraction ~ res$beta
-    print(heatmap(t(res$beta), cexCol = 0.5, cexRow = 0.7, margins = c(10,7)))
-    # Heatmap of cell profile matrix used ~ res$X
-    print(heatmap(sweep(res$X, 1, apply(res$X, 1, max), "/"), labRow = NA, margins = c(10, 5)))
-    # Abundance Barplot - draws legend in a new page 
-    print(TIL_barplot(res$prop_of_all, draw_legend = TRUE, cex.names = 0.3))
+    print(spatial_output$figures)
 
     print("Spatial Deconvolution Done")
 

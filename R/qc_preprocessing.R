@@ -47,8 +47,8 @@ QcProc <- function(object,
                    percentSaturation = 50,
                    minNegativeCount = 10,
                    maxNTCCount = 1000,         # DIF 60
-                   minNuclei = 100,            # DIF 200
-                   minArea = 5000,             # DIF 16000
+                   minNuclei = 200,            # DIF 200
+                   minArea = 16000,             # DIF 16000
                    minProbeRatio = 0.1,
                    outlierTestAlpha = 0.01,    # MIS
                    percentFailGrubbs = 20,
@@ -136,9 +136,12 @@ QcProc <- function(object,
   saturated <-
     QcHist(sData(object), "Saturated (%)", color.by, percentSaturation) +
     labs(x = "sequencing\nsaturation (%)")
-  #area <-
-  #  QcHist(sData(object), "area", color.by, minArea, scale_trans = "log10")
-  #nuclei <- QcHist(sData(object), "nuclei", color.by, minNuclei)
+  if(!is.null(minNuclei)){
+    nuclei <- QcHist(sData(object), "nuclei", color.by, minNuclei)
+  }
+  if(!is.null(minArea)){
+    area <- QcHist(sData(object), "area", color.by, minArea, scale_trans = "log10")
+  }
   
   neg.gm <-
     esBy(
@@ -194,8 +197,10 @@ QcProc <- function(object,
     pData(object)[, !colnames(pData(object)) %in% neg.cols]
   
   #show all NTC values, Freq =  of Segments with a given NTC count:
-  #kable(table(NTC_Count = sData(object)$NTC),
-  #      col.names = c("NTC Count", " of Segments"))
+  if(!is.null(NTC_Count)){
+    kable(table(NTC_Count = sData(object)$NTC),col.names = c("NTC Count", " of Segments"))
+  }
+ 
   kable(seg.qc.summary, caption = "QC Summary Table for each Segment")
   
   ## Remove flagged segments
