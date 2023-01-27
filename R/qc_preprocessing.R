@@ -197,7 +197,7 @@ QcProc <- function(object,
     pData(object)[, !colnames(pData(object)) %in% neg.cols]
   
   #show all NTC values, Freq =  of Segments with a given NTC count:
-  if(!is.null(NTC_Count)){
+  if(!is.null(maxNTCCount)){
     kable(table(NTC_Count = sData(object)$NTC),col.names = c("NTC Count", " of Segments"))
   }
  

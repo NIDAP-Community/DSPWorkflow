@@ -1,34 +1,64 @@
-test_that("Load Kidney dataset", {
-  # The data directory containing all PKC, DCC, and annotation files
-  datadir <- "/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example"
+test_that("Test Kidney dataset", {
   
-  DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
-                  full.names = TRUE, recursive = TRUE)
+  kidney_dat <- select_dataset_sd("kidney")
   
-  # Multiple PKC file grabber currently not functional
-  PKCFiles <- unzip(dir(file.path(datadir, "pkcs"), pattern = ".pkc*",
-              full.names = TRUE, recursive = TRUE))
-  
-  #PKCFiles <- "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset//pkcs/TAP_H_WTA_v1.0.pkc"
-  
-  SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
-                              full.names = TRUE, recursive = TRUE)
-  
-  # Optional parameters for selecting annotation column names that are used by the GeoMX object
-  DccColName <- "Sample_ID"
-  ProtocolColNames <- c("aoi", "roi")
-  ExperimentColNames = c("panel")
-  AnnotationSheetName = "Template"
-  
+  dsp.list <- StudyDesign(dccFiles = kidney_dat$DCCFiles, pkcFiles = kidney_dat$PKCFiles,
+                          phenoDataFile = kidney_dat$SampleAnnotationFile,
+                          phenoDataSheet = kidney_dat$AnnotationSheetName,
+                          phenoDataDccColName = kidney_dat$DccColName,
+                          protocolDataColNames = kidney_dat$ProtocolColNames,
+                          experimentDataColNames = kidney_dat$ExperimentColNames)
 
-  dsp.list <- StudyDesign(dccFiles = DCCFiles, pkcFiles = PKCFiles,
-                           phenoDataFile = SampleAnnotationFile,
-                           phenoDataSheet = AnnotationSheetName,
-                           phenoDataDccColName = DccColName,
-                           protocolDataColNames = ProtocolColNames,
-                           experimentDataColNames = ExperimentColNames)
-  print(dsp.list$plot)
   expected.elements = c("plot", "dsp.obj")
   expect_setequal(names(dsp.list), expected.elements)
-  #expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
+  
 })
+
+test_that("Test Colon Dataset", {
+  
+  colon_dat <- select_dataset_sd("colon")
+  
+  dsp.list <- StudyDesign(dccFiles = colon_dat$DCCFiles, pkcFiles = colon_dat$PKCFiles,
+                          phenoDataFile = colon_dat$SampleAnnotationFile,
+                          phenoDataSheet = colon_dat$AnnotationSheetName,
+                          phenoDataDccColName = colon_dat$DccColName,
+                          protocolDataColNames = colon_dat$ProtocolColNames,
+                          experimentDataColNames = colon_dat$ExperimentColNames)
+  
+  expected.elements = c("plot", "dsp.obj")
+  expect_setequal(names(dsp.list), expected.elements)
+  
+})
+
+test_that("Test Mouse Thymus Dataset", {
+  
+  thymus_dat <- select_dataset_sd("thymus")
+  
+  dsp.list <- StudyDesign(dccFiles = thymus_dat$DCCFiles, pkcFiles = thymus_dat$PKCFiles,
+                          phenoDataFile = thymus_dat$SampleAnnotationFile,
+                          phenoDataSheet = thymus_dat$AnnotationSheetName,
+                          phenoDataDccColName = thymus_dat$DccColName,
+                          protocolDataColNames = thymus_dat$ProtocolColNames,
+                          experimentDataColNames = thymus_dat$ExperimentColNames)
+  
+  expected.elements = c("plot", "dsp.obj")
+  expect_setequal(names(dsp.list), expected.elements)
+  
+})
+
+test_that("Test Human NSCLC Dataset", {
+  
+  nsclc_dat <- select_dataset_sd("nsclc")
+  
+  dsp.list <- StudyDesign(dccFiles = nsclc_dat$DCCFiles, pkcFiles = nsclc_dat$PKCFiles,
+                          phenoDataFile = nsclc_dat$SampleAnnotationFile,
+                          phenoDataSheet = nsclc_dat$AnnotationSheetName,
+                          phenoDataDccColName = nsclc_dat$DccColName,
+                          protocolDataColNames = nsclc_dat$ProtocolColNames,
+                          experimentDataColNames = nsclc_dat$ExperimentColNames)
+  
+  expected.elements = c("plot", "dsp.obj")
+  expect_setequal(names(dsp.list), expected.elements)
+  
+})
+

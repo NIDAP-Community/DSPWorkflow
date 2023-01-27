@@ -1,9 +1,61 @@
-test_that("DSP object and dimension reduction plots returned", {
+test_that("Test Human Kidney dataset", {
   
-  target.Data <- readRDS(test_path("fixtures", "target.Data.rds"))
+  kidney_dat <- select_normalized_RTD("kidney")
+  
   output <-
     DimReduct(
-      object = target.Data,
+      object = kidney_dat$inputObject,
+      point.size = 1,
+      point.alpha = 1,
+      color.variable1 = "region",
+      shape.variable = "class"
+    )
+  expected.elements = c("dsp.object", "plot.list")
+  expect_equal(length(setdiff(expected.elements, names(output))), 0)
+  
+})
+
+test_that("Test Colon Dataset", {
+  
+  colon_dat <- select_normalized_RTD("colon")
+  
+  output <-
+    DimReduct(
+      object = colon_dat$inputObject,
+      point.size = 1,
+      point.alpha = 1,
+      color.variable1 = "region",
+      shape.variable = "class"
+    )
+  expected.elements = c("dsp.object", "plot.list")
+  expect_equal(length(setdiff(expected.elements, names(output))), 0)
+  
+})
+
+test_that("Test Mouse Thymus Dataset", {
+  
+  thymus_dat <- select_normalized_RTD("thymus")
+  
+  output <-
+    DimReduct(
+      object = thymus_dat$inputObject,
+      point.size = 1,
+      point.alpha = 1,
+      color.variable1 = "region",
+      shape.variable = "class"
+    )
+  expected.elements = c("dsp.object", "plot.list")
+  expect_equal(length(setdiff(expected.elements, names(output))), 0)
+  
+})
+
+test_that("Test Human NSCLC Dataset", {
+  
+  nsclc_dat <- select_normalized_RTD("nsclc")
+  
+  output <-
+    DimReduct(
+      object = nsclc_dat$inputObject,
       point.size = 1,
       point.alpha = 1,
       color.variable1 = "region",
@@ -15,10 +67,12 @@ test_that("DSP object and dimension reduction plots returned", {
 })
 
 test_that("dimension reductions present in DSP object", {
-  load(test_path("fixtures", "target.Data.rda"))
+  
+  kidney_dat <- select_normalized_RTD("kidney")
+  
   output <-
     DimReduct(
-      object = target.Data,
+      object = kidney_dat$inputObject,
       point.size = 1,
       point.alpha = 1,
       color.variable1 = "region",
