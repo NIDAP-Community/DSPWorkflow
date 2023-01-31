@@ -4,8 +4,8 @@
 
 #' Estimate cell composition across spatial samples using information from a custom cell signature matrix
 
-#' @param dsp_qnorm normalized expression matrix (Gene x DSP_Samples).
-#' @param dsp_negnorm matrix of expected background for all data points in the normalized data matrix
+#' @param dsp_obj Nanostring object containing normalized gene expression data
+#' @param norm_expr_type Name of the slot containing normalized gene expression data
 #' @param ref_mtx expression matrix (Gene x Reference_Samples) 
 #' @param ref_annot annotated data.frame with CellID and LabeledCellType, will be used along with ref_mtx to generate custom signature matrix
 #' @param CellID column of annotated data.frame containing cell barcode or name
@@ -32,7 +32,10 @@
 #' res$prop_of_all: res$beta rescaled to proportion of celltype across each sample 
 #' heatmap / barplot of estimated cell abundances in data
 
-spatial_deconvolution <- function(dsp_qnorm, dsp_negnorm, ref_mtx, ref_annot,
+spatial_deconvolution <- function(dsp_obj,
+                                  norm_expr_type = "",
+                                  ref_mtx, 
+                                  ref_annot,
                                   CellID = "CellID",
                                   cellTypeCol = "LabeledCellType",
                                   normalize = FALSE,
@@ -40,13 +43,26 @@ spatial_deconvolution <- function(dsp_qnorm, dsp_negnorm, ref_mtx, ref_annot,
                                   minGenes = 10
                                   ){
   
-  norm <- dsp_qnorm
+  ## -------------------------------- ##
+  ## Parameter Misspecifation Errors  ##
+  ## -------------------------------- ##
   
-  # Load negative background
-  per.observation.mean.neg = dsp_negnorm
-  bg = sweep(norm * 0, 2, per.observation.mean.neg, "+")
+  if (!norm_expr_type %in% names(dsp_obj@assayData)){
+    stop("Normalized data slot not found in the data")
+  } else if (!all(c(CellID, cellTypeCol) %in% colnames(ref_annot))){
+    stop ("Check that CellID and cellTypeCol are properly labeled and present in reference annotation table")
+  }
   
-  # Load reference dataset 
+  norm_data <- assayDataElement(dsp_obj, elt = norm_expr_type)
+  
+  # Calculate negative background
+  neg_sub <- negativeControlSubset(dsp_obj)
+
+  bg = derive_GeoMx_background(norm = norm_data,
+                               probepool = fData(dsp_obj)$Module,
+                               negnames = neg_sub@featureData@data$TargetName)
+  
+  # Load reference dataset (matrix and annotation table)
   mtx_for_deconv <- ref_mtx
   annot <- ref_annot
   
@@ -56,7 +72,7 @@ spatial_deconvolution <- function(dsp_qnorm, dsp_negnorm, ref_mtx, ref_annot,
     cellAnnots = annot,
     cellTypeCol = cellTypeCol,  
     cellNameCol = CellID,           
-    matrixName = "custom_DSP_mtx", # name of final profile matrix
+    matrixName = "custom_DSP_mtx",  # name of final profile matrix
     outDir = NULL,                  # path to desired output directory, set to NULL if matrix should not be written
     normalize = normalize,                
     minCellNum = minCellNum,                  
@@ -65,7 +81,7 @@ spatial_deconvolution <- function(dsp_qnorm, dsp_negnorm, ref_mtx, ref_annot,
     discardCellTypes = FALSE)
   
   # Run Spatial Deconvolution
-  res <- spatialdecon(norm = norm,
+  res <- spatialdecon(norm = norm_data,
                       bg = bg,
                       X = custom_mtx,
                       align_genes = TRUE)
@@ -82,10 +98,7 @@ spatial_deconvolution <- function(dsp_qnorm, dsp_negnorm, ref_mtx, ref_annot,
   cell_abund_prop$celltype <- rownames(cell_abund_prop)
   cell_abund_prop <- melt(cell_abund_prop)
   
-  # Original SpatialDeconv Function
-  #TIL_bar <- TIL_barplot(res$prop_of_all, draw_legend = TRUE, cex.names = 0.3)
-  
-  # New ggplot barplot
+  # Creates and stores all ggplot figures in a list
   TIL_bar <- ggplot(data = cell_abund_prop, aes(x=variable, y=value, fill=celltype)) + geom_bar(stat="identity") +
     theme(axis.text.x=element_text(angle=90,hjust=1))
   
