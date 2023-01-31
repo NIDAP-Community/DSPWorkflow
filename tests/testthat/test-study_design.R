@@ -2,15 +2,17 @@ test_that("Test Kidney dataset", {
   
   kidney_dat <- select_dataset_sd("kidney")
   
-  dsp.list <- StudyDesign(dccFiles = kidney_dat$DCCFiles, pkcFiles = kidney_dat$PKCFiles,
-                          phenoDataFile = kidney_dat$SampleAnnotationFile,
-                          phenoDataSheet = kidney_dat$AnnotationSheetName,
-                          phenoDataDccColName = kidney_dat$DccColName,
-                          protocolDataColNames = kidney_dat$ProtocolColNames,
-                          experimentDataColNames = kidney_dat$ExperimentColNames)
+  study_design_ouput <- do.call(StudyDesign,kidney_dat)
+  
+  #dsp.list <- StudyDesign(dccFiles = kidney_dat$DCCFiles, pkcFiles = kidney_dat$PKCFiles,
+  #                        phenoDataFile = kidney_dat$SampleAnnotationFile,
+  #                        phenoDataSheet = kidney_dat$AnnotationSheetName,
+  #                        phenoDataDccColName = kidney_dat$DccColName,
+  #                        protocolDataColNames = kidney_dat$ProtocolColNames,
+  #                        experimentDataColNames = kidney_dat$ExperimentColNames)
 
   expected.elements = c("plot", "dsp.obj")
-  expect_setequal(names(dsp.list), expected.elements)
+  expect_setequal(names(study_design_output), expected.elements)
   
 })
 

@@ -60,7 +60,6 @@ DiffExpr <- function(object,
   pData(object)$testRegion <- factor(pData(object)[[regionCol]], levels = regions)
   
   grp.check <- groups[!groups %in% pData(object)[[groupCol]]]
-  grp.check
   if(length(grp.check) > 0){stop(paste0(grp.check, " is not in group column.\n" ))}
   
   groups <- groups[groups %in% pData(object)[[groupCol]]]
@@ -70,27 +69,24 @@ DiffExpr <- function(object,
   pData(object)$slide <- factor(pData(object)[[slideCol]])
   assayDataElement(object = object, elt = element) <-
     assayDataApply(object, 2, FUN = log, base = 2, elt = "q_norm")
-  pData(object)
   
   #Test for correct selection of parameter columns and/or filling out of factors:
   ind.na <- colSums(is.na(pData(object)))
   param.na <- names(ind.na[ind.na > 0])
-  param.na
   
   if(length(param.na) > 0){
     if(param.na[1] == "testRegion"){
           regdiff <- setdiff(unique(pData(object)[[regionCol]]),unique(levels(pData(object)$testRegion)))
-          message(paste0("At least one of the regions within the Region Column was not selected and is excluded: ",regdiff))
+          message(paste0("At least one of the regions within the Region Column was not selected and is excluded: ",regdiff,"\n"))
     }
     else if(param.na[1] == "testClass"){
           classdiff <- setdiff(unique(pData(object)[[groupCol]]),unique(levels(pData(object)$testClass)))
-          message("At least one of the groups within the Group Column was not selected and is excluded: ", classdiff)
+          message("At least one of the groups within the Group Column was not selected and is excluded: ", classdiff,"\n")
     } 
   }
   
   reg.length <- length(unique(pData(object)$testRegion)[!is.na(unique(pData(object)$testRegion))]) #has to be 2 for first test
   grp.length <- length(unique(pData(object)$testClass)[!is.na(unique(pData(object)$testClass))]) #has to be 2 for second test
-  reg.length
   
   #Print Metadata Pivot Table
   metadata <- pData(object) %>% rownames_to_column("sample")
@@ -115,7 +111,9 @@ DiffExpr <- function(object,
     results <- c()
     for(status in groups) {
       ind <- pData(object)$testClass == status
+      ind[is.na(ind)] <- FALSE
       ind2 <- pData(object)$testRegion %in% regions
+      ind2[is.na(ind2)] <- FALSE
       mixedOutmc <- mixedModelDE(object[,ind & ind2],
                                  elt = element,
                                  modelFormula = ~ testRegion + (1 + testRegion | slide),
@@ -148,7 +146,9 @@ DiffExpr <- function(object,
     results <- c()
     for(region in regions) {
       ind <- pData(object)$testRegion == region
+      ind[is.na(ind)] <- FALSE
       ind2 <- pData(object)$testClass %in% groups
+      ind2[is.na(ind2)] <- FALSE
       mixedOutmc <-
         mixedModelDE(object[,ind & ind2],
                      elt = element,

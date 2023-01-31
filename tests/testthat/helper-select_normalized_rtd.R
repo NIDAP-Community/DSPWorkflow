@@ -22,6 +22,6 @@ select_normalized_RTD <- function(dataset) {
     
   }
 
-  return(list("inputObject" = inputObject))
+  return(inputObject)
   
 }
