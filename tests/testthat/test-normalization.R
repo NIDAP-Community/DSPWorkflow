@@ -2,9 +2,11 @@ test_that("Normalization Success", {
   #load("/rstudio-files/ccr-dceg-data/users/Chad/DSP/tests/testthat/fixtures/target_demoDataNorm.Rdata") 
   target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
  
+  #select_dataset_normalization("kidney")
+  
   dsp.list <- GeoMxNorm(target_demoDataNorm, "quant")
   #dsp.list <- GeoMxNorm(Data = target_demoData, Norm = "quant")
-  expected.elements = c("plot", "boxplot", "Normalized Dataframe")
+  expected.elements = c("plot", "Boxplot", "Normalized Dataframe")
   expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
 })
 
