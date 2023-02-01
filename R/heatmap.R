@@ -111,19 +111,49 @@
 # na_col                        specify the color of the NA cell in the matrix.
 # ...                           graphical parameters for the text used in plot. Parameters passed to grid.text,see gpar.
 
-HeatMap <- function(target.data, ngenes, image.width, image.height, image.resolution, image.filename,
-                    scale.by.row.or.col, show.rownames, show.colnames, clustering.method, cluster.rows, cluster.cols,
-                    clustering.distance.rows, clustering.distance.cols, annotation.row, annotation.col, 
-                    breaks.by.values, heatmap.color, norm.method) {
+#HeatMap <- function(target.data, ngenes, image.width, image.height, image.resolution, image.filename,
+#                    scale.by.row.or.col, show.rownames, show.colnames, clustering.method, cluster.rows, cluster.cols,
+#                    clustering.distance.rows, clustering.distance.cols, annotation.row, annotation.col, 
+#                    breaks.by.values, heatmap.color, norm.method) 
+  
+HeatMap <- function(
+    ## Basic Parameters
+    target.data, 
+    norm.method = "quant",
+    annotation.col = c("class", "segment", "region"),
+    ngenes = 200,
+    
+    ## Visualization
+    scale.by.row.or.col = "row",
+    show.rownames = FALSE,
+    show.colnames = FALSE,
+    
+    ## Clustering
+    clustering.method = "average",
+    cluster.rows = TRUE,
+    cluster.cols = TRUE,
+    clustering.distance.rows = "correlation",
+    clustering.distance.cols = "correlation",
+    annotation.row = NA,
+    #annotation.col = pData(target.data)[, c("class", "segment", "region")],
+    
+    ## Image
+    image.width = 3600,
+    image.height = 1800,
+    image.resolution = 300,
+    image.filename = "heatmap.clust.highCVgenes.png",
+    breaks.by.values = seq(-3, 3, 0.05), # 6/0.05=120 colors
+    heatmap.color = colorRampPalette(c("blue", "white", "red"))(120))  
+{
 
 ## log2 transformation
-#log2.data <- assayDataElement(object = target.data, elt = "log_q") <- 
+#log2.data <- Biobase::assayDataElement(object = target.data, elt = "log_q") <- 
 #  assayDataApply(target.data, 2, FUN = log, base = 2, elt = "q_norm")
 
 if(norm.method == "quant") elt.value <- "q_norm"  # Upper quartile (Q3) normalization
 if(norm.method == "neg") elt.value <- "neg_norm"  # background normalization
 
-assayDataElement(object = target.data, elt = "log_q") <- 
+Biobase::assayDataElement(object = target.data, elt = "log_q") <- 
      assayDataApply(target.data, 2, FUN = log, base = 2, elt = elt.value)
   
 # create CV function
@@ -140,7 +170,7 @@ goi <- names(cv.dat)[cv.dat > quantile(cv.dat, 0.8)]
 
 # output heatmap inot pdf file
 #pdf(file=filename)
-plot.genes <- assayDataElement(target.data[goi, ], elt = "log_q")
+plot.genes <- Biobase::assayDataElement(target.data[goi, ], elt = "log_q")
 
 ## image params
 # width <- image.width
@@ -150,6 +180,8 @@ plot.genes <- assayDataElement(target.data[goi, ], elt = "log_q")
 
 ## heatmap color
 col.palette <- heatmap.color  # color = colorRampPalette(c("blue", "white", "red"))(120)
+#anno.col = pData(target.data)[, c("class", "segment", "region")])
+anno.col <- pData(target.data)[, annotation.col]
 
 p <- pheatmap(plot.genes[1:ngenes,],
          main ="Clustering high CV genes",
@@ -164,12 +196,18 @@ p <- pheatmap(plot.genes[1:ngenes,],
          clustering_distance_cols = clustering.distance.cols, ## "correlation",
          breaks = breaks.by.values, # seq(-3, 3, 0.05),
          color = col.palette,
-         annotation_col = pData(target.data)[, c("class", "segment", "region")])
+         annotation_col = anno.col)
 
-png(filename=image.filename, width=image.width, height=image.height, units="px", pointsize=4, bg="white", res=image.resolution, type="cairo")
+#png(filename=image.filename, width=image.width, height=image.height, units="px", pointsize=4, bg="white", res=image.resolution, type="cairo")
  print(p)
-dev.off()
+#dev.off()
 
+## gene.df converts to data frame
+gene.df <- as.data.frame(plot.genes)
+ 
+## add genename column to the output matrix
+plot.genes <- gene.df %>% rownames_to_column("gene")
+ 
 #return(list("log2.data" = log2.data, "plot.genes"=plot.genes, plot" = p))
 return(list("plot.genes" = plot.genes, "plot" = p))
 }

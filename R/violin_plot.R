@@ -18,17 +18,20 @@
 
 
 violin_function <- function(data = target_demoData,
+                            expr_type = "q_norm",
                             genes = c(),
                             group = "CellType",
-                            facet_by = NULL,
-                            expr_type = "q_norm"){
+                            facet_by = NULL
+                            ){
   
   ## -------------------------------- ##
   ## Parameter Misspecifation Errors  ##
   ## -------------------------------- ##
   
   check_errors <- function(obj){
-    if (all(!genes %in% rownames(obj@assayData$q_norm))){
+    if (!expr_type %in% names(obj@assayData)){
+      stop("expression data type was not found in DSP data")
+    } else if (all(!genes %in% rownames(obj@assayData[[expr_type]]))){
       stop("no genes were found in DSP data")}
     else if (!group %in% colnames(pData(obj))){
       stop("grouping parameter was not found in DSP data")
@@ -36,43 +39,37 @@ violin_function <- function(data = target_demoData,
        if (!facet_by %in% colnames(pData(obj))){
       stop("facet parameter was not found in DSP data")
         }
-    } else if (!expr_type %in% names(obj@assayData)){
-      stop("expression data type was not found in DSP data")
-    }
+    } 
   }
   
   check_errors(obj = data)
   
+  # Print genes not found in data
+  print(paste0(genes[!genes %in% rownames(data@assayData[[expr_type]])], " not found and will not be displayed"))
+  
+  # Display violin plots for genes found in the data
+  genes_present <- as.list(genes[genes %in% rownames(data@assayData[[expr_type]])])
+  
   violin <- list()
   
-  for (gene in genes){
-    
-    if (!is.null(facet_by)){
-    violin[[gene]] <- ggplot(pData(data),
-                             aes(x = eval(parse(text=group)), fill = eval(parse(text=group)),
-                                 y = assayDataElement(data[gene, ],
-                                                      elt = expr_type))) + 
+  draw_violin <- function(gene){
+    violin <- ggplot(pData(data),
+                          aes(x = eval(parse(text=group)), fill = eval(parse(text=group)),
+                              y = assayDataElement(data[gene, ],
+                                                   elt = expr_type))) +
       geom_violin() +
       geom_jitter(width = .2) +
       labs(y = paste(gene,"Expression", sep = " ")) +
       scale_y_continuous(trans = "log2") +
-      facet_wrap(~eval(parse(text=facet_by))) +
       theme_bw() + theme(axis.text.x=element_text(angle=90,hjust=1),
                          legend.title=element_blank(), axis.title.x = element_blank())
-    } else {
-      violin[[gene]] <- ggplot(pData(data),
-                               aes(x = eval(parse(text=group)), fill = eval(parse(text=group)),
-                                   y = assayDataElement(data[gene, ],
-                                                        elt = expr_type))) + 
-        geom_violin() +
-        geom_jitter(width = .2) +
-        labs(y = paste(gene,"Expression", sep = " ")) +
-        scale_y_continuous(trans = "log2") +
-        theme_bw() + theme(axis.text.x=element_text(angle=90,hjust=1),
-                           legend.title=element_blank(), axis.title.x = element_blank())
-  }}
+    
+    return(violin)
+  }
   
-  final_plot <- do.call(arrangeGrob, violin)
+  violin <- lapply(genes_present, function (x) draw_violin(x))
+
+  final_plot <- arrangeGrob(grobs = violin)
   
   return(final_plot)
 }
