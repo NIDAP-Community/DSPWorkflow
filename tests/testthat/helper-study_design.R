@@ -1,51 +1,45 @@
 select_dataset_sd <- function(dataset) {
   
-  #AnnotationSheetName <- SampleAnnotationFile <- PKCFiles <- datadir <- NULL
-  
   if (dataset == "kidney"){
     
     print("selected kidney dataset") 
-    datadir <- "/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example"
-    DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$", full.names = TRUE, recursive = TRUE)
-    PKCFiles <- "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset/pkcs/TAP_H_WTA_v1.0.pkc"
-    SampleAnnotationFile <- "/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example/annotation/kidney_AOI_Annotations_all_vignette.xlsx"
-    AnnotationSheetName = "Template"
+    dccFiles <- dir(file.path("/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example/", "dccs"), pattern = ".dcc$", full.names = TRUE, recursive = TRUE)
+    pkcFiles <- "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset/pkcs/TAP_H_WTA_v1.0.pkc"
+    phenoDataFile <- "/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example/annotation/kidney_AOI_Annotations_all_vignette.xlsx"
+    phenoDataSheet = "Template"
     
   } else if (dataset == "thymus"){
     
     print("selected thymus dataset")
-    datadir <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset"
-    DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$", full.names = TRUE, recursive = TRUE)
-    PKCFiles <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset/pkcs/Mm_R_NGS_WTA_v1.0.pkc"
-    SampleAnnotationFile <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset/annotations/Thymus_Annotation_updated_3.xlsx"
-    AnnotationSheetName = "Annotation"
+    dccFiles <- dir(file.path("/rstudio-files/ccr-dceg-data/data/Thymus_Dataset/", "dccs"), pattern = ".dcc$", full.names = TRUE, recursive = TRUE)
+    pkcFiles <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset/pkcs/Mm_R_NGS_WTA_v1.0.pkc"
+    phenoDataFile <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset/annotations/Thymus_Annotation_updated_3.xlsx"
+    phenoDataSheet = "Annotation"
     
   } else if (dataset == "colon"){
     
     print("selected colon dataset")
-    datadir <- "/rstudio-files/ccr-dceg-data/data/Colon_Dataset"
-    DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$", full.names = TRUE, recursive = TRUE)
-    PKCFiles <- "/rstudio-files/ccr-dceg-data/data/Colon_Dataset/pkcs/Hs_R_NGS_WTA_v1.0.pkc"
-    SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
+    dccFiles <- dir(file.path("/rstudio-files/ccr-dceg-data/data/Colon_Dataset/", "dccs"), pattern = ".dcc$", full.names = TRUE, recursive = TRUE)
+    pkcFiles <- "/rstudio-files/ccr-dceg-data/data/Colon_Dataset/pkcs/Hs_R_NGS_WTA_v1.0.pkc"
+    phenoDataFile <- dir(file.path("/rstudio-files/ccr-dceg-data/data/Colon_Dataset/", "annotation"), pattern = ".xlsx$",
                                 full.names = TRUE, recursive = TRUE)
-    AnnotationSheetName = "SegmentProperties"  
+    phenoDataSheet = "SegmentProperties"  
     
   } else if (dataset == "nsclc"){
     
     print("selected nsclc dataset")
-    datadir <- "/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset"
-    DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$", full.names = TRUE, recursive = TRUE)
-    PKCFiles <- "/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset/pkcs/Hs_R_NGS_WTA_v1.0.pkc"
-    SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
+    dccFiles <- dir(file.path("/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset/", "dccs"), pattern = ".dcc$", full.names = TRUE, recursive = TRUE)
+    pkcFiles <- "/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset/pkcs/Hs_R_NGS_WTA_v1.0.pkc"
+    phenoDataFile <- dir(file.path("/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset/", "annotation"), pattern = ".xlsx$",
                                 full.names = TRUE, recursive = TRUE)
-    AnnotationSheetName = "Template" 
+    phenoDataSheet = "Template" 
     
   }
   
-  DccColName <- "Sample_ID"
-  ProtocolColNames <- c("aoi", "roi")
-  ExperimentColNames = c("panel")
+  phenoDataDccColName <- "Sample_ID"
+  protocolDataColNames <- c("aoi", "roi")
+  experimentDataColNames = c("panel")
   
-  return(list("PKCFiles" = PKCFiles, "SampleAnnotationFile" = SampleAnnotationFile, "AnnotationSheetName" = AnnotationSheetName, "DCCFiles" = DCCFiles, "DccColName" = DccColName, "ProtocolColNames" = ProtocolColNames, "ExperimentColNames" = ExperimentColNames))
+  return(list("pkcFiles" = pkcFiles, "phenoDataFile" = phenoDataFile, "phenoDataSheet" = phenoDataSheet, "dccFiles" = dccFiles, "phenoDataDccColName" = phenoDataDccColName, "protocolDataColNames" = protocolDataColNames, "experimentDataColNames" = experimentDataColNames))
   
 }
