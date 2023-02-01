@@ -25,7 +25,7 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
   datadir <- "/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example"
   DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
                   full.names = TRUE, recursive = TRUE) 
-  PKCFiles <- "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset//pkcs/TAP_H_WTA_v1.0.pkc"
+  PKCFiles <- "/tests/testthat/fixtures/TAP_H_WTA_v1.0.pkc"
   SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
                               full.names = TRUE, recursive = TRUE)
 
@@ -33,8 +33,8 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
                                 pkcFiles = PKCFiles,
                                 phenoDataFile = SampleAnnotationFile)
   
+  # For creating fixture RDS
   #studyDesignHumanKidney <- sdesign.list$dsp.obj
-  
   #saveRDS(studyDesignHumanKidney, file = "studyDesignHumanKidney.RDS")
   
   print(sdesign.list$plot)

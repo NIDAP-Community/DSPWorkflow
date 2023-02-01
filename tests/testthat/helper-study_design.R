@@ -4,7 +4,7 @@ select_dataset_sd <- function(dataset) {
     
     print("selected kidney dataset") 
     dccFiles <- dir(file.path("/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example/", "dccs"), pattern = ".dcc$", full.names = TRUE, recursive = TRUE)
-    pkcFiles <- "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset/pkcs/TAP_H_WTA_v1.0.pkc"
+    pkcFiles <- test_path("fixtures/Human_Kidney", "TAP_H_WTA_v1.0.pkc")
     phenoDataFile <- "/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example/annotation/kidney_AOI_Annotations_all_vignette.xlsx"
     phenoDataSheet = "Template"
     
@@ -12,7 +12,7 @@ select_dataset_sd <- function(dataset) {
     
     print("selected thymus dataset")
     dccFiles <- dir(file.path("/rstudio-files/ccr-dceg-data/data/Thymus_Dataset/", "dccs"), pattern = ".dcc$", full.names = TRUE, recursive = TRUE)
-    pkcFiles <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset/pkcs/Mm_R_NGS_WTA_v1.0.pkc"
+    pkcFiles <- test_path("fixtures/Mouse_Thymus", "Mm_R_NGS_WTA_v1.0.pkc")
     phenoDataFile <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset/annotations/Thymus_Annotation_updated_3.xlsx"
     phenoDataSheet = "Annotation"
     
@@ -20,7 +20,7 @@ select_dataset_sd <- function(dataset) {
     
     print("selected colon dataset")
     dccFiles <- dir(file.path("/rstudio-files/ccr-dceg-data/data/Colon_Dataset/", "dccs"), pattern = ".dcc$", full.names = TRUE, recursive = TRUE)
-    pkcFiles <- "/rstudio-files/ccr-dceg-data/data/Colon_Dataset/pkcs/Hs_R_NGS_WTA_v1.0.pkc"
+    pkcFiles <- test_path("fixtures/Human_Colon", "Hs_R_NGS_WTA_v1.0.pkc")
     phenoDataFile <- dir(file.path("/rstudio-files/ccr-dceg-data/data/Colon_Dataset/", "annotation"), pattern = ".xlsx$",
                                 full.names = TRUE, recursive = TRUE)
     phenoDataSheet = "SegmentProperties"  
@@ -29,7 +29,7 @@ select_dataset_sd <- function(dataset) {
     
     print("selected nsclc dataset")
     dccFiles <- dir(file.path("/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset/", "dccs"), pattern = ".dcc$", full.names = TRUE, recursive = TRUE)
-    pkcFiles <- "/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset/pkcs/Hs_R_NGS_WTA_v1.0.pkc"
+    pkcFiles <- test_path("fixtures/Human_NSCLC", "Hs_R_NGS_WTA_v1.0.pkc")
     phenoDataFile <- dir(file.path("/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset/", "annotation"), pattern = ".xlsx$",
                                 full.names = TRUE, recursive = TRUE)
     phenoDataSheet = "Template" 
