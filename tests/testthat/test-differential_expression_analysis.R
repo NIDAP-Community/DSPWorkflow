@@ -1,163 +1,188 @@
-kidney_data <- get_de_params("kidney")
-goi <- c("CD274", "CD8A", "CD68", "EPCAM",
-         "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
-kidney_data$object <- kidney_data$object[goi,]
-
 test_that("Run Diff Exp Analysis with default parameters - kidney data", {
-    
+    kidney_data <- getsubset("kidney","Within")    
     reslist.1 <- do.call(DiffExpr,kidney_data) #Runs with default parameters
+    
+    #Test saving plots and calculated FC and pvals
+    #announce_snapshot_file("output/kidney_within.png")
+    saveplots(reslist.1,"output/kidney_within.png",10)
+    expect_snapshot_file("output","kidney_within.png")
+    
+    res <- calcfc("kidney",reslist.1$results,"Within")
+    expect_equal(res$lfc, -2.014,tolerance=1e-3)
+    expect_equal(res$pval, 0.0274,tolerance=1e-3)
 
-    grid.draw(reslist.1$sample_table)
-    grid.newpage()
-    grid.draw(reslist.1$summary_table)
     expected.elements <- c("results","sample_table","summary_table")
     expect_setequal(names(reslist.1),expected.elements)
     
-    lfc_col1 <- colnames(reslist.1$result)[grepl("logFC",colnames(reslist.1$result))]
-    pval_col1 <- colnames(reslist.1$result)[grepl("_pval",colnames(reslist.1$result))]
-
-    lfc.1 <- reslist.1$result %>% dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% pull(lfc_col1) %>% as.numeric()
-    pval.1 <- reslist.1$result %>% dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% pull(pval_col1) %>% as.numeric()
-    expect_equal(lfc.1, -2.014,tolerance=1e-3)
-    expect_equal(pval.1, 0.0274,tolerance=1e-3)
-    
-    
     ###Testing Between groups:
-    kidney_test <- kidney_data
-    kidney_test$analysisType <- "Between Groups"
-    reslist.2 <- do.call(DiffExpr,kidney_test)
-      
-    grid.draw(reslist.2$sample_table)
-    grid.newpage()
-    grid.draw(reslist.2$summary_table)
-    expected.elements <- c("results","sample_table","summary_table")
-    expect_setequal(names(reslist.2),expected.elements)
+    kidney_data <- getsubset("kidney","Between")
+    reslist.2 <- do.call(DiffExpr,kidney_data)
     
-    lfc_col2 <- colnames(reslist.2$result)[grepl("logFC",colnames(reslist.2$result))]
-    pval_col2 <- colnames(reslist.2$result)[grepl("_pval",colnames(reslist.2$result))]
-     
-    lfc.2 <- reslist.2$result %>% dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% pull(lfc_col2) %>% as.numeric()
-    pval.2 <- reslist.2$result %>% dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% pull(pval_col2) %>% as.numeric()
-    expect_equal(lfc.2, -1.408,tolerance=1e-3)
-    expect_equal(pval.2, 0.01268,tolerance=1e-3)
+    #Test saving plots and calculated FC and pvals  
+    #announce_snapshot_file("output/kidney_between.png")
+    saveplots(reslist.2,"output/kidney_between.png",10)
+    expect_snapshot_file("output","kidney_between.png")
+    
+    res <- calcfc("kidney",reslist.2$results,"Between")
+    expect_equal(res$lfc, -1.408,tolerance=1e-3)
+    expect_equal(res$pval, 0.01268,tolerance=1e-3)
 })
 
 test_that("Run Diff Exp Analysis with wrong selected group column", {
     
-    kidney_test <- kidney_data
-    kidney_test$analysisType <- "Between Groups"
+    kidney_data <- getsubset("kidney","Between")
+    kidney_data$groupCol <- "segment" #Wrong selected group column
     
-    kidney_test$groupCol <- "segment" #Wrong selected group column
-    
-    expect_error(do.call(DiffExpr,kidney_test),fixed=TRUE,"DKD is not in group column.\nnormal is not in group column.")
+    expect_error(do.call(DiffExpr,kidney_data),fixed=TRUE,"DKD is not in group column.\nnormal is not in group column.")
 })
 
 test_that("Run Diff Exp Analysis with wrong selected region column", {
 
-  kidney_test <- kidney_data
-  
-  kidney_test$regionCol <- "segment" #Wrong selected region column
-  
-  expect_error(do.call(DiffExpr,kidney_test),fixed=TRUE,
+  kidney_data <- getsubset("kidney","Within")
+  kidney_data$regionCol <- "segment" #Wrong selected region column
+  expect_error(do.call(DiffExpr,kidney_data),fixed=TRUE,
       "glomerulus is not in region column.\ntubule is not in region column.\n")
   
 })
 
 test_that("Run Diff Exp Analysis with wrong entry for Groups", {
   
-  kidney_test <- kidney_data
-  
+  kidney_data <- getsubset("kidney","Within")
   kidney_test$groups <- c("Dkd","normal") #Misspecifying the group name
-  
-  expect_error(do.call(DiffExpr,kidney_test),fixed=TRUE, "Dkd is not in group column.\n")
+  expect_error(do.call(DiffExpr,kidney_test),fixed=TRUE, 
+               "Dkd is not in group column.\n")
   
 })
 
 test_that("Run Diff Exp Analysis with wrong entry for regions", {
   
-  kidney_test <- kidney_data
-  
-  kidney_test$regions <- c("glomerul", "tubule") #
-  
-  expect_error(do.call(DiffExpr,kidney_test),fixed=TRUE, "glomerul is not in region column.\n")
+  kidney_data <- getsubset("kidney","Within")
+  kidney_data$regions <- c("glomerul", "tubule") #
+  expect_error(do.call(DiffExpr,kidney_data),fixed=TRUE, 
+               "glomerul is not in region column.\n")
   
 })
 
-# test_that("Run Within Group Analysis with fewer than 2 regions (wrong variable entry)", {
-#   
-#   kidney_test$regionCol <- "tubule"
-#   
-#   expect_error(do.call(DiffExpr,kidney_test),fixed=TRUE, "Cannot run Within Group Analysis with 1 Region.\n")
-#   
-# })
+test_that("Run Within Group Analysis with fewer than 2 regions (wrong variable entry)", {
 
-#test_that("Run Between Group Analysis with fewer than 2 groups (wrong variable entry)", {
-  
-#   expect_error(DiffExpr(object = data, 
-#                         analysisType = "Between Groups",
-#                         groups = c("DKD"), 
-#                         groupCol = "class",
-#                         regions = c("tubule","glomerulus"), 
-#                         regionCol = "region",
-#                         slideCol = "slide name",
-#                         nCores = 4), "Cannot run Between Group Analysis with 1 Group.\n")
-#   
-# })
+  kidney_data <- getsubset("kidney","Within")
+  kidney_data$regions <- "tubule"
+  expect_error(do.call(DiffExpr,kidney_data),fixed=TRUE, 
+               "Cannot run Within Group Analysis with 1 Region.\n")
 
+})
 
-## Using Mouse Data:
+test_that("Run Between Group Analysis with fewer than 2 groups (wrong variable entry)", {
 
-thymus_data <- get_de_params("thymus")
-
-goi <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", 
-         "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
-thymus_data$object <- thymus_data$object[goi,]
-
+  kidney_data <- getsubset("kidney","Between")
+  kidney_data$groups = c("DKD")
+  expect_error(do.call(DiffExpr,kidney_data),fixed=TRUE, 
+               "Cannot run Between Group Analysis with 1 Group.\n")
+})
 
 test_that("Run Diff Exp Analysis with default parameters - Mouse Thymus data", {
   
+  thymus_data <- getsubset("thymus","Within")
   reslist.1 <- do.call(DiffExpr,thymus_data) #Runs with default parameters
   
-  grid.draw(reslist.1$sample_table)
-  grid.newpage()
-  grid.draw(reslist.1$summary_table)
+  #Test saving plots and calculated FC and pvals
+  
+  #announce_snapshot_file("output/thymus_within.png")
+  saveplots(reslist.1,"output/thymus_within.png",10)
+  expect_snapshot_file("output","thymus_within.png")
+  
+  res <- calcfc("thymus",reslist.1$results,"Within")
+  expect_equal(res$lfc, -1.6451,tolerance=1e-3)
+  expect_equal(res$pval, 2.74e-07,tolerance=1e-3)
+  
   expected.elements <- c("results","sample_table","summary_table")
   expect_setequal(names(reslist.1),expected.elements)
   
-  lfc_col1 <- colnames(reslist.1$result)[grepl("logFC",colnames(reslist.1$result))]
-  pval_col1 <- colnames(reslist.1$result)[grepl("_pval",colnames(reslist.1$result))]
-  
-  lfc.1 <- reslist.1$result %>% dplyr::filter(Gene == "Ccr7" & Subset == "Thymus") %>% pull(lfc_col1) %>% as.numeric()
-  pval.1 <- reslist.1$result %>% dplyr::filter(Gene == "Ccr7" & Subset == "Thymus") %>% pull(pval_col1) %>% as.numeric()
-  expect_equal(lfc.1, -1.6451,tolerance=1e-3)
-  expect_equal(pval.1, 2.74e-07,tolerance=1e-3)
-  
-  
   ###Testing Between groups:
-  thymus_test <- thymus_data
+  thymus_data <- getsubset("thymus","Between")
   
   #Setting parameters for testing Between Groups:
-  thymus_test$analysisType <- "Between Groups"
-  thymus_test$groups <- c("Tumor", "Medullar")
-  thymus_test$regions = c("PanCK")
-  thymus_test$regionCol = "segment"
-  thymus_test$groupCol = "region"
+  reslist.2 <- do.call(DiffExpr,thymus_data)
   
-  reslist.2 <- do.call(DiffExpr,thymus_test)
+  #announce_snapshot_file("output/thymus_between.png")
+  saveplots(reslist.1,"output/thymus_between.png",10)
+  expect_snapshot_file("output","thymus_between.png")
   
-  grid.draw(reslist.2$sample_table)
-  grid.newpage()
-  grid.draw(reslist.2$summary_table)
   expected.elements <- c("results","sample_table","summary_table")
   expect_setequal(names(reslist.2),expected.elements)
   
-  lfc_col2 <- colnames(reslist.2$result)[grepl("logFC",colnames(reslist.2$result))]
-  pval_col2 <- colnames(reslist.2$result)[grepl("_pval",colnames(reslist.2$result))]
-  
-  lfc.2 <- reslist.2$result %>% dplyr::filter(Gene == "Ccr7" & Subset == "PanCK") %>% pull(lfc_col2) %>% as.numeric()
-  pval.2 <- reslist.2$result %>% dplyr::filter(Gene == "Ccr7" & Subset == "PanCK") %>% pull(pval_col2) %>% as.numeric()
-  expect_equal(lfc.2, -1.868,tolerance=1e-3)
-  expect_equal(pval.2, 5.15e-06,tolerance=1e-3)
+  res <- calcfc("thymus",reslist.2$results,"Between")
+  expect_equal(res$lfc, -1.868,tolerance=1e-3)
+  expect_equal(res$pval, 5.15e-06,tolerance=1e-3)
 })
 
-## Using 
+test_that("Run Diff Exp Analysis with default parameters - Colon data", {
+  
+  colon_data <- getsubset("colon","Within")
+  reslist.1 <- do.call(DiffExpr,colon_data) #Runs with default parameters
+  
+  #Test saving plots and calculated FC and pvals  
+  
+  #announce_snapshot_file("output/colon_within.png")
+  saveplots(reslist.1,"output/colon_within.png",10)
+  expect_snapshot_file("output","colon_within.png")
+  
+  res <- calcfc("colon",reslist.1$results,"Within")
+  expect_equal(res$lfc, -4.698,tolerance=1e-3)
+  expect_equal(res$pval, 0.05631,tolerance=1e-3)
+  
+  expected.elements <- c("results","sample_table","summary_table")
+  expect_setequal(names(reslist.1),expected.elements)
+  
+  ###Testing Between groups:
+  colon_data <- getsubset("colon","Between")
+  
+  #Setting parameters for testing Between Groups:
+  reslist.2 <- do.call(DiffExpr,colon_data)
+  
+  #announce_snapshot_file("output/colon_between.png")
+  saveplots(reslist.2,"output/colon_between.png",10)
+  expect_snapshot_file("output","colon_between.png")
+  
+  expected.elements <- c("results","sample_table","summary_table")
+  expect_setequal(names(reslist.2),expected.elements)
+  
+  res <- calcfc("colon",reslist.2$results,"Between")
+  expect_equal(res$lfc, -4.431,tolerance=1e-3)
+  expect_equal(res$pval, 6.95e-06,tolerance=1e-3)
+})
+
+test_that("Run Diff Exp Analysis with default parameters - NSCLC data", {
+  
+  nsclc_data <- getsubset("nsclc","Within")
+  reslist.1 <- do.call(DiffExpr,nsclc_data) #Runs with default parameters
+  
+  #Test saving plots and calculated FC and pvals  
+  #announce_snapshot_file("output/nsclc_within.png")
+  saveplots(reslist.1,"output/nsclc_within.png",40)
+  expect_snapshot_file("output","nsclc_within.png")
+  
+  res <- calcfc("nsclc",reslist.1$results,"Within")
+  expect_equal(res$lfc, -2.09,tolerance=1e-3)
+  expect_equal(res$pval, 8.51e-07,tolerance=1e-3)
+  
+  expected.elements <- c("results","sample_table","summary_table")
+  expect_setequal(names(reslist.1),expected.elements)
+  
+  ###Testing Between groups:
+  nsclc_data <- getsubset("nsclc","Between")
+  
+  #Setting parameters for testing Between Groups:
+  reslist.2 <- do.call(DiffExpr,nsclc_data)
+  
+  #announce_snapshot_file("output/nsclc_between.png")
+  saveplots(reslist.2,"output/nsclc_between.png",40)
+  expect_snapshot_file("output","nsclc_between.png")
+  
+  expected.elements <- c("results","sample_table","summary_table")
+  expect_setequal(names(reslist.2),expected.elements)
+  
+  res <- calcfc("nsclc",reslist.2$results,"Between")
+  expect_equal(res$lfc, 2.55,tolerance=1e-3)
+  expect_equal(res$pval, 9.77e-09,tolerance=1e-3)
+})

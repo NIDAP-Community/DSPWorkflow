@@ -7,11 +7,11 @@
 DiffExpr(
   object,
   analysisType,
-  regions,
   groups,
+  groupCol,
+  regions,
+  regionCol,
   slideCol = "slide name",
-  groupCol = "class",
-  regionCol = "region",
   element = "log_q",
   multiCore = TRUE,
   nCores = 1,
@@ -27,15 +27,15 @@ DiffExpr(
 
 \item{analysisType}{Analysis type either "Between Groups" or "Within Groups"}
 
-\item{regions}{One or more regions of interest (needs to be variables within regionCol)}
-
 \item{groups}{One or more groups of interest (needs to be variables within groupCol)}
-
-\item{slideCol}{column for slide name}
 
 \item{groupCol}{column for group (groups are usually found in different slides)}
 
+\item{regions}{One or more regions of interest (needs to be variables within regionCol)}
+
 \item{regionCol}{column for region (regions are usually found within a slide)}
+
+\item{slideCol}{column for slide name}
 
 \item{element}{assayDataElement of the geoMxSet object to run the DE on}
 
