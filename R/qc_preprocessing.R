@@ -105,19 +105,72 @@ QcProc <- function(object,
       minNegativeCount = minNegativeCount
     )
   
-  # If NTC Counts are present, include them as a parameter
-  if(!is.null(maxNTCCount)){
-    qc.params$maxNTCCount = maxNTCCount
+  # Check if required parameters contain non-numeric values
+  for (param in names(qc.params)) {
+    
+    param_value <- qc.params[param]
+    
+    for(value in param_value){
+      if(!is.numeric(value)){
+        stop(paste0(param, " is not numeric. Please specify a numeric value.\n"))
+      }
+    }
   }
   
-  # If nuclei counts are present, include them as a parameter
-  if(!is.null(minNuclei)){
-    qc.params$minNuclei = minNuclei
+  # Check if NTC is in the annotation, if so the maxNTCCount parameter needs to be numeric
+  if("NTC" %in% colnames(sData(object))){
+    
+    if(is.null(maxNTCCount)){
+      stop(paste0("NTC is part of the annotation, please specify a numeric value for maxNTCCount.\n"))
+      
+    } else{
+      if(!is.numeric(maxNTCCount)){
+        stop(paste0("maxNTCCount is not numeric. Please specify a numeric value.\n"))
+      }
+      
+      # Add the maxNTCCount parameter
+      qc.params$maxNTCCount = maxNTCCount
+    }
+  }else{
+    warning(paste0("NTC is not found in the annotation, maxNTCCount will not be considered.\n"))
   }
   
-  # If min area size is present, include it as a parameter
-  if(!is.null(minArea)){
-    qc.params$minArea = minArea
+  
+  # Check if nuclei is in the annotation, if so the minNuclei parameter needs to be numeric
+  if("nuclei" %in% colnames(sData(object))){
+    
+    if(is.null(minNuclei)){
+      stop(paste0("Nuclei is part of the annotation, please specify a numeric value for minNuclei.\n"))
+      
+    } else{
+        if(!is.numeric(minNuclei)){
+          stop(paste0("minNuclei is not numeric. Please specify a numeric value.\n"))
+        }
+      
+        # Add the minNuclei parameter
+        qc.params$minNuclei = minNuclei
+    }
+  }else{
+    warning(paste0("Nuclei is not found in the annotation, minNuclei will not be considered.\n"))
+  }
+  
+  
+  # Check if area is in the annotation, if so the minArea parameter needs to be numeric
+  if("area" %in% colnames(sData(object))){
+    
+    if(is.null(minArea)){
+      stop(paste0("Area is part of the annotation, please specify a numeric value for minArea.\n"))
+      
+    } else{
+      if(!is.numeric(minArea)){
+        stop(paste0("minArea is not numeric. Please specify a numeric value.\n"))
+      }
+      
+      # Add the minArea parameter
+      qc.params$minArea = minArea
+    }
+  } else{
+    warning(paste0("Area is not found in the annotation, minArea will not be considered.\n"))
   }
   
   # set segment QC flags

@@ -52,7 +52,7 @@ select_dataset_qc <- function(dataset) {
     percentAligned = 80    
     percentSaturation = 50 
     minNegativeCount = 10  
-    maxNTCCount = NULL    
+    maxNTCCount = 1000    
     minNuclei = NULL      
     minArea = NULL 
     
