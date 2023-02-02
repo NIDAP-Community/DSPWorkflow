@@ -20,7 +20,7 @@
 #'
 #' @importFrom GeomxTools mixedModelDE
 #' @import NanoStringNCTools
-#' @importFrom Biobase pData
+#' @import Biobase
 #' @importFrom stats p.adjust
 #' @importFrom dplyr group_by select filter arrange pull
 #' @importFrom tidyr pivot_wider
@@ -77,11 +77,11 @@ DiffExpr <- function(object,
   if(length(param.na) > 0){
     if(param.na[1] == "testRegion"){
           regdiff <- setdiff(unique(pData(object)[[regionCol]]),unique(levels(pData(object)$testRegion)))
-          message(paste0("At least one of the regions within the Region Column was not selected and is excluded: ",regdiff,"\n"))
+          message(paste0("At least one of the regions within the Region Column was not selected and is excluded:\n",regdiff,"\n"))
     }
     else if(param.na[1] == "testClass"){
           classdiff <- setdiff(unique(pData(object)[[groupCol]]),unique(levels(pData(object)$testClass)))
-          message("At least one of the groups within the Group Column was not selected and is excluded: ", classdiff,"\n")
+          message("At least one of the groups within the Group Column was not selected and is excluded:\n", classdiff,"\n")
     } 
   }
   
