@@ -1,4 +1,4 @@
-select_dataset_qc <- function(dataset) {
+selectDatasetQC <- function(dataset) {
   
   if (dataset == "kidney"){
     
