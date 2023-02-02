@@ -28,7 +28,7 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
   datadir <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset"
   DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
                   full.names = TRUE, recursive = TRUE)
-  PKCFiles <- "/tests/testthat/fixtures/Mm_R_NGS_WTA_v1.0.pkc"
+  PKCFiles <- test_path("fixtures/Mouse_Thymus", "Mm_R_NGS_WTA_v1.0.pkc")
   SampleAnnotationFile <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset/annotations/Thymus_Annotation_updated_3.xlsx"
       
   # Optional parameters for selecting annotation column names that are used by the GeoMX object

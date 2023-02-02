@@ -46,15 +46,15 @@ QcProc <- function(object,
                    percentAligned = 80,
                    percentSaturation = 50,
                    minNegativeCount = 10,
-                   maxNTCCount = 1000,         # DIF 60
-                   minNuclei = 200,            # DIF 200
-                   minArea = 16000,             # DIF 16000
+                   maxNTCCount = NULL,         # DIF 60
+                   minNuclei = NULL,            # DIF 200
+                   minArea = NULL,             # DIF 16000
                    minProbeRatio = 0.1,
                    outlierTestAlpha = 0.01,    # MIS
                    percentFailGrubbs = 20,
                    removeLocalOutliers = TRUE
-                   )
-{
+                   ){
+
   # DEFAULTS <- list() #from https://github.com/Nanostring-Biostats/GeomxTools/blob/master/R/NanoStringGeoMxSet-qc.R
   # #loqCutoff = 1.0,            # MIS
   # highCountCutoff = 10000     # MIS
@@ -102,11 +102,23 @@ QcProc <- function(object,
       percentStitched = percentStitched,
       percentAligned = percentAligned,
       percentSaturation = percentSaturation,
-      minNegativeCount = minNegativeCount,
-      maxNTCCount = maxNTCCount,
-      minNuclei = minNuclei,
-      minArea = minArea
+      minNegativeCount = minNegativeCount
     )
+  
+  # If NTC Counts are present, include them as a parameter
+  if(!is.null(maxNTCCount)){
+    qc.params$maxNTCCount = maxNTCCount
+  }
+  
+  # If nuclei counts are present, include them as a parameter
+  if(!is.null(minNuclei)){
+    qc.params$minNuclei = minNuclei
+  }
+  
+  # If min area size is present, include it as a parameter
+  if(!is.null(minArea)){
+    qc.params$minArea = minArea
+  }
   
   # set segment QC flags
   object <- setSegmentQCFlags(object, qcCutoffs = qc.params)
@@ -136,10 +148,10 @@ QcProc <- function(object,
   saturated <-
     QcHist(sData(object), "Saturated (%)", color.by, percentSaturation) +
     labs(x = "sequencing\nsaturation (%)")
-  if(!is.null(minNuclei)){
+  if(!is.null(qc.params$minNuclei)){
     nuclei <- QcHist(sData(object), "nuclei", color.by, minNuclei)
   }
-  if(!is.null(minArea)){
+  if(!is.null(qc.params$minArea)){
     area <- QcHist(sData(object), "area", color.by, minArea, scale_trans = "log10")
   }
   
@@ -197,7 +209,7 @@ QcProc <- function(object,
     pData(object)[, !colnames(pData(object)) %in% neg.cols]
   
   #show all NTC values, Freq =  of Segments with a given NTC count:
-  if(!is.null(maxNTCCount)){
+  if(!is.null(qc.params$maxNTCCount)){
     kable(table(NTC_Count = sData(object)$NTC),col.names = c("NTC Count", " of Segments"))
   }
  
