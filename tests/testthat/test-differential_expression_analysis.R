@@ -3,8 +3,9 @@ test_that("Run Diff Exp Analysis with default parameters - kidney data", {
     reslist.1 <- do.call(DiffExpr,kidney_data) #Runs with default parameters
     
     #Test saving plots and calculated FC and pvals
-    saveplots(reslist.1,"output/kidney_within.png")
-    expect_snapshot_output("output/kidney_within.png")
+    #announce_snapshot_file("output/kidney_within.png")
+    saveplots(reslist.1,"output/kidney_within.png",10)
+    expect_snapshot_file("output","kidney_within.png")
     
     res <- calcfc("kidney",reslist.1$results,"Within")
     expect_equal(res$lfc, -2.014,tolerance=1e-3)
@@ -18,8 +19,9 @@ test_that("Run Diff Exp Analysis with default parameters - kidney data", {
     reslist.2 <- do.call(DiffExpr,kidney_data)
     
     #Test saving plots and calculated FC and pvals  
-    saveplots(reslist.2,"output/kidney_between.png")
-    expect_snapshot_output("output/kidney_between.png")
+    #announce_snapshot_file("output/kidney_between.png")
+    saveplots(reslist.2,"output/kidney_between.png",10)
+    expect_snapshot_file("output","kidney_between.png")
     
     res <- calcfc("kidney",reslist.2$results,"Between")
     expect_equal(res$lfc, -1.408,tolerance=1e-3)
@@ -83,9 +85,11 @@ test_that("Run Diff Exp Analysis with default parameters - Mouse Thymus data", {
   thymus_data <- getsubset("thymus","Within")
   reslist.1 <- do.call(DiffExpr,thymus_data) #Runs with default parameters
   
-  #Test saving plots and calculated FC and pvals  
-  saveplots(reslist.1,"output/thymus_within.png")
-  expect_snapshot_output("output/thymus_within.png")
+  #Test saving plots and calculated FC and pvals
+  
+  #announce_snapshot_file("output/thymus_within.png")
+  saveplots(reslist.1,"output/thymus_within.png",10)
+  expect_snapshot_file("output","thymus_within.png")
   
   res <- calcfc("thymus",reslist.1$results,"Within")
   expect_equal(res$lfc, -1.6451,tolerance=1e-3)
@@ -100,8 +104,9 @@ test_that("Run Diff Exp Analysis with default parameters - Mouse Thymus data", {
   #Setting parameters for testing Between Groups:
   reslist.2 <- do.call(DiffExpr,thymus_data)
   
-  saveplots(reslist.2,"output/thymus_between.png")
-  expect_snapshot_output("output/thymus_between.png")
+  #announce_snapshot_file("output/thymus_between.png")
+  saveplots(reslist.1,"output/thymus_between.png",10)
+  expect_snapshot_file("output","thymus_between.png")
   
   expected.elements <- c("results","sample_table","summary_table")
   expect_setequal(names(reslist.2),expected.elements)
@@ -117,8 +122,10 @@ test_that("Run Diff Exp Analysis with default parameters - Colon data", {
   reslist.1 <- do.call(DiffExpr,colon_data) #Runs with default parameters
   
   #Test saving plots and calculated FC and pvals  
-  saveplots(reslist.1,"output/colon_within.png")
-  expect_snapshot_output("output/colon_within.png")
+  
+  #announce_snapshot_file("output/colon_within.png")
+  saveplots(reslist.1,"output/colon_within.png",10)
+  expect_snapshot_file("output","colon_within.png")
   
   res <- calcfc("colon",reslist.1$results,"Within")
   expect_equal(res$lfc, -4.698,tolerance=1e-3)
@@ -133,8 +140,9 @@ test_that("Run Diff Exp Analysis with default parameters - Colon data", {
   #Setting parameters for testing Between Groups:
   reslist.2 <- do.call(DiffExpr,colon_data)
   
-  saveplots(reslist.2,"output/colon_between.png")
-  expect_snapshot_output("output/colon_between.png")
+  #announce_snapshot_file("output/colon_between.png")
+  saveplots(reslist.2,"output/colon_between.png",10)
+  expect_snapshot_file("output","colon_between.png")
   
   expected.elements <- c("results","sample_table","summary_table")
   expect_setequal(names(reslist.2),expected.elements)
@@ -150,8 +158,9 @@ test_that("Run Diff Exp Analysis with default parameters - NSCLC data", {
   reslist.1 <- do.call(DiffExpr,nsclc_data) #Runs with default parameters
   
   #Test saving plots and calculated FC and pvals  
-  saveplots(reslist.1,"output/nsclc_within.png")
-  expect_snapshot_output("output/nsclc_within.png")
+  #announce_snapshot_file("output/nsclc_within.png")
+  saveplots(reslist.1,"output/nsclc_within.png",40)
+  expect_snapshot_file("output","nsclc_within.png")
   
   res <- calcfc("nsclc",reslist.1$results,"Within")
   expect_equal(res$lfc, -2.09,tolerance=1e-3)
@@ -166,8 +175,9 @@ test_that("Run Diff Exp Analysis with default parameters - NSCLC data", {
   #Setting parameters for testing Between Groups:
   reslist.2 <- do.call(DiffExpr,nsclc_data)
   
-  saveplots(reslist.2,"output/nsclc_between.png")
-  expect_snapshot_output("output/nsclc_between.png")
+  #announce_snapshot_file("output/nsclc_between.png")
+  saveplots(reslist.2,"output/nsclc_between.png",40)
+  expect_snapshot_file("output","nsclc_between.png")
   
   expected.elements <- c("results","sample_table","summary_table")
   expect_setequal(names(reslist.2),expected.elements)

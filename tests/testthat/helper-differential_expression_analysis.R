@@ -14,7 +14,7 @@ get_de_params <- function(data,test){
     } else {
       analysisType = "Between Groups"
     }
-  } else if(data == "thymus") {
+  } else if (data == "thymus") {
       object <- select_normalized_RTD("thymus")
       slideCol = "slide name"
       nCores = 4
@@ -24,7 +24,7 @@ get_de_params <- function(data,test){
         groupCol = "class"
         regions = c("Cortical", "Medullar")
         regionCol = "region"
-      } else{
+      } else {
         analysisType <- "Between Groups"
         groups <- c("Tumor", "Medullar")
         groupCol = "region"
@@ -110,12 +110,12 @@ getsubset <- function(data,test){
   return(dataset)
 }
 
-saveplots <- function(data,file){
+saveplots <- function(data,file,w){
     g1 <- data$sample_table
     g2 <- data$summary_table
     gg <- wrap_elements(g1) + wrap_elements(g2) + 
       plot_layout(ncol = 1, heights = c(0.1, 0.2))
-    ggsave(file,gg, width = 10, height = 10)
+    ggsave(file,gg, width = w, height = 10)
 }
 
 calcfc <- function(data, result, test){

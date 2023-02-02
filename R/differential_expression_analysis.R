@@ -21,6 +21,7 @@
 #' @importFrom GeomxTools mixedModelDE
 #' @import NanoStringNCTools
 #' @import Biobase
+#' @import stringr
 #' @importFrom stats p.adjust
 #' @importFrom dplyr group_by select filter arrange pull
 #' @importFrom tidyr pivot_wider
@@ -93,9 +94,11 @@ DiffExpr <- function(object,
   metadata %>% select(testClass,testRegion,sample,slide) -> met.tab
   met.tab %>% group_by(testClass,testRegion,slide) %>% count() -> met.sum
   met.sum %>% pivot_wider(names_from= slide,values_from = n) -> met.pivot
-
+  colnames(met.pivot) <- str_wrap(colnames(met.pivot), 10)
+  ind <- !(is.na(met.pivot$testClass) | is.na(met.pivot$testRegion))
+  met.pivot <- met.pivot[ind,]
   grid.newpage()
-  gt <- tableGrob(met.pivot)
+  gt <- tableGrob(met.pivot, theme=ttheme_default(base_size = 8))
   
   #Run DEG Analysis
   options(digits = 9)
@@ -232,7 +235,7 @@ DiffExpr <- function(object,
     FCadjpval2 <- getgenelists(selectGroups,FClimit = fclim, pvallimit = pvallim2,"adjpval")
     pvaltab <- rbind(FCpval1,FCpval2,FCadjpval1,FCadjpval2)
     colnames(pvaltab) <- sapply(colnames(pvaltab), function(x) wraplines(x))
-    table <- tableGrob(pvaltab, theme=ttheme_default(base_size = 10))
+    table <- tableGrob(pvaltab, theme=ttheme_default(base_size = 8))
     title2 <- unique(results$Contrast)
     t1 <- textGrob(title1, gp = gpar(fontsize = 15))
     t2 <- textGrob(title2, gp = gpar(fontsize = 15))
@@ -245,6 +248,7 @@ DiffExpr <- function(object,
     table <- gtable_add_grob(table, list(t1,t2),
                              t = c(1,2), l = 1, r = ncol(table))
     table$layout$clip <- "off"
+    
     return(table)
   }
   
