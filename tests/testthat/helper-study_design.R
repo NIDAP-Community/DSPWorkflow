@@ -1,4 +1,4 @@
-select_dataset_sd <- function(dataset) {
+selectDatasetSD <- function(dataset) {
   
   if (dataset == "kidney"){
     

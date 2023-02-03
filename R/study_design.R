@@ -52,8 +52,16 @@ StudyDesign <- function(dccFiles, pkcFiles, phenoDataFile, phenoDataSheet = "Tem
   modules <- gsub(".pkc", "", pkcs)
   kable(data.frame(PKCs = pkcs, modules = modules))
 
-
-
+  # Set up a list of required field names
+  required.field.names = c("slide name", "class", "segment", "region")
+  
+  # Check each of the required fields for correct naming
+  given.field.names = colnames(sData(study.data))
+  for(field in required.field.names){
+    if(!(field %in% given.field.names)){
+      stop(paste0(field, " is required and NOT found in the annotation. Please correct annotation sheet fields.\n"))
+    }
+  }
 
   # select the annotations we want to show, use `` to surround column names with
   # spaces or special symbols
