@@ -207,7 +207,7 @@ gene.df <- as.data.frame(plot.genes)
  
 ## add genename column to the output matrix
 plot.genes <- gene.df %>% rownames_to_column("gene")
- 
+
 #return(list("log2.data" = log2.data, "plot.genes"=plot.genes, plot" = p))
 return(list("plot.genes" = plot.genes, "plot" = p))
 }

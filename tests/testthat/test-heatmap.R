@@ -1,7 +1,22 @@
-test_that("making heatmap plot", {
+test_that("making heatmap plot---Human Kidney dataset", {
 
-    target.data <- readRDS(test_path("fixtures", "target.Data.rds"))  
-    
+#    target.data <- readRDS(test_path("fixtures", "target.Data.rds"))  
+#    target.data <- readRDS("/rstudio-files/ccr-dceg-data/users/Difei/DSP/DSPWorkflow/tests/testthat/fixtures/Human_Kidney/normalizationHumanKidney.RDS")
+
+for (dataset in c("kidney","thymus","colon","nsclc")) 
+{
+
+  message("Loading ", dataset)
+  if (dataset == "kidney"){
+     target.data <- readRDS(test_path("fixtures/Human_Kidney", "normalizationHumanKidney.RDS"))
+  } else if (dataset == "thymus") {
+     target.data <- readRDS(test_path("fixtures/Mouse_Thymus", "normalizationMouseThymus.RDS"))
+  } else if (dataset == "colon") {
+     target.data <- readRDS(test_path("fixtures/Human_Colon", "normalizationHumanColon.RDS"))
+  } else if (dataset == "nsclc") {
+     target.data <- readRDS(test_path("fixtures/Human_NSCLC", "normalizationHumanNSCLC.RDS"))
+  }
+
 #    ngenes <- 200
 #    image.width <- 3600
 #    image.height <- 1800
@@ -34,7 +49,7 @@ test_that("making heatmap plot", {
       target.data, 
       norm.method = "quant",
       annotation.col = c("class", "segment", "region"),
-      ngenes = 1000,
+      ngenes = 500,
       
       ## Visualization
       scale.by.row.or.col = "row",
@@ -61,5 +76,8 @@ test_that("making heatmap plot", {
     print(dsp.list$plot)
     expected.elements = c("plot.genes", "plot")
     expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
+
+} ## end for loop
   
 })
+
