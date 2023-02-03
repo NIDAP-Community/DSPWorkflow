@@ -1,4 +1,4 @@
-test_that("making heatmap plot---Human Kidney dataset", {
+test_that("making heatmap plot---Human Kidney, Mouse Thymus, Human Colon, NSCLCt", {
 
 #    target.data <- readRDS(test_path("fixtures", "target.Data.rds"))  
 #    target.data <- readRDS("/rstudio-files/ccr-dceg-data/users/Difei/DSP/DSPWorkflow/tests/testthat/fixtures/Human_Kidney/normalizationHumanKidney.RDS")
