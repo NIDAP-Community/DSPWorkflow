@@ -19,7 +19,7 @@
 # LOQcutoff 2 is recommended, LOQmin 2 is recommend, 
 # Cutsegment = remove segments with less than 10% of the genes detected; .05-.1 recommended,
 # GOI = goi (genes of interest). Must be a vector of genes (i.e c("PDCD1", "CD274")),
-filtering <- function(Data, dsp_obj, PKCS, LOQcutoff, LOQmin, CutSegment, GOI) {
+filtering <- function(Data, PKCS, LOQcutoff, LOQmin, CutSegment, GOI) {
   
   if(class(Data)[1] != "NanoStringGeoMxSet"){
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
@@ -45,6 +45,9 @@ filtering <- function(Data, dsp_obj, PKCS, LOQcutoff, LOQmin, CutSegment, GOI) {
     stop(paste0("Error: You have the wrong data class, must be character" ))
   }
   modules <- gsub(".pkc", "", pkcs)
+  
+  # Collapse probes to gene targets
+  #target_Data <- aggregateCounts(Data)
 
   # Calculate LOQ per module tested
   LOQ <- data.frame(row.names = colnames(Data))
@@ -110,8 +113,8 @@ filtering <- function(Data, dsp_obj, PKCS, LOQcutoff, LOQmin, CutSegment, GOI) {
 
   # select the annotations we want to show, use `` to surround column names with
   # spaces or special symbols
-  count_mat <- count(pData(dsp_obj), `slide name`, class, region, segment)
-  if(class(dsp_obj)[1] != "NanoStringGeoMxSet"){
+  count_mat <- count(pData(Data), `slide name`, class, region, segment)
+  if(class(Data)[1] != "NanoStringGeoMxSet"){
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
   }
   # simplify the slide names
