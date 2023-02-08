@@ -4,15 +4,15 @@
 
 #' Estimate cell composition across spatial samples using information from a custom cell signature matrix
 
-#' @param dsp_obj Nanostring object containing normalized gene expression data
-#' @param norm_expr_type Name of the slot containing normalized gene expression data
-#' @param ref_mtx expression matrix (Gene x Reference_Samples) 
-#' @param ref_annot annotated data.frame with CellID and LabeledCellType, will be used along with ref_mtx to generate custom signature matrix
-#' @param CellID column of annotated data.frame containing cell barcode or name
-#' @param celltypeCol column of annotated data.frame containing cell identity information
+#' @param dsp.obj Nanostring object containing normalized gene expression data
+#' @param norm.expr.type Name of the slot containing normalized gene expression data
+#' @param ref.mtx expression matrix (Gene x Reference_Samples) 
+#' @param ref.annot annotated data.frame with cell.id and LabeledCellType, will be used along with ref.mtx to generate custom signature matrix
+#' @param cell.id column of annotated data.frame containing cell barcode or name
+#' @param celltype.col column of annotated data.frame containing cell identity information
 #' @param normalize scale profile matrix gene expression according to gene count
-#' @param minCellNum minimum number of cells (within a type) required to generate signature matrix
-#' @param minGenes filters cells according to minimum number of genes expressed 
+#' @param min.cell.num minimum number of cells (within a type) required to generate signature matrix
+#' @param min.genes filters cells according to minimum number of genes expressed 
 #' 
 #' @import SpatialDecon
 #' @import GeomxTools
@@ -32,51 +32,51 @@
 #' res$prop_of_all: res$beta rescaled to proportion of celltype across each sample 
 #' heatmap / barplot of estimated cell abundances in data
 
-spatial_deconvolution <- function(dsp_obj,
-                                  norm_expr_type = "",
-                                  ref_mtx, 
-                                  ref_annot,
-                                  CellID = "CellID",
-                                  cellTypeCol = "LabeledCellType",
+spatialDeconvolution <- function(dsp.obj,
+                                  norm.expr.type = "",
+                                  ref.mtx, 
+                                  ref.annot,
+                                  cell.id = "CellID",
+                                  celltype.col = "LabeledCellType",
                                   normalize = FALSE,
-                                  minCellNum = 0,
-                                  minGenes = 10
+                                  min.cell.num = 0,
+                                  min.genes = 10
                                   ){
   
   ## -------------------------------- ##
   ## Parameter Misspecifation Errors  ##
   ## -------------------------------- ##
   
-  if (!norm_expr_type %in% names(dsp_obj@assayData)){
+  if (!norm.expr.type %in% names(dsp.obj@assayData)){
     stop("Normalized data slot not found in the data")
-  } else if (!all(c(CellID, cellTypeCol) %in% colnames(ref_annot))){
-    stop ("Check that CellID and cellTypeCol are properly labeled and present in reference annotation table")
+  } else if (!all(c(cell.id, celltype.col) %in% colnames(ref.annot))){
+    stop ("Check that cell.id and celltype.col are properly labeled and present in reference annotation table")
   }
   
-  norm_data <- assayDataElement(dsp_obj, elt = norm_expr_type)
+  norm_data <- assayDataElement(dsp.obj, elt = norm.expr.type)
   
   # Calculate negative background
-  neg_sub <- negativeControlSubset(dsp_obj)
+  neg_sub <- negativeControlSubset(dsp.obj)
 
   bg = derive_GeoMx_background(norm = norm_data,
-                               probepool = fData(dsp_obj)$Module,
+                               probepool = fData(dsp.obj)$Module,
                                negnames = neg_sub@featureData@data$TargetName)
   
   # Load reference dataset (matrix and annotation table)
-  mtx_for_deconv <- ref_mtx
-  annot <- ref_annot
+  mtx_for_deconv <- ref.mtx
+  annot <- ref.annot
   
   # Create custom matrix for input to spatial deconvolution, returns matrix with gene and celltype information
   custom_mtx <- create_profile_matrix(
     mtx = mtx_for_deconv,
     cellAnnots = annot,
-    cellTypeCol = cellTypeCol,  
-    cellNameCol = CellID,           
+    cellTypeCol = celltype.col,  
+    cellNameCol = cell.id,           
     matrixName = "custom_DSP_mtx",  # name of final profile matrix
     outDir = NULL,                  # path to desired output directory, set to NULL if matrix should not be written
     normalize = normalize,                
-    minCellNum = minCellNum,                  
-    minGenes = minGenes,              
+    minCellNum = min.cell.num,                  
+    minGenes = min.genes,              
     scalingFactor = 1,              # what should all values be multiplied by for final matrix
     discardCellTypes = FALSE)
   

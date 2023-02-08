@@ -2,8 +2,8 @@
 
 #' @param genes which genes should be plotted on the y-axis of the violin plot
 #' @param group which groups should be plotted on the x axis of the violin plot
-#' @param facet_by broader category of group, if specified, the violin plots will be split further based on this category
-#' @param expr_type name of normalized expression data slot
+#' @param facet.by broader category of group, if specified, the violin plots will be split further based on this category
+#' @param expr.type name of normalized expression data slot
 
 #' @import GeomxTools
 #' @import ggplot2
@@ -17,46 +17,46 @@
 ## Plotting Genes of Interest
 
 
-violin_function <- function(data = target_demoData,
-                            expr_type = "q_norm",
+violinPlot <- function(data = target_demoData,
+                            expr.type = "q_norm",
                             genes = c(),
                             group = "CellType",
-                            facet_by = NULL
+                            facet.by = NULL
                             ){
   
   ## -------------------------------- ##
   ## Parameter Misspecifation Errors  ##
   ## -------------------------------- ##
   
-  check_errors <- function(obj){
-    if (!expr_type %in% names(obj@assayData)){
+  checkErrors <- function(obj){
+    if (!expr.type %in% names(obj@assayData)){
       stop("expression data type was not found in DSP data")
-    } else if (all(!genes %in% rownames(obj@assayData[[expr_type]]))){
+    } else if (all(!genes %in% rownames(obj@assayData[[expr.type]]))){
       stop("no genes were found in DSP data")}
     else if (!group %in% colnames(pData(obj))){
       stop("grouping parameter was not found in DSP data")
-    } else if (!is.null(facet_by)){
-       if (!facet_by %in% colnames(pData(obj))){
+    } else if (!is.null(facet.by)){
+       if (!facet.by %in% colnames(pData(obj))){
       stop("facet parameter was not found in DSP data")
         }
     } 
   }
   
-  check_errors(obj = data)
+  checkErrors(obj = data)
   
   # Print genes not found in data
-  print(paste0(genes[!genes %in% rownames(data@assayData[[expr_type]])], " not found and will not be displayed"))
+  print(paste0(genes[!genes %in% rownames(data@assayData[[expr.type]])], " not found and will not be displayed"))
   
   # Display violin plots for genes found in the data
-  genes_present <- as.list(genes[genes %in% rownames(data@assayData[[expr_type]])])
+  genes_present <- as.list(genes[genes %in% rownames(data@assayData[[expr.type]])])
   
   violin <- list()
   
-  draw_violin <- function(gene){
+  drawViolin <- function(gene){
     violin <- ggplot(pData(data),
                           aes(x = eval(parse(text=group)), fill = eval(parse(text=group)),
                               y = assayDataElement(data[gene, ],
-                                                   elt = expr_type))) +
+                                                   elt = expr.type))) +
       geom_violin() +
       geom_jitter(width = .2) +
       labs(y = paste(gene,"Expression", sep = " ")) +
@@ -67,7 +67,7 @@ violin_function <- function(data = target_demoData,
     return(violin)
   }
   
-  violin <- lapply(genes_present, function (x) draw_violin(x))
+  violin <- lapply(genes_present, function (x) drawViolin(x))
 
   final_plot <- arrangeGrob(grobs = violin)
   
