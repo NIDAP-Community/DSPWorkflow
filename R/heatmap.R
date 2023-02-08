@@ -2,9 +2,9 @@
 #http://www.bioconductor.org/packages/release/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html#62_Clustering_high_CV_Genes
 
 #' NanoString Digital Spatial Profile study
-#' 
+#'
 #' 1. Exploring the normalized data by calculating the coefficient of variation (CV) for each gene (g) using the formula CVg=SDg/meang.
-#' 2. We then identify genes with high CVs that should have large differences across the various profiled segments. 
+#' 2. We then identify genes with high CVs that should have large differences across the various profiled segments.
 #' 3. This unbiased approach can reveal highly variable genes across the study.
 #' 4. We plot the results using unsupervised hierarchical clustering, displayed as a heatmap.
 
@@ -24,16 +24,16 @@
 #' @param clustering.distance.cols distance for clustering by cols (correlation, or euclidean)
 #' @param annotation.row the annotations shown on left side of the heatmap
 #' @param annotation.col the annotations shown on right side of the heatmap
-#' @param breaks.by.values a sequence of numbers that covers the range of values in mat e.g seq(-3, 3, 0.05), 6/0.05=120 colors. 
+#' @param breaks.by.values a sequence of numbers that covers the range of values in mat e.g seq(-3, 3, 0.05), 6/0.05=120 colors.
 #' @param heatmap.color colors of heatmap colorRampPalette(c("blue", "white", "red"))(120), here 120 is consistent with 120 above.
 #' @param norm.method normalization method quant: Upper quartile (Q3) normalization and neg: background normalization
-#' 
+#'
 #' @importFrom NanoStringNCTools assayDataApply
 #' @importFrom Biobase assayDataElement
 #' @import pheatmap
-#' 
+#'
 #' @export
-#' 
+#'
 #' @return A list containing the plot genes data matrix, and the heatmap plot.
 ##
 ## target.data is the output S4 obj from normalization step
@@ -63,7 +63,7 @@
 #                               etc. If the value is none of the above it is assumed that a distance matrix is provided.
 # clustering_distance_cols      distance measure used in clustering columns. Possible values the same as for clustering_distance_rows.
 # clustering_method             clustering method used. Accepts the same values as hclust.
-# clustering_callback           callback function to modify the clustering. Is called with two parameters: original hclust object and 
+# clustering_callback           callback function to modify the clustering. Is called with two parameters: original hclust object and
 #                               the matrix used for clustering. Must return a hclust object.
 # cutree_cols                   similar to cutree_rows, but for columns
 # treeheight_row                the height of a tree for rows, if these are clustered. Default value 50 points.
@@ -91,7 +91,7 @@
 # fontsize_row                  fontsize for rownames (Default: fontsize)
 # fontsize_col                  fontsize for colnames (Default: fontsize)
 # angle_col                     angle of the column labels, right now one can choose only from few predefined options (0, 45, 90, 270 and 315)
-# display_numbers               logical determining if the numeric values are also printed to the cells. If this is a matrix (with same 
+# display_numbers               logical determining if the numeric values are also printed to the cells. If this is a matrix (with same
 #                               dimensions as original matrix), the contents of the matrix are shown instead of original values.
 # number_format                 format strings (C printf style) of the numbers shown in cells. For example "%.2f" shows 2 decimal places
 #                               and "%.1e" shows exponential notation (see more in sprintf).
@@ -102,7 +102,7 @@
 # gaps_col                      similar to gaps_row, but for columns.
 # labels_row                    custom labels for rows that are used instead of rownames.
 # labels_col                    similar to labels_row, but for columns.
-# filename                      file path where to save the picture. Filetype is decided by the extension in the path. Currently following 
+# filename                      file path where to save the picture. Filetype is decided by the extension in the path. Currently following
 #                               formats are supported: png, pdf, tiff, bmp, jpeg. Even if the plot does not fit into the plotting window,
 #                               the file size is calculated so that the plot would fit there, unless specified otherwise.
 # width                         manual option for determining the output file width in inches.
@@ -113,101 +113,121 @@
 
 #HeatMap <- function(target.data, ngenes, image.width, image.height, image.resolution, image.filename,
 #                    scale.by.row.or.col, show.rownames, show.colnames, clustering.method, cluster.rows, cluster.cols,
-#                    clustering.distance.rows, clustering.distance.cols, annotation.row, annotation.col, 
-#                    breaks.by.values, heatmap.color, norm.method) 
+#                    clustering.distance.rows, clustering.distance.cols, annotation.row, annotation.col,
+#                    breaks.by.values, heatmap.color, norm.method)
+
+heatMap <- function(## Basic Parameters
+  target.data,
+  norm.method = "quant",
+  annotation.col = c("class", "segment", "region"),
+  ngenes = 200,
   
-HeatMap <- function(
-    ## Basic Parameters
-    target.data, 
-    norm.method = "quant",
-    annotation.col = c("class", "segment", "region"),
-    ngenes = 200,
-    
-    ## Visualization
-    scale.by.row.or.col = "row",
-    show.rownames = FALSE,
-    show.colnames = FALSE,
-    
-    ## Clustering
-    clustering.method = "average",
-    cluster.rows = TRUE,
-    cluster.cols = TRUE,
-    clustering.distance.rows = "correlation",
-    clustering.distance.cols = "correlation",
-    annotation.row = NA,
-    #annotation.col = pData(target.data)[, c("class", "segment", "region")],
-    
-    ## Image
-    image.width = 3600,
-    image.height = 1800,
-    image.resolution = 300,
-    image.filename = "heatmap.clust.highCVgenes.png",
-    breaks.by.values = seq(-3, 3, 0.05), # 6/0.05=120 colors
-    heatmap.color = colorRampPalette(c("blue", "white", "red"))(120))  
+  ## Visualization
+  scale.by.row.or.col = "row",
+  show.rownames = FALSE,
+  show.colnames = FALSE,
+  
+  ## Clustering
+  clustering.method = "average",
+  cluster.rows = TRUE,
+  cluster.cols = TRUE,
+  clustering.distance.rows = "correlation",
+  clustering.distance.cols = "correlation",
+  annotation.row = NA,
+  #annotation.col = pData(target.data)[, c("class", "segment", "region")],
+  
+  ## Image
+  image.width = 3600,
+  image.height = 1800,
+  image.resolution = 300,
+  image.filename = "heatmap.clust.highCVgenes.png",
+  breaks.by.values = seq(-3, 3, 0.05),
+  # 6/0.05=120 colors
+  heatmap.color = colorRampPalette(c("blue", "white", "red"))(120))
 {
-
-## log2 transformation
-#log2.data <- Biobase::assayDataElement(object = target.data, elt = "log_q") <- 
-#  assayDataApply(target.data, 2, FUN = log, base = 2, elt = "q_norm")
-
-if(norm.method == "quant") elt.value <- "q_norm"  # Upper quartile (Q3) normalization
-if(norm.method == "neg") elt.value <- "neg_norm"  # background normalization
-
-Biobase::assayDataElement(object = target.data, elt = "log_q") <- 
-     assayDataApply(target.data, 2, FUN = log, base = 2, elt = elt.value)
+  ## log2 transformation
+  #log2.data <- Biobase::assayDataElement(object = target.data, elt = "log_q") <-
+  #  assayDataApply(target.data, 2, FUN = log, base = 2, elt = "q_norm")
   
-# create CV function
-calc.cv <- function(x) {sd(x) / mean(x)}
-cv.dat <- assayDataApply(target.data,
-                         elt = "log_q", MARGIN = 1, calc.cv)
-# show the highest CD genes and their CV values
-sort(cv.dat, decreasing = TRUE)[1:5]
-#>   CAMK2N1    AKR1C1      AQP2     GDF15       REN 
-#> 0.5886006 0.5114973 0.4607206 0.4196469 0.4193216
-
-# Identify genes in the top 3rd of the CV values
-goi <- names(cv.dat)[cv.dat > quantile(cv.dat, 0.8)]
-
-# output heatmap inot pdf file
-#pdf(file=filename)
-plot.genes <- Biobase::assayDataElement(target.data[goi, ], elt = "log_q")
-
-## image params
-# width <- image.width
-# height <- image.height
-# resolution <- image.resolution
-# filename <- image.filename
-
-## heatmap color
-col.palette <- heatmap.color  # color = colorRampPalette(c("blue", "white", "red"))(120)
-#anno.col = pData(target.data)[, c("class", "segment", "region")])
-anno.col <- pData(target.data)[, annotation.col]
-
-p <- pheatmap(plot.genes[1:ngenes,],
-         main ="Clustering high CV genes",
-         scale = scale.by.row.or.col, # "row",
-         show_rownames = show.rownames, # FALSE, 
-         show_colnames = show.colnames, # FALSE,
-         border_color = NA,
-         clustering_method = clustering.method, # "average"
-         cluster_rows = cluster.rows, ## T
-         cluster_cols = cluster.cols, ## T
-         clustering_distance_rows = clustering.distance.rows, ## "correlation",
-         clustering_distance_cols = clustering.distance.cols, ## "correlation",
-         breaks = breaks.by.values, # seq(-3, 3, 0.05),
-         color = col.palette,
-         annotation_col = anno.col)
-
-#png(filename=image.filename, width=image.width, height=image.height, units="px", pointsize=4, bg="white", res=image.resolution, type="cairo")
- print(p)
-#dev.off()
-
-## gene.df converts to data frame
-gene.df <- as.data.frame(plot.genes)
- 
-## add genename column to the output matrix
-plot.genes <- gene.df %>% rownames_to_column("gene")
-
-#return(list("log2.data" = log2.data, "plot.genes"=plot.genes, plot" = p))
-return(list("plot.genes" = plot.genes, "plot" = p))
+  if (norm.method == "quant")
+    elt.value <- "q_norm"  # Upper quartile (Q3) normalization
+  if (norm.method == "neg")
+    elt.value <- "neg_norm"  # background normalization
+  
+  Biobase::assayDataElement(object = target.data, elt = "log_q") <-
+    assayDataApply(target.data,
+                   2,
+                   FUN = log,
+                   base = 2,
+                   elt = elt.value)
+  
+  # create CV function
+  calc.cv <- function(x) {
+    sd(x) / mean(x)
+  }
+  cv.dat <- assayDataApply(target.data,
+                           elt = "log_q", MARGIN = 1, calc.cv)
+  # show the highest CD genes and their CV values
+  sort(cv.dat, decreasing = TRUE)[1:5]
+  #>   CAMK2N1    AKR1C1      AQP2     GDF15       REN
+  #> 0.5886006 0.5114973 0.4607206 0.4196469 0.4193216
+  
+  # Identify genes in the top 3rd of the CV values
+  goi <- names(cv.dat)[cv.dat > quantile(cv.dat, 0.8)]
+  
+  # output heatmap inot pdf file
+  #pdf(file=filename)
+  plot.genes <-
+    Biobase::assayDataElement(target.data[goi,], elt = "log_q")
+  
+  ## image params
+  # width <- image.width
+  # height <- image.height
+  # resolution <- image.resolution
+  # filename <- image.filename
+  
+  ## heatmap color
+  col.palette <-
+    heatmap.color  # color = colorRampPalette(c("blue", "white", "red"))(120)
+  #anno.col = pData(target.data)[, c("class", "segment", "region")])
+  anno.col <- pData(target.data)[, annotation.col]
+  
+  p <- pheatmap(
+    plot.genes[1:ngenes, ],
+    main = "Clustering high CV genes",
+    scale = scale.by.row.or.col,
+    # "row",
+    show_rownames = show.rownames,
+    # FALSE,
+    show_colnames = show.colnames,
+    # FALSE,
+    border_color = NA,
+    clustering_method = clustering.method,
+    # "average"
+    cluster_rows = cluster.rows,
+    ## T
+    cluster_cols = cluster.cols,
+    ## T
+    clustering_distance_rows = clustering.distance.rows,
+    ## "correlation",
+    clustering_distance_cols = clustering.distance.cols,
+    ## "correlation",
+    breaks = breaks.by.values,
+    # seq(-3, 3, 0.05),
+    color = col.palette,
+    annotation_col = anno.col
+  )
+  
+  #png(filename=image.filename, width=image.width, height=image.height, units="px", pointsize=4, bg="white", res=image.resolution, type="cairo")
+  print(p)
+  #dev.off()
+  
+  ## gene.df converts to data frame
+  gene.df <- as.data.frame(plot.genes)
+  
+  ## add genename column to the output matrix
+  plot.genes <- gene.df %>% rownames_to_column("gene")
+  
+  #return(list("log2.data" = log2.data, "plot.genes"=plot.genes, plot" = p))
+  return(list("plot.genes" = plot.genes, "plot" = p))
 }
