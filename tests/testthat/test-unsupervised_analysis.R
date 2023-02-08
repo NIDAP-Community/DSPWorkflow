@@ -105,8 +105,7 @@ test_that("Check warning message when replacing pre-existing analysis", {
     )
   
   # Run again with different parameters to replace previous analysis
-  expect_warning(output2 <-
-                   DimReduct(
+  expect_warning(DimReduct(
                      object = output$dsp.object,
                      point.size = 5,
                      point.alpha = 5,

@@ -42,12 +42,9 @@ DimReduct <-
     
     if (any(c("PC1", "PC2", "tSNE1", "UMAP1", "UMAP2") %in% colnames(pData(object)))) {
       reductions = colnames(pData(object))[grepl("PC|tSNE|UMAP", colnames(pData(object)))]
-      cat(
-        sprintf(
-          "\nWarning: %s found in the input DSP object and will be replaced by this calculation",
-          reductions
-        )
-      )
+      for(reduction in reductions){
+        warning(paste0(reduction," found in the input DSP object and will be replaced by this calculation.\n"))
+      }
     }
     color.variable <-
       PC1 <- PC2 <- tSNE1 <- tSNE2 <- UMAP1 <- UMAP2 <- NULL
