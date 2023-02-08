@@ -64,8 +64,8 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                         minArea = 1000)
     print(QCoutput$segments.qc)
     
-    qcHumanKidney <- QCoutput$dsp.target
-    saveRDS(qcHumanKidney, file = "qcHumanKidney.RDS")
+    #qcHumanKidney <- QCoutput$dsp.target
+    #saveRDS(qcHumanKidney, file = "qcHumanKidney.RDS")
 
 ```
 
@@ -75,7 +75,6 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     
     PKFil <- annotation(QCoutput$dsp.target)
     target_demoDataFil <- QCoutput$dsp.target
-    demoDataFil <- QCoutput$dsp.target
     
     genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
