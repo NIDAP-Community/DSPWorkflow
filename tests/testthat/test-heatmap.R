@@ -11,7 +11,7 @@ test_that("making heatmap plot---Test Human Kidney dataset", {
     norm.method = "quant",
     annotation.col = c("class", "segment", "region"),
     ngenes = 500,
-    
+
     ## Visualization
     scale.by.row.or.col = "row",
     show.rownames = FALSE,

@@ -80,12 +80,10 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     
     PKFil <- annotation(QCoutput$dsp.target)
     target_demoDataFil <- QCoutput$dsp.target
-    demoDataFil <- QCoutput$dsp.target
     
     genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
     FiltOutput <- filtering(Data = target_demoDataFil, 
-                            dsp_obj = demoDataFil, 
                             PKCS = PKFil, 
                             LOQcutoff = 2, 
                             LOQmin = 2, 
