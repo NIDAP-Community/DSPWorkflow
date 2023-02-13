@@ -25,7 +25,7 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
   datadir <- "/rstudio-files/ccr-dceg-data/data/Colon_Dataset"
   DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
                   full.names = TRUE, recursive = TRUE)
-  PKCFiles <- "/tests/testthat/fixtures/Hs_R_NGS_WTA_v1.0.pkc"
+  PKCFiles <- test_path("fixtures/Human_Colon", "Hs_R_NGS_WTA_v1.0.pkc")
   SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
                               full.names = TRUE, recursive = TRUE)
   
@@ -64,13 +64,13 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                         percentSaturation = 50, 
                         minNegativeCount = 10,   
                         maxNTCCount = 1000,     
-                        minNuclei = 200,         
+                        minNuclei = NULL,         
                         minArea = 16000)
     print(QCoutput$segments.qc)
     
-    #qcHumanColon <- QCoutput$dsp.target
-    
-    #saveRDS(qcHumanColon, file = "qcHumanColon.RDS")
+    # For creating fixture RDS
+    qcHumanColon <- QCoutput$dsp.target
+    saveRDS(qcHumanColon, file = "qcHumanColon.RDS")
 
 ```
 
@@ -80,12 +80,10 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     
     PKFil <- annotation(QCoutput$dsp.target)
     target_demoDataFil <- QCoutput$dsp.target
-    demoDataFil <- QCoutput$dsp.target
     
     genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
     FiltOutput <- filtering(Data = target_demoDataFil, 
-                            dsp_obj = demoDataFil, 
                             PKCS = PKFil, 
                             LOQcutoff = 2, 
                             LOQmin = 2, 

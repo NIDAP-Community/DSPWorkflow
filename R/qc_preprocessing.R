@@ -46,15 +46,15 @@ QcProc <- function(object,
                    percentAligned = 80,
                    percentSaturation = 50,
                    minNegativeCount = 10,
-                   maxNTCCount = 1000,         # DIF 60
-                   minNuclei = 200,            # DIF 200
-                   minArea = 16000,             # DIF 16000
+                   maxNTCCount = NULL,         # DIF 60
+                   minNuclei = NULL,            # DIF 200
+                   minArea = NULL,             # DIF 16000
                    minProbeRatio = 0.1,
                    outlierTestAlpha = 0.01,    # MIS
                    percentFailGrubbs = 20,
                    removeLocalOutliers = TRUE
-                   )
-{
+                   ){
+
   # DEFAULTS <- list() #from https://github.com/Nanostring-Biostats/GeomxTools/blob/master/R/NanoStringGeoMxSet-qc.R
   # #loqCutoff = 1.0,            # MIS
   # highCountCutoff = 10000     # MIS
@@ -102,11 +102,76 @@ QcProc <- function(object,
       percentStitched = percentStitched,
       percentAligned = percentAligned,
       percentSaturation = percentSaturation,
-      minNegativeCount = minNegativeCount,
-      maxNTCCount = maxNTCCount,
-      minNuclei = minNuclei,
-      minArea = minArea
+      minNegativeCount = minNegativeCount
     )
+  
+  # Check if required parameters contain non-numeric values
+  for (param in names(qc.params)) {
+    
+    param_value <- qc.params[param]
+    
+    for(value in param_value){
+      if(!is.numeric(value)){
+        stop(paste0(param, " is not numeric. Please specify a numeric value.\n"))
+      }
+    }
+  }
+  
+  # Check if NTC is in the annotation, if so the maxNTCCount parameter needs to be numeric
+  if("NTC" %in% colnames(sData(object))){
+    
+    if(is.null(maxNTCCount)){
+      stop(paste0("NTC is part of the annotation, please specify a numeric value for maxNTCCount.\n"))
+      
+    } else{
+      if(!is.numeric(maxNTCCount)){
+        stop(paste0("maxNTCCount is not numeric. Please specify a numeric value.\n"))
+      }
+      
+      # Add the maxNTCCount parameter
+      qc.params$maxNTCCount = maxNTCCount
+    }
+  }else{
+    warning(paste0("NTC is not found in the annotation, maxNTCCount will not be considered.\n"))
+  }
+  
+  
+  # Check if nuclei is in the annotation, if so the minNuclei parameter needs to be numeric
+  if("nuclei" %in% colnames(sData(object))){
+    
+    if(is.null(minNuclei)){
+      stop(paste0("Nuclei is part of the annotation, please specify a numeric value for minNuclei.\n"))
+      
+    } else{
+        if(!is.numeric(minNuclei)){
+          stop(paste0("minNuclei is not numeric. Please specify a numeric value.\n"))
+        }
+      
+        # Add the minNuclei parameter
+        qc.params$minNuclei = minNuclei
+    }
+  }else{
+    warning(paste0("Nuclei is not found in the annotation, minNuclei will not be considered.\n"))
+  }
+  
+  
+  # Check if area is in the annotation, if so the minArea parameter needs to be numeric
+  if("area" %in% colnames(sData(object))){
+    
+    if(is.null(minArea)){
+      stop(paste0("Area is part of the annotation, please specify a numeric value for minArea.\n"))
+      
+    } else{
+      if(!is.numeric(minArea)){
+        stop(paste0("minArea is not numeric. Please specify a numeric value.\n"))
+      }
+      
+      # Add the minArea parameter
+      qc.params$minArea = minArea
+    }
+  } else{
+    warning(paste0("Area is not found in the annotation, minArea will not be considered.\n"))
+  }
   
   # set segment QC flags
   object <- setSegmentQCFlags(object, qcCutoffs = qc.params)
@@ -136,10 +201,10 @@ QcProc <- function(object,
   saturated <-
     QcHist(sData(object), "Saturated (%)", color.by, percentSaturation) +
     labs(x = "sequencing\nsaturation (%)")
-  if(!is.null(minNuclei)){
+  if(!is.null(qc.params$minNuclei)){
     nuclei <- QcHist(sData(object), "nuclei", color.by, minNuclei)
   }
-  if(!is.null(minArea)){
+  if(!is.null(qc.params$minArea)){
     area <- QcHist(sData(object), "area", color.by, minArea, scale_trans = "log10")
   }
   
@@ -197,7 +262,7 @@ QcProc <- function(object,
     pData(object)[, !colnames(pData(object)) %in% neg.cols]
   
   #show all NTC values, Freq =  of Segments with a given NTC count:
-  if(!is.null(maxNTCCount)){
+  if(!is.null(qc.params$maxNTCCount)){
     kable(table(NTC_Count = sData(object)$NTC),col.names = c("NTC Count", " of Segments"))
   }
  

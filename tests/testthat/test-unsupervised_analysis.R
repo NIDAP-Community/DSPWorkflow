@@ -1,10 +1,10 @@
 test_that("Test Human Kidney dataset", {
   
-  kidney_dat <- select_normalized_RTD("kidney")
+  kidney.dat <- select_normalized_RTD("kidney")
   
   output <-
     DimReduct(
-      object = kidney_dat$inputObject,
+      object = kidney.dat,
       point.size = 1,
       point.alpha = 1,
       color.variable1 = "region",
@@ -17,11 +17,11 @@ test_that("Test Human Kidney dataset", {
 
 test_that("Test Colon Dataset", {
   
-  colon_dat <- select_normalized_RTD("colon")
+  colon.dat <- select_normalized_RTD("colon")
   
   output <-
     DimReduct(
-      object = colon_dat$inputObject,
+      object = colon.dat,
       point.size = 1,
       point.alpha = 1,
       color.variable1 = "region",
@@ -34,11 +34,11 @@ test_that("Test Colon Dataset", {
 
 test_that("Test Mouse Thymus Dataset", {
   
-  thymus_dat <- select_normalized_RTD("thymus")
+  thymus.dat <- select_normalized_RTD("thymus")
   
   output <-
     DimReduct(
-      object = thymus_dat$inputObject,
+      object = thymus.dat,
       point.size = 1,
       point.alpha = 1,
       color.variable1 = "region",
@@ -51,11 +51,11 @@ test_that("Test Mouse Thymus Dataset", {
 
 test_that("Test Human NSCLC Dataset", {
   
-  nsclc_dat <- select_normalized_RTD("nsclc")
+  nsclc.dat <- select_normalized_RTD("nsclc")
   
   output <-
     DimReduct(
-      object = nsclc_dat$inputObject,
+      object = nsclc.dat,
       point.size = 1,
       point.alpha = 1,
       color.variable1 = "region",
@@ -68,11 +68,11 @@ test_that("Test Human NSCLC Dataset", {
 
 test_that("dimension reductions present in DSP object", {
   
-  kidney_dat <- select_normalized_RTD("kidney")
+  kidney.dat <- select_normalized_RTD("kidney")
   
   output <-
     DimReduct(
-      object = kidney_dat$inputObject,
+      object = kidney.dat,
       point.size = 1,
       point.alpha = 1,
       color.variable1 = "region",
@@ -88,5 +88,29 @@ test_that("dimension reductions present in DSP object", {
   expect_true(sum(grepl("tSNE1|tSNE2", colnames(
     pData(output$dsp.object)
   ))) == 2)
+  
+})
+
+test_that("Check warning message when replacing pre-existing analysis", {
+  
+  kidney.dat <- select_normalized_RTD("kidney")
+  
+  output <-
+    DimReduct(
+      object = kidney.dat,
+      point.size = 1,
+      point.alpha = 1,
+      color.variable1 = "region",
+      shape.variable = "class"
+    )
+  
+  # Run again with different parameters to replace previous analysis
+  expect_warning(DimReduct(
+                     object = output$dsp.object,
+                     point.size = 5,
+                     point.alpha = 5,
+                     color.variable1 = "region",
+                     shape.variable = "segment"
+                   ), "found in the input DSP object and will be replaced by this calculation")
   
 })

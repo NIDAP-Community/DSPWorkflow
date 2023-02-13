@@ -25,13 +25,17 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
   datadir <- "/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example"
   DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
                   full.names = TRUE, recursive = TRUE) 
-  PKCFiles <- "/tests/testthat/fixtures/TAP_H_WTA_v1.0.pkc"
-  SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
-                              full.names = TRUE, recursive = TRUE)
-
+  PKCFiles <- test_path("fixtures/Human_Kidney", "TAP_H_WTA_v1.0.pkc")
+  #SampleAnnotationFile <- "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset/annotation/kidney_demo_AOI_Annotations.xlsx"
+  SampleAnnotationFile <- "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset/annotation/kidney_AOI_Annotations_all_vignette.xlsx"
+  
   sdesign.list <- StudyDesign(dccFiles = DCCFiles, 
                                 pkcFiles = PKCFiles,
-                                phenoDataFile = SampleAnnotationFile)
+                                phenoDataFile = SampleAnnotationFile,
+                                phenoDataSheet = "Template",
+                                phenoDataDccColName = "Sample_ID",
+                                protocolDataColNames = c("aoi", "roi"),
+                                experimentDataColNames = c("panel"))
   
   # For creating fixture RDS
   #studyDesignHumanKidney <- sdesign.list$dsp.obj
@@ -61,7 +65,6 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     print(QCoutput$segments.qc)
     
     #qcHumanKidney <- QCoutput$dsp.target
-    
     #saveRDS(qcHumanKidney, file = "qcHumanKidney.RDS")
 
 ```
@@ -72,12 +75,10 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     
     PKFil <- annotation(QCoutput$dsp.target)
     target_demoDataFil <- QCoutput$dsp.target
-    demoDataFil <- QCoutput$dsp.target
     
     genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
     FiltOutput <- filtering(Data = target_demoDataFil, 
-                            dsp_obj = demoDataFil, 
                             PKCS = PKFil, 
                             LOQcutoff = 2, 
                             LOQmin = 2, 
