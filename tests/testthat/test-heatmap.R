@@ -49,7 +49,7 @@ test_that("making heatmap plot---Test Colon Dataset", {
     colon.dat, 
     norm.method = "quant",
     annotation.col = c("class", "segment", "region"),
-    ngenes = 500,
+    ngenes = 800,
     
     ## Visualization
     scale.by.row.or.col = "row",
@@ -88,7 +88,7 @@ test_that("making heatmap plot---Test Mouse Thymus Dataset", {
     thymus.dat, 
     norm.method = "quant",
     annotation.col = c("class", "segment", "region"),
-    ngenes = 500,
+    ngenes = 1000,
     
     ## Visualization
     scale.by.row.or.col = "row",
@@ -127,7 +127,7 @@ test_that("making heatmap plot---Test Human NSCLC Dataset", {
     nsclc.dat, 
     norm.method = "quant",
     annotation.col = c("class", "segment", "region"),
-    ngenes = 500,
+    ngenes = 2000,
     
     ## Visualization
     scale.by.row.or.col = "row",
@@ -156,3 +156,11 @@ test_that("making heatmap plot---Test Human NSCLC Dataset", {
   expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
   
 })
+
+
+#test_that("making heatmap plot---Test Human NSCLC Dataset", {
+  
+#  nsclc.dat <- select_normalized_RTD("nsclc")
+  
+#  expect_error(heatMap(nsclc.dat, norm.method="Quantile",...), "Error: Quantile needs to be quant")
+#})
