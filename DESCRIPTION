@@ -1,6 +1,6 @@
 Package: DSPWorkflow
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Version: 0.0.1.0
 Authors@R: 
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
@@ -25,7 +25,7 @@ Imports:
     gridExtra (>= 2.3),
     gtable (>= 0.3.0),
     knitr (>= 1.40),
-    NanoStringNCTools (>= 1.4.0),
+    NanoStringNCTools (>= 1.2.0),
     patchwork (>= 1.1.2),
     reshape2 (>= 1.4.4),
     Rmpfr (>= 0.8-9),
@@ -37,6 +37,7 @@ Imports:
     tidyr (>= 1.2.1),
     tidyverse (>= 1.3.2),
     umap (>= 0.2.9.0),
-    pheatmap (>= 1.0.12)
+    pheatmap (>= 1.0.12),
+    stringr
 Config/testthat/edition: 3
 
