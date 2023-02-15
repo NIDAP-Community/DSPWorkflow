@@ -4,7 +4,7 @@
 
 #' Run a linear mixed model on GeoMxSet
 #'
-#' @param object name of the NanoStringGeoMxSet to perform DE analysis on
+#' @param object Name of the NanoStringGeoMxSet to perform DE analysis on
 #' @param analysis.type Analysis type either "Between Groups" or "Within Groups"
 #' @param groups One or more groups of interest (needs to be variables within group.col)
 #' @param group.col Column for group (groups are usually found in different slides)
@@ -12,16 +12,15 @@
 #' @param region.col Column for region (regions are usually found within a slide)
 #' @param slide.col Column for slide name
 #' @param element assayDataElement of the geoMxSet object to run the DE on
-#' @param fc.lim = 1.2, Fold Change limit for summarizing genes of interest
-#' @param n.cores = 1, Number of cores to use, set to 1 if running in serial mode
-#' @param multi.core = TRUE, set to TRUE to use multicore, FALSE to run in cluster mode
-#' @param p.adjust = Method to use for pvalue adjustment. Choices are "holm","hochberg","hommel","bonferroni","BH","BY","fdr","none". Default is "BH"
-#' @param pairwise Boolean to calculate least-square means pairwise differences
+#' @param fc.lim Fold Change limit for summarizing genes of interest (default is 1.2)
+#' @param n.cores Number of cores to use, set to 1 if running in serial mode (default is 1)
+#' @param multi.core Set to TRUE to use multicore, FALSE to run in cluster mode (default is TRUE)
+#' @param p.adjust Method to use for pvalue adjustment. Choices are "holm","hochberg","hommel","bonferroni","BH","BY","fdr","none". Default is "BH"
+#' @param pairwise Boolean to calculate least-square means pairwise differences (default is NULL)
 #'
 #' @importFrom GeomxTools mixedModelDE
-#' @import NanoStringNCTools
-#' @import Biobase
 #' @importFrom stringr str_wrap
+#' @importFrom patchwork wrap_elements
 #' @importFrom stats p.adjust
 #' @importFrom dplyr group_by select filter arrange pull
 #' @importFrom tidyr pivot_wider
@@ -30,6 +29,8 @@
 #' @importFrom tibble rownames_to_column
 #' @importFrom gridExtra tableGrob
 #' @importFrom BiocGenerics rownames colnames rbind
+#' @import NanoStringNCTools
+#' @import Biobase
 #' @export
 #'
 #' @return a list containing mixed model output data frame, grid tables for samples and summary of genelists
