@@ -1,338 +1,0 @@
-✔ | F W S  OK | Context
-⠏ |         0 | differential_expression_analysis                                                                    [1] "selected kidney dataset"
-Running Within Group Analysis between Regions⠋ | 1       0 | differential_expression_analysis                                                                    [1] "selected kidney dataset"
-⠙ | 1       1 | differential_expression_analysis                                                                    [1] "selected kidney dataset"
-⠹ | 1       2 | differential_expression_analysis                                                                    [1] "selected kidney dataset"
-⠸ | 2       2 | differential_expression_analysis                                                                    [1] "selected kidney dataset"
-⠼ | 2       3 | differential_expression_analysis                                                                    [1] "selected kidney dataset"
-Running Within Group Analysis between Regions⠴ | 2       4 | differential_expression_analysis                                                                    [1] "selected kidney dataset"
-Running Between Group Analysis for Regions⠦ | 2       5 | differential_expression_analysis                                                                    [1] "selected thymus dataset"
-Running Within Group Analysis between Regions⠧ | 3       5 | differential_expression_analysis                                                                    [1] "selected colon dataset"
-Running Within Group Analysis between Regions⠇ | 4       5 | differential_expression_analysis                                                                    [1] "selected nsclc dataset"
-Running Within Group Analysis between Regions⠏ | 5       5 | differential_expression_analysis                                                                    ✖ | 5       5 | differential_expression_analysis [11.8s]
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-Error (test-differential_expression_analysis.R:7:5): Run Diff Exp Analysis with default parameters - kidney data
-Error in `wrap_elements(g1)`: could not find function "wrap_elements"
-Backtrace:
- 1. DSPWorkflow:::saveplots(...)
-      at test-differential_expression_analysis.R:7:4
-
-Error (test-differential_expression_analysis.R:51:3): Run Diff Exp Analysis with wrong entry for Groups
-Error in `kidney_test$groups <- c("Dkd", "normal")`: object 'kidney_test' not found
-
-Error (test-differential_expression_analysis.R:91:3): Run Diff Exp Analysis with default parameters - Mouse Thymus data
-Error in `wrap_elements(g1)`: could not find function "wrap_elements"
-Backtrace:
- 1. DSPWorkflow:::saveplots(...)
-      at test-differential_expression_analysis.R:91:2
-
-Error (test-differential_expression_analysis.R:127:3): Run Diff Exp Analysis with default parameters - Colon data
-Error in `wrap_elements(g1)`: could not find function "wrap_elements"
-Backtrace:
- 1. DSPWorkflow:::saveplots(...)
-      at test-differential_expression_analysis.R:127:2
-
-Error (test-differential_expression_analysis.R:162:3): Run Diff Exp Analysis with default parameters - NSCLC data
-Error in `wrap_elements(g1)`: could not find function "wrap_elements"
-Backtrace:
- 1. DSPWorkflow:::saveplots(...)
-      at test-differential_expression_analysis.R:162:2
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-⠏ |         0 | Filtering                                                                                           [1] "selected kidney dataset"
-⠋ |         1 | Filtering                                                                                           [1] "selected colon dataset"
-⠙ |         2 | Filtering                                                                                           [1] "selected thymus dataset"
-⠹ |         3 | Filtering                                                                                           [1] "selected nsclc dataset"
-⠸ |         4 | Filtering                                                                                           ⠼ | 1       4 | Filtering                                                                                           ⠴ | 2       4 | Filtering                                                                                           ⠦ | 3       4 | Filtering                                                                                           ⠧ | 4       4 | Filtering                                                                                           ⠇ | 5       4 | Filtering                                                                                           ⠏ | 6       4 | Filtering                                                                                           ⠋ | 7       4 | Filtering                                                                                           ⠙ | 8       4 | Filtering                                                                                           ⠹ | 9       4 | Filtering                                                                                           ✖ | 9       4 | Filtering [13.3s]
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-Error (test-Filtering.R:67:3): Filtering Success
-Error in `filtering(Data = target_demoDataFil, dsp_obj = demoDataFil, PKCS = PKFil, 
-    LOQcutoff = 2, LOQmin = 2, CutSegment = 0.1, GOI = genes)`: unused argument (dsp_obj = demoDataFil)
-
-Error (test-Filtering.R:78:3): Filtering Success
-Error in `filtering(Data = target_demoDataFil, dsp_obj = demoDataFil, PKCS = PKFil, 
-    LOQcutoff = 2, LOQmin = 2, CutSegment = 0.1, GOI = genes)`: unused argument (dsp_obj = demoDataFil)
-Backtrace:
- 1. testthat::expect_error(...)
-      at test-Filtering.R:78:2
- 2. testthat:::expect_condition_matching(...)
- 3. testthat:::quasi_capture(...)
- 6. rlang::eval_bare(quo_get_expr(.quo), quo_get_env(.quo))
-
-Error (test-Filtering.R:88:3): Filtering Success
-Error in `filtering(Data = target_demoDataFil, dsp_obj = demoDataFil, PKCS = PKFil, 
-    LOQcutoff = c("A"), LOQmin = 2, CutSegment = 0.1, GOI = genes)`: unused argument (dsp_obj = demoDataFil)
-Backtrace:
- 1. testthat::expect_error(...)
-      at test-Filtering.R:88:2
- 2. testthat:::expect_condition_matching(...)
- 3. testthat:::quasi_capture(...)
- 6. rlang::eval_bare(quo_get_expr(.quo), quo_get_env(.quo))
-
-Error (test-Filtering.R:98:3): Filtering Success
-Error in `filtering(Data = target_demoDataFil, dsp_obj = demoDataFil, PKCS = PKFil, 
-    LOQcutoff = 2, LOQmin = c("A"), CutSegment = 0.1, GOI = genes)`: unused argument (dsp_obj = demoDataFil)
-Backtrace:
- 1. testthat::expect_error(...)
-      at test-Filtering.R:98:2
- 2. testthat:::expect_condition_matching(...)
- 3. testthat:::quasi_capture(...)
- 6. rlang::eval_bare(quo_get_expr(.quo), quo_get_env(.quo))
-
-Error (test-Filtering.R:108:3): Filtering Success
-Error in `filtering(Data = target_demoDataFil, dsp_obj = demoDataFil, PKCS = PKFil, 
-    LOQcutoff = 2, LOQmin = 2, CutSegment = 0.1, GOI = genes)`: unused argument (dsp_obj = demoDataFil)
-Backtrace:
- 1. testthat::expect_error(...)
-      at test-Filtering.R:108:2
- 2. testthat:::expect_condition_matching(...)
- 3. testthat:::quasi_capture(...)
- 6. rlang::eval_bare(quo_get_expr(.quo), quo_get_env(.quo))
-
-Error (test-Filtering.R:118:3): Filtering Success
-Error in `filtering(Data = target_demoDataFil, dsp_obj = demoDataFil, PKCS = PKFil, 
-    LOQcutoff = 2, LOQmin = 2, CutSegment = c("A"), GOI = genes)`: unused argument (dsp_obj = demoDataFil)
-Backtrace:
- 1. testthat::expect_error(...)
-      at test-Filtering.R:118:2
- 2. testthat:::expect_condition_matching(...)
- 3. testthat:::quasi_capture(...)
- 6. rlang::eval_bare(quo_get_expr(.quo), quo_get_env(.quo))
-
-Error (test-Filtering.R:128:3): Filtering Success
-Error in `filtering(Data = target_demoDataFil, dsp_obj = demoDataFil, PKCS = PKFil, 
-    LOQcutoff = 2, LOQmin = 2, CutSegment = 10, GOI = genes)`: unused argument (dsp_obj = demoDataFil)
-Backtrace:
- 1. testthat::expect_error(...)
-      at test-Filtering.R:128:2
- 2. testthat:::expect_condition_matching(...)
- 3. testthat:::quasi_capture(...)
- 6. rlang::eval_bare(quo_get_expr(.quo), quo_get_env(.quo))
-
-Error (test-Filtering.R:138:3): Filtering Success
-Error in `filtering(Data = target_demoDataFil, dsp_obj = demoDataFil, PKCS = PKFil, 
-    LOQcutoff = 2, LOQmin = 2, CutSegment = 0.1, GOI = genes)`: unused argument (dsp_obj = demoDataFil)
-Backtrace:
- 1. testthat::expect_error(...)
-      at test-Filtering.R:138:2
- 2. testthat:::expect_condition_matching(...)
- 3. testthat:::quasi_capture(...)
- 6. rlang::eval_bare(quo_get_expr(.quo), quo_get_env(.quo))
-
-Error (test-Filtering.R:148:3): Filtering Success
-Error in `filtering(Data = target_demoDataFil, dsp_obj = demoDataFil, PKCS = PKFil, 
-    LOQcutoff = 2, LOQmin = 2, CutSegment = 10, GOI = genes)`: unused argument (dsp_obj = demoDataFil)
-Backtrace:
- 1. testthat::expect_error(...)
-      at test-Filtering.R:148:2
- 2. testthat:::expect_condition_matching(...)
- 3. testthat:::quasi_capture(...)
- 6. rlang::eval_bare(quo_get_expr(.quo), quo_get_env(.quo))
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-⠏ |         0 | heatmap                                                                                             [1] "selected kidney dataset"
-⠋ |         1 | heatmap                                                                                             [1] "selected colon dataset"
-⠙ |         2 | heatmap                                                                                             [1] "selected thymus dataset"
-⠹ |         3 | heatmap                                                                                             [1] "selected nsclc dataset"
-⠸ |         4 | heatmap                                                                                             ✔ |         4 | heatmap [22.0s]
-⠏ |         0 | normalization                                                                                       [1] "selected kidney dataset"
-⠋ |         1 | normalization                                                                                       [1] "selected thymus dataset"
-⠙ |         2 | normalization                                                                                       [1] "selected colon dataset"
-⠹ |         3 | normalization                                                                                       [1] "selected nsclc dataset"
-⠸ |         4 | normalization                                                                                       [1] "selected kidney dataset"
-⠴ |         6 | normalization                                                                                       ⠦ |         7 | normalization                                                                                       ⠧ |         8 | normalization                                                                                       ⠇ |         9 | normalization                                                                                       ⠏ |        10 | normalization                                                                                       ⠋ |        11 | normalization                                                                                       ✔ |        11 | normalization [12.0s]
-⠏ |         0 | qc_preprocessing                                                                                    [1] "selected kidney dataset"
-⠋ |         1 | qc_preprocessing                                                                                    [1] "selected colon dataset"
-⠙ |   1     1 | qc_preprocessing                                                                                    ⠹ |   1     2 | qc_preprocessing                                                                                    [1] "selected thymus dataset"
-⠸ |   1     3 | qc_preprocessing                                                                                    [1] "selected nsclc dataset"
-⠼ |   2     3 | qc_preprocessing                                                                                    ⠧ |   4     4 | qc_preprocessing                                                                                    [1] "selected kidney dataset"
-[1] "selected thymus dataset"
-⠇ |   4     5 | qc_preprocessing                                                                                    [1] "selected colon dataset"
-[1] "selected nsclc dataset"
-⠋ |   4     7 | qc_preprocessing                                                                                    ⠸ |   6     8 | qc_preprocessing                                                                                    [1] "selected kidney dataset"
-[1] "selected thymus dataset"
-⠼ |   6     9 | qc_preprocessing                                                                                    ✔ |   6    10 | qc_preprocessing [47.8s]
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-Warning (test-qc_preprocessing.R:16:3): Test Colon Dataset
-Nuclei is not found in the annotation, minNuclei will not be considered.
-
-Backtrace:
- 1. base::do.call(QcProc, colon.dat)
-      at test-qc_preprocessing.R:16:2
- 2. DSPWorkflow (local) `<fn>`(...)
-
-Warning (test-qc_preprocessing.R:38:3): Test Human NSCLC Dataset
-NTC is not found in the annotation, maxNTCCount will not be considered.
-
-Backtrace:
- 1. base::do.call(QcProc, nsclc.dat)
-      at test-qc_preprocessing.R:38:2
- 2. DSPWorkflow (local) `<fn>`(...)
-
-Warning (test-qc_preprocessing.R:38:3): Test Human NSCLC Dataset
-Nuclei is not found in the annotation, minNuclei will not be considered.
-
-Backtrace:
- 1. base::do.call(QcProc, nsclc.dat)
-      at test-qc_preprocessing.R:38:2
- 2. DSPWorkflow (local) `<fn>`(...)
-
-Warning (test-qc_preprocessing.R:38:3): Test Human NSCLC Dataset
-Area is not found in the annotation, minArea will not be considered.
-
-Backtrace:
- 1. base::do.call(QcProc, nsclc.dat)
-      at test-qc_preprocessing.R:38:2
- 2. DSPWorkflow (local) `<fn>`(...)
-
-Warning (test-qc_preprocessing.R:65:3): Check for a warning message when running QC for a dataset missing an optional parameter
-Nuclei is not found in the annotation, minNuclei will not be considered.
-
-Backtrace:
- 1. testthat::expect_warning(do.call(QcProc, nsclc.dat), "NTC is not found in the annotation")
-      at test-qc_preprocessing.R:65:2
- 8. DSPWorkflow (local) `<fn>`(...)
-
-Warning (test-qc_preprocessing.R:65:3): Check for a warning message when running QC for a dataset missing an optional parameter
-Area is not found in the annotation, minArea will not be considered.
-
-Backtrace:
- 1. testthat::expect_warning(do.call(QcProc, nsclc.dat), "NTC is not found in the annotation")
-      at test-qc_preprocessing.R:65:2
- 8. DSPWorkflow (local) `<fn>`(...)
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-⠏ |         0 | spatial_deconvolution                                                                               [1] "selected kidney dataset"
-⠋ |   1     0 | spatial_deconvolution                                                                               ⠙ |   1     1 | spatial_deconvolution                                                                               [1] "selected thymus dataset"
-⠹ |   2     1 | spatial_deconvolution                                                                               ⠸ |   2     2 | spatial_deconvolution                                                                               [1] "selected colon dataset"
-⠼ |   3     2 | spatial_deconvolution                                                                               ⠴ |   3     3 | spatial_deconvolution                                                                               [1] "selected nsclc dataset"
-⠦ |   4     3 | spatial_deconvolution                                                                               ⠧ |   4     4 | spatial_deconvolution                                                                               [1] "selected kidney dataset"
-⠇ |   4     5 | spatial_deconvolution                                                                               [1] "selected kidney dataset"
-⠏ |   4     6 | spatial_deconvolution                                                                               ✔ |   4     6 | spatial_deconvolution [89.0s]
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-Warning (test-spatial_deconvolution.R:5:3): Spatial Deconvolution works for Human Kidney data
-not all cellNameCol names are in count matrix; 5311 cells are missing
-Backtrace:
- 1. utils::capture.output(...)
-      at test-spatial_deconvolution.R:5:2
- 3. DSPWorkflow::spatialDeconvolution(...)
- 4. SpatialDecon::create_profile_matrix(...)
-      at DSPWorkflow/R/spatial_deconvolution.R:70:2
-
-Warning (test-spatial_deconvolution.R:19:3): Spatial Deconvolution works for Mouse Thymus data
-not all cellNameCol names are in count matrix; 5311 cells are missing
-Backtrace:
- 1. utils::capture.output(...)
-      at test-spatial_deconvolution.R:19:2
- 3. DSPWorkflow::spatialDeconvolution(...)
- 4. SpatialDecon::create_profile_matrix(...)
-      at DSPWorkflow/R/spatial_deconvolution.R:70:2
-
-Warning (test-spatial_deconvolution.R:33:3): Spatial Deconvolution works for Human Colon data
-not all cellNameCol names are in count matrix; 5311 cells are missing
-Backtrace:
- 1. utils::capture.output(...)
-      at test-spatial_deconvolution.R:33:2
- 3. DSPWorkflow::spatialDeconvolution(...)
- 4. SpatialDecon::create_profile_matrix(...)
-      at DSPWorkflow/R/spatial_deconvolution.R:70:2
-
-Warning (test-spatial_deconvolution.R:47:3): Spatial Deconvolution works for Human NSCLC
-not all cellNameCol names are in count matrix; 5311 cells are missing
-Backtrace:
- 1. utils::capture.output(...)
-      at test-spatial_deconvolution.R:47:2
- 3. DSPWorkflow::spatialDeconvolution(...)
- 4. SpatialDecon::create_profile_matrix(...)
-      at DSPWorkflow/R/spatial_deconvolution.R:70:2
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-⠏ |         0 | study_design                                                                                        [1] "selected kidney dataset"
-[1] "selected thymus dataset"
-[1] "selected nsclc dataset"
-[1] "selected colon dataset"
-⠋ |         1 | study_design                                                                                        ⠙ |         2 | study_design                                                                                        ⠹ |   1     2 | study_design                                                                                        ⠸ |   1     3 | study_design                                                                                        ⠼ |   2     3 | study_design                                                                                        ⠴ |   2     4 | study_design                                                                                        ✔ |   2     4 | study_design [321.7s]
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-Warning (test-study_design.R:60:3): Check for an error message when running study design on an annotation file without required fields
-Not all probes are found within PKC probe metadata. The following probes are ignored from analysis and were most likely removed from metadata while resolving multiple module PKC version conflicts.
-RTS0021749RTS0021916RTS0021976RTS0021979RTS0022732RTS0027943RTS0029660RTS0031708RTS0036612RTS0036631RTS0050279RTS0050433RTS0050547RTS0050580RTS0051214RTS0051219RTS0051232RTS0051449RTS0052009
-Backtrace:
- 1. testthat::expect_error(do.call(StudyDesign, nsclc.dat), "segment is required")
-      at test-study_design.R:60:2
- 8. DSPWorkflow (local) `<fn>`(...)
- 9. GeomxTools::readNanoStringGeoMxSet(...)
-      at DSPWorkflow/R/study_design.R:41:2
-
-Warning (test-study_design.R:63:3): Check for an error message when running study design on an annotation file without required fields
-Annotations missing for the following: DSP-1012300100510-H-A01.dcc, These will be excluded from the GeoMxSet object.
-Backtrace:
- 1. testthat::expect_error(do.call(StudyDesign, colon.dat), "region is required")
-      at test-study_design.R:63:2
- 8. DSPWorkflow (local) `<fn>`(...)
- 9. GeomxTools::readNanoStringGeoMxSet(...)
-      at DSPWorkflow/R/study_design.R:41:2
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-⠏ |         0 | unsupervised_analysis                                                                               [1] "selected kidney dataset"
-⠋ |         1 | unsupervised_analysis                                                                               [1] "selected colon dataset"
-⠙ |         2 | unsupervised_analysis                                                                               [1] "selected thymus dataset"
-⠹ |         3 | unsupervised_analysis                                                                               [1] "selected nsclc dataset"
-⠸ |         4 | unsupervised_analysis                                                                               [1] "selected kidney dataset"
-⠼ |         5 | unsupervised_analysis                                                                               [1] "selected kidney dataset"
-⠧ |   1     7 | unsupervised_analysis                                                                               ⠹ |   5     8 | unsupervised_analysis                                                                               ✔ |   5     8 | unsupervised_analysis [39.2s]
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-Warning (test-unsupervised_analysis.R:108:3): Check warning message when replacing pre-existing analysis
-PC2 found in the input DSP object and will be replaced by this calculation.
-
-Backtrace:
- 1. testthat::expect_warning(...)
-      at test-unsupervised_analysis.R:108:2
- 7. DSPWorkflow::DimReduct(...)
-
-Warning (test-unsupervised_analysis.R:108:3): Check warning message when replacing pre-existing analysis
-tSNE1 found in the input DSP object and will be replaced by this calculation.
-
-Backtrace:
- 1. testthat::expect_warning(...)
-      at test-unsupervised_analysis.R:108:2
- 7. DSPWorkflow::DimReduct(...)
-
-Warning (test-unsupervised_analysis.R:108:3): Check warning message when replacing pre-existing analysis
-tSNE2 found in the input DSP object and will be replaced by this calculation.
-
-Backtrace:
- 1. testthat::expect_warning(...)
-      at test-unsupervised_analysis.R:108:2
- 7. DSPWorkflow::DimReduct(...)
-
-Warning (test-unsupervised_analysis.R:108:3): Check warning message when replacing pre-existing analysis
-UMAP1 found in the input DSP object and will be replaced by this calculation.
-
-Backtrace:
- 1. testthat::expect_warning(...)
-      at test-unsupervised_analysis.R:108:2
- 7. DSPWorkflow::DimReduct(...)
-
-Warning (test-unsupervised_analysis.R:108:3): Check warning message when replacing pre-existing analysis
-UMAP2 found in the input DSP object and will be replaced by this calculation.
-
-Backtrace:
- 1. testthat::expect_warning(...)
-      at test-unsupervised_analysis.R:108:2
- 7. DSPWorkflow::DimReduct(...)
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-⠏ |         0 | violin_plot                                                                                         [1] "selected kidney dataset"
-[1] "FOXP3 not found and will not be displayed"
-⠋ |         1 | violin_plot                                                                                         [1] "selected thymus dataset"
-[1] "FoxP3 not found and will not be displayed"
-⠙ |         2 | violin_plot                                                                                         [1] "selected colon dataset"
-[1] "FOXP3 not found and will not be displayed"
-⠹ |         3 | violin_plot                                                                                         [1] "selected nsclc dataset"
-[1] "FOXP3 not found and will not be displayed"
-⠸ |         4 | violin_plot                                                                                         [1] "selected nsclc dataset"
-[1] "FOXP3 not found and will not be displayed"
-⠼ |         5 | violin_plot                                                                                         [1] "selected kidney dataset"
-⠴ |         6 | violin_plot                                                                                         [1] "selected kidney dataset"
-⠦ |         7 | violin_plot                                                                                         [1] "selected kidney dataset"
-⠧ |         8 | violin_plot                                                                                         [1] "selected kidney dataset"
-⠇ |         9 | violin_plot                                                                                         ✔ |         9 | violin_plot [8.9s]
-
-══ Results ═════════════════════════════════════════════════════════════════════════════════════════════════════════
-Duration: 566.3 s
-
-[ FAIL 14 | WARN 17 | SKIP 0 | PASS 61 ]
