@@ -35,6 +35,7 @@ if [ -f DESCRIPTION ]; then
     do 
       
       test_call='test_file("'"$current_dir"'/tests/testthat/'"$test_to_run"'");'
+      echo "Running: "$test_call""
       
       echo "====================================================================="
       echo -e "Running $test_call"
@@ -42,6 +43,7 @@ if [ -f DESCRIPTION ]; then
       Rscript -e 'if(! require("devtools")){install.packages("devtools")};library(devtools);sink(file="'"${current_dir}"'/test.log");load_all();'"$test_call"'sink()'  
       
       cat test.log
+      
       echo "====================================================================="
       echo "====================================================================="
       
