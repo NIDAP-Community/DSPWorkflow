@@ -13,7 +13,6 @@
 #' @param shape.variable categorical variable to be used for the shape of points (optional)
 #' @param symbol.size symbols size in legends
 #' @param text.size base font size
-#' 
 #' @importFrom Biobase pData assayDataElement
 #' @importFrom ggplot2 ggplot aes geom_point element_text ggtitle labs theme theme_bw
 #' @importFrom patchwork plot_layout plot_annotation guide_area
