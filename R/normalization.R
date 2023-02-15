@@ -21,7 +21,6 @@
 #' @importFrom utils head
 #' @importFrom GeomxTools normalize
 #'
-#'
 #' @export
 #' @return A list containing the ggplot grid, a boxplot, an normalized dataframe.
 

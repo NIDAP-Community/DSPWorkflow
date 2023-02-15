@@ -33,7 +33,6 @@
 
 #test_that("Test Human NSCLC Dataset", {
 
-
 #  nsclc.dat <- selectDatasetSD("nsclc")
   
 #  study.design.output <- do.call(StudyDesign,nsclc.dat)
