@@ -1,5 +1,5 @@
 name: Routine Push Check
-run-name: ${{ github.actor }} is checking push to "${{ github.ref_name }}"  branch
+run-name: ${{ github.actor }} is checking push to "${{ github.ref_name }}"branch
 on:
   push:
     branches:
