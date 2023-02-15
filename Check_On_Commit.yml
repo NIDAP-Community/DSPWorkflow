@@ -23,7 +23,7 @@ jobs:
            token: ${{secrets.GITHUB_TOKEN}}
            ref: ${{ steps.extract_branch.outputs.branch }}
            fetch-depth: 0
-      
+           
       - id: Build_check
         name: R Build and Checks
         run: |
@@ -32,7 +32,7 @@ jobs:
           
           git config --global --add safe.directory "$current_wd"
           
-          bash $current_wd/.github/workflows/Check_on_Commit.sh "$current_wd"
+          bash $current_wd/.github/workflows/Check_on_Commit.sh "$current_wd" "${{ github.event.before }}"
           
           
       - name: Undo Push

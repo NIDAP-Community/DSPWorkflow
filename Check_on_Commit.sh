@@ -1,7 +1,8 @@
 #!/bin/sh -l
 
 cd $1
-conda activate DSPWorkflow_NIDAP
+
+last_commit="$2"
 
 current_dir="$1"
 current_branch="$(git rev-parse --abbrev-ref HEAD)"
@@ -12,19 +13,19 @@ if [ -f DESCRIPTION ]; then
     echo "DESCRIPTION exist."
     
     
-    R_script_test=($(git log -n 1 --raw --name-status --pretty=format: $current_branch | \
+    R_script_test=($(git diff "$last_commit" HEAD --name-only $current_branch | \
                     grep -E 'tests/testthat' | sed 's:.*/::' ))
                     
     echo -e "Test script changed: \n${R_script_test[*]}\n"
     
-    R_script_func=($(git log -n 1 --raw --name-status --pretty=format: $current_branch | \
+    R_script_func=($(git diff "$last_commit" HEAD --name-only $current_branch | \
                     grep -E 'R/' | sed 's:.*/::' ))
                     
     echo -e "Function script changed: \n${R_script_func[*]}\n"
     
     for R_script in ${R_script_func[@]}
     do
-      test_file=$(ls tests/testthat | grep -iE "$R_script")
+      test_file=$(ls tests/testthat | grep -iE "$R_script" | grep -iE "test")
       if [[ ! " ${R_script_test[*]} " =~ " ${test_file} " ]]; then
         R_script_test+=("$test_file")
       fi
