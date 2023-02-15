@@ -1,6 +1,7 @@
 #!/bin/sh -l
 
 cd $1
+conda activate DSPWorkflow_NIDAP
 
 current_dir="$1"
 current_branch="$(git rev-parse --abbrev-ref HEAD)"
