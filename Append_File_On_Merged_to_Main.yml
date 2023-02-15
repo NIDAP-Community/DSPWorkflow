@@ -41,7 +41,7 @@ jobs:
           
           git checkout main
           
-          Rscript -e 'library(devtools);document()'
+          R -e 'library(devtools);document()'
           
           cat $(pwd)/NAMESPACE
 
