@@ -13,7 +13,6 @@
 #' @export
 #' 
 #' 
-#' 
 #' @return Violin plot(s) of genes to view across groups and (optionally) faceted across classes
 
 ## Plotting Genes of Interest

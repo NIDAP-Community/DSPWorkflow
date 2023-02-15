@@ -8,8 +8,7 @@ current_dir="$1"
 if [ -f DESCRIPTION ]; then
     echo "DESCRIPTION exist."
     
-    Rscript -e 'if(! require("devtools")){install.packages("devtools")};'
-    Rscript -e 'library(devtools);sink(file="'${current_dir}'/test.log");load_all();check();sink()'  
+    R -e 'if(! require("devtools")){install.packages("devtools")};library(devtools);sink(file="'${current_dir}'/test.log");load_all();check();sink()'  
     
     cat test.log
     

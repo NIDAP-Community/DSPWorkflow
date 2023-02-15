@@ -3,7 +3,6 @@ test_that("making heatmap plot---Test Human Kidney dataset", {
   # kidney.dat <- readRDS("/rstudio-files/ccr-dceg-data/users/Difei/DSP/DSPWorkflow/tests/testthat/fixtures/Human_Kidney/normalizationHumanKidney.RDS")
   # kidney.dat <- readRDS(test_path("fixtures/Human_Kidney","normalizationHumanKidney.RDS"))
   
-  
   kidney.dat <- select_normalized_RTD("kidney")
   
   dsp.list <- heatMap(
