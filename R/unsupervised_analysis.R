@@ -20,6 +20,7 @@
 #' @importFrom stats prcomp
 #' @importFrom Rtsne Rtsne
 #' @importFrom umap umap
+#' 
 #'  
 #' @export
 #' @seealso \link[stats]{prcomp} \link[Rtsne]{Rtsne}  \link[umap]{umap}
