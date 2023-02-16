@@ -41,7 +41,7 @@ jobs:
           
           git checkout main
           
-          R -e 'library(devtools);document()'
+          R -e '.libPaths(c("/renv/library/R-4.1/x86_64-pc-linux-gnu",.libPaths()));library(devtools);document()'
           
           cat $(pwd)/NAMESPACE
 
