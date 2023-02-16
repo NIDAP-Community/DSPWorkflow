@@ -15,30 +15,25 @@ if [ -f DESCRIPTION ]; then
     
     
     R_script_test=($(git diff "$last_commit" HEAD --name-only $current_branch | \
-                    grep -E 'tests/testthat' | sed 's:.*/::' ))
+                    grep -E 'tests/testthat'))
                     
     echo -e "Test script changed: \n${R_script_test[*]}\n"
     
     R_script_func=($(git diff "$last_commit" HEAD --name-only $current_branch | \
-                    grep -E 'R/' | sed 's:.*/::' ))
+                    grep -E 'R/'))
                     
     echo -e "Function script changed: \n${R_script_func[*]}\n"
     
-    for R_script in "${R_script_func[@]}"
-    do
-      test_file=$(ls tests/testthat | grep -iE "$R_script" | grep -iE "test")
-      if [[ ! " ${R_script_test[*]} " =~ " ${test_file} " ]]; then
-        R_script_test+=("$test_file")
-      fi
-    done
     
-    echo -e "Tests to run as: \n${R_script_test[*]}\n"
+    Lint_list=( "${R_script_test[@]}" "${R_script_func[@]}" )
     
-    for test_to_run in "${R_script_test[@]}"
+    echo -e "Lint to run as: \n${R_script_test[*]}\n"
+    
+    for test_to_run in "${Lint_list[@]}"
     do 
       
-      test_call='lint("'"$current_dir"'/tests/testthat/'"$test_to_run"'", style = "lintr");'
-      echo "Running: $test_call"
+      test_call='File_to_lint = "'"$test_to_run"'";source(".github/workflows/Workflow_linter.R", local=FALSE, print.eval=TRUE);'
+      
       
       echo "====================================================================="
       echo "Running $test_call"
