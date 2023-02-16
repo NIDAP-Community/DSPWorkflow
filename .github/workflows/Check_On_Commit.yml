@@ -1,5 +1,5 @@
 name: Routine Push Check
-run-name: ${{ github.actor }} is checking push to "${{ github.ref_name }}"  branch
+run-name: ${{ github.actor }} push to "${{ github.ref_name }}" on ${{ github.sha }}
 on:
   push:
     branches:
@@ -9,13 +9,15 @@ on:
 jobs:
   Routine_Check_for_Commit:
     runs-on: ubuntu-latest
-    container: ruihe864/dsp_github_workflow_env:2_13_23
+    container: ruihe864/dsp_github_workflow_env:R_env_v1.0
     steps:
-      - run: echo "Running test in Official R-base docker container with devtools"
+      - run: echo "Running test in DSPWorkflow container"
       
       - name: Extract branch name
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo "Push time: ${{ github.event.head_commit.timestamp }}"
         id: extract_branch
 
       - uses: actions/checkout@v3
@@ -23,16 +25,26 @@ jobs:
            token: ${{secrets.GITHUB_TOKEN}}
            ref: ${{ steps.extract_branch.outputs.branch }}
            fetch-depth: 0
-      
-      - id: Build_check
-        name: R Build and Checks
+           
+      - id: Unit_Test
+        name: Unit test for changed scripts
         run: |
           export current_wd="/__w/${GITHUB_REPOSITORY#*/}/${GITHUB_REPOSITORY#*/}"
           echo "$current_wd"
           
           git config --global --add safe.directory "$current_wd"
           
-          bash $current_wd/.github/workflows/Check_on_Commit.sh "$current_wd"
+          bash $current_wd/.github/workflows/Check_on_Commit.sh "$current_wd" "${{ github.event.before }}"
+        
+      - id: Lint_check
+        name: Use lintr to check code
+        run: |
+          export current_wd="/__w/${GITHUB_REPOSITORY#*/}/${GITHUB_REPOSITORY#*/}"
+          echo "$current_wd"
+          
+          git config --global --add safe.directory "$current_wd"
+          
+          bash $current_wd/.github/workflows/Lint_on_Commit.sh "$current_wd" "${{ github.event.before }}"
           
           
       - name: Undo Push
@@ -57,8 +69,6 @@ jobs:
           
           git checkout ${{ steps.extract_branch.outputs.branch }}
           
-          git reset --hard HEAD~1
-          
-          git commit --amend -m "Undo last push due to error in test()"
+          git reset --hard ${{ github.event.before }}
           
           git push -f origin ${{ steps.extract_branch.outputs.branch }}

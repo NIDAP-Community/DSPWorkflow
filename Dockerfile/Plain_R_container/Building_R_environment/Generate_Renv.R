@@ -15,7 +15,7 @@ print("Repos loaded.")
 
 ###############################################################
 
-print("Setting up environment now...")
+print("Setting up plain R environment now...")
 
 if(!file.exists("DESCRIPTION")){
   
@@ -33,31 +33,9 @@ if(!file.exists("DESCRIPTION")){
   
   renv::install()
   
-  print("Packages installed...")
+  print("Packages installed.")
   
-  print("Taking snapshot now...")
-  renv::snapshot()
-  
-  renv::status()
-  
-  print("Loading and recording sessionInfo now...")
-  
-  # Load packages
-  list_of_package <- scan("package_list.txt", what="", sep="\n")
 
-  for (packages in list_of_package){
-    lapply(packages, 
-           function(x) suppressMessages(library(x, 
-                                    character.only = TRUE,
-                                    quietly=TRUE,
-                                    warn.conflicts = FALSE)))
-  }
-  
-  
-  sessionInfoName <- "sessionInfo.txt"
-  writeLines(capture.output(sessionInfo()), sessionInfoName)
-  print("SessionInfo printed.")
-  
   auto.snapshot <- getOption("renv.config.auto.snapshot")
   options(renv.config.auto.snapshot = TRUE)
   

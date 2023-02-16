@@ -131,7 +131,10 @@ ENV PATH /opt/conda/envs/env/bin:$PATH
 COPY environment.yml .
 RUN mamba env update -f environment.yml
 
-RUN echo "source activate DSPWorkflow_NIDAP" > ~/.bashrc
+
+SHELL ["/bin/bash", "-c"]
+
+RUN echo "source activate DSPWorkflow_NIDAP" >> ~/.bashrc
 
 RUN chmod -R ugo+rwx /opt
 RUN chmod -R ugo+rwx /tmp
@@ -154,5 +157,6 @@ RUN conda config --add channels file:///tmp/local_conda_channel/
 RUN mamba install --prefix ~/miniconda3/envs/DSPWorkflow_NIDAP -c file:///tmp/local_conda_channel/ bioconductor-geomxtools==3.1.1 bioconductor-spatialdecon==1.4.3
 # RUN mamba install --prefix ~/miniconda3/envs/DSPWorkflow_NIDAP -c file:///tmp/local_conda_channel/ bioconductor-nanostringnctools==1.4.0
 
+COPY start_conda.sh .
 
-CMD ["bash"]
+CMD ["start_conda.sh"]

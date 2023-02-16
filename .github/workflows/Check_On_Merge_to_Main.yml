@@ -9,7 +9,7 @@ on:
 jobs:
   Integration_Test_and_Check:
     runs-on: ubuntu-latest
-    container: ruihe864/dsp_github_workflow_env:2_13_23
+    container: ruihe864/dsp_github_workflow_env:R_env_v1.0
     steps:
       - run: echo "Running test in Official R-base docker container with devtools"
       - uses: actions/checkout@v3
