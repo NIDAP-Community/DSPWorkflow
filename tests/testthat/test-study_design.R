@@ -7,6 +7,7 @@
 #  expected.elements = c("plot", "dsp.obj")
 #  expect_setequal(names(study.design.output), expected.elements)
   
+
 #})
 
 #test_that("Test Colon Dataset", {
