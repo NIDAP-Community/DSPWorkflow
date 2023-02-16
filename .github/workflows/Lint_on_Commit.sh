@@ -43,7 +43,7 @@ if [ -f DESCRIPTION ]; then
       echo "====================================================================="
       echo "Running $test_call"
       
-      R -e '.libPaths(c("/renv/library/R-4.1/x86_64-pc-linux-gnu",.libPaths()));library(lintr);sink(file="'"${current_dir}"'/lint.log";'"$test_call"'sink()'  
+      R -e '.libPaths(c("/renv/library/R-4.1/x86_64-pc-linux-gnu",.libPaths()));library(lintr);sink(file="'"${current_dir}"'/lint.log");'"$test_call"'sink()'  
       
       cat lint.log
       
