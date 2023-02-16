@@ -1,0 +1,24 @@
+name: Preparing for Merging to main
+run-name: ${{ github.actor }} is preparing for merging "${{ github.ref_name }}" to main
+on:
+  pull_request:
+    types:
+      - opened
+    branches:
+      - main 
+jobs:
+  Integration_Test_and_Check:
+    runs-on: ubuntu-latest
+    container: ruihe864/dsp_github_workflow_env:R_env_v1.0
+    steps:
+      - run: echo "Running test in Official R-base docker container with devtools"
+      - uses: actions/checkout@v3
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+      
+      - id: Build_check
+        name: R Build and Checks
+        run: |
+          export current_wd="/__w/${GITHUB_REPOSITORY#*/}/${GITHUB_REPOSITORY#*/}"
+          echo "$current_wd"
+          bash $current_wd/.github/workflows/Check_On_Merge_Main.sh "$current_wd"

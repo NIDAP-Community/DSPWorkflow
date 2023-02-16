@@ -1,8 +1,10 @@
 #### This code comes from http://www.bioconductor.org/packages/release/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html#6_Unsupervised_Analysis
 
+
 #' DimReduct: Dimensional Reduction
 #'
 #' Reduces data to 2-dimensions using PCA, tSNE, and UMAP. Adds the sample embeddings of each dimensional reduction technique to the input object (phenoData) and plots them on 2D scatter plots.
+#' 
 #' 
 #' If both color.variable1 and color.variable2 are defined, points in the scatter plots are colored by a factor which combines the levels of these two variables.
 #' @param object of class NanoStringGeoMxSet with q_norm slot present
@@ -13,7 +15,6 @@
 #' @param shape.variable categorical variable to be used for the shape of points (optional)
 #' @param symbol.size symbols size in legends
 #' @param text.size base font size
-#' 
 #' @importFrom Biobase pData assayDataElement
 #' @importFrom ggplot2 ggplot aes geom_point element_text ggtitle labs theme theme_bw
 #' @importFrom patchwork plot_layout plot_annotation guide_area

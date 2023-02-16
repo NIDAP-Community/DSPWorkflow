@@ -4,7 +4,7 @@
 \alias{filtering}
 \title{Normalize Nano String Digital Spatial Profile}
 \usage{
-filtering(Data, dsp_obj, PKCS, LOQcutoff, LOQmin, CutSegment, GOI)
+filtering(Data, PKCS, LOQcutoff, LOQmin, CutSegment, GOI)
 }
 \arguments{
 \item{Data}{A NanoStringGeoMxSet dataset}
