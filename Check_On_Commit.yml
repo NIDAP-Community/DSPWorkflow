@@ -1,5 +1,5 @@
 name: Routine Push Check
-run-name: "${{ github.actor }}" push to "${{ github.ref_name }}" with "${{ github.event.head_commit.message }}"
+run-name: "${{ github.actor }}" push to "${{ github.ref_name }}" on "${{ github.sha }}"
 on:
   push:
     branches:
@@ -15,7 +15,9 @@ jobs:
       
       - name: Extract branch name
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo "Push time: ${{ github.event.head_commit.timestamp }}"
         id: extract_branch
 
       - uses: actions/checkout@v3
