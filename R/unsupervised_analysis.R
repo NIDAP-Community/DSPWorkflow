@@ -1,5 +1,6 @@
 #### This code comes from http://www.bioconductor.org/packages/release/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html#6_Unsupervised_Analysis
 
+
 #' DimReduct: Dimensional Reduction
 #'
 #' Reduces data to 2-dimensions using PCA, tSNE, and UMAP. Adds the sample embeddings of each dimensional reduction technique to the input object (phenoData) and plots them on 2D scatter plots.
