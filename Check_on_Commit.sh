@@ -1,6 +1,6 @@
 #!/bin/sh -l
 
-cd $1
+cd "$1"
 
 last_commit="$2"
 
@@ -23,7 +23,7 @@ if [ -f DESCRIPTION ]; then
                     
     echo -e "Function script changed: \n${R_script_func[*]}\n"
     
-    for R_script in ${R_script_func[@]}
+    for R_script in "${R_script_func[@]}"
     do
       test_file=$(ls tests/testthat | grep -iE "$R_script" | grep -iE "test")
       if [[ ! " ${R_script_test[*]} " =~ " ${test_file} " ]]; then
@@ -35,14 +35,14 @@ if [ -f DESCRIPTION ]; then
     
     R -e '.libPaths(c("/renv/library/R-4.1/x86_64-pc-linux-gnu",.libPaths()));.libPaths();ip = as.data.frame(installed.packages()[,c(1,3:4)]);ip = ip[is.na(ip$Priority),1:2,drop=FALSE];ip;sessionInfo();'
     
-    for test_to_run in ${R_script_test[@]}
+    for test_to_run in "${R_script_test[@]}"
     do 
       
       test_call='test_file("'"$current_dir"'/tests/testthat/'"$test_to_run"'");'
-      echo "Running: "$test_call""
+
       
       echo "====================================================================="
-      echo -e "Running $test_call"
+      echo "Running $test_call"
       
       R -e '.libPaths(c("/renv/library/R-4.1/x86_64-pc-linux-gnu",.libPaths()));library(devtools);sink(file="'"${current_dir}"'/test.log");load_all();'"$test_call"'sink()'  
       
