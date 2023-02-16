@@ -4,6 +4,7 @@
 #'
 #' Reduces data to 2-dimensions using PCA, tSNE, and UMAP. Adds the sample embeddings of each dimensional reduction technique to the input object (phenoData) and plots them on 2D scatter plots.
 #' 
+#' 
 #' If both color.variable1 and color.variable2 are defined, points in the scatter plots are colored by a factor which combines the levels of these two variables.
 #' @param object of class NanoStringGeoMxSet with q_norm slot present
 #' @param point.size point size
