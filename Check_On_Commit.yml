@@ -9,9 +9,9 @@ on:
 jobs:
   Routine_Check_for_Commit:
     runs-on: ubuntu-latest
-    container: ruihe864/dsp_github_workflow_env:2_13_23
+    container: ruihe864/dsp_github_workflow_env:R_env_v1.0
     steps:
-      - run: echo "Running test in Official R-base docker container with devtools"
+      - run: echo "Running test in DSPWorkflow container"
       
       - name: Extract branch name
         shell: bash
@@ -57,8 +57,6 @@ jobs:
           
           git checkout ${{ steps.extract_branch.outputs.branch }}
           
-          git reset --hard HEAD~1
-          
-          git commit --amend -m "Undo last push due to error in test()"
+          git reset --hard ${{ github.event.before }}
           
           git push -f origin ${{ steps.extract_branch.outputs.branch }}
