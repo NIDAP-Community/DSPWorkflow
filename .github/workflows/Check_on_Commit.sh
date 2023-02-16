@@ -43,7 +43,7 @@ if [ -f DESCRIPTION ]; then
       echo "====================================================================="
       echo -e "Running $test_call"
       
-      R -e 'getwd();if(! require("devtools")){install.packages("devtools")};library(devtools);sink(file="'"${current_dir}"'/test.log");load_all();'"$test_call"'sink()'  
+      R -e '.libPaths(c("/renv/library/R-4.1/x86_64-pc-linux-gnu","/renv/sandbox/R-4.1/x86_64-pc-linux-gnu/9a444a72","/usr/lib/R/library"));library(devtools);sink(file="'"${current_dir}"'/test.log");load_all();'"$test_call"'sink()'  
       
       cat test.log
       

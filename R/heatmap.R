@@ -3,6 +3,7 @@
 
 #' NanoString Digital Spatial Profile study
 #'
+#'
 #' 1. Exploring the normalized data by calculating the coefficient of variation (CV) for each gene (g) using the formula CVg=SDg/meang.
 #' 2. We then identify genes with high CVs that should have large differences across the various profiled segments.
 #' 3. This unbiased approach can reveal highly variable genes across the study.
