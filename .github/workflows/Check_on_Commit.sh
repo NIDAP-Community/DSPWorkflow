@@ -12,7 +12,6 @@ echo "Checking latestest push to $current_branch"
 if [ -f DESCRIPTION ]; then
     echo "DESCRIPTION exist."
     
-    R -e 'getwd();.libPaths(c("/renv/library/R-4.1/x86_64-pc-linux-gnu",.libPaths()));.libPaths();ip = as.data.frame(installed.packages()[,c(1,3:4)]);ip = ip[is.na(ip$Priority),1:2,drop=FALSE];ip;sessionInfo();'
     
     R_script_test=($(git diff "$last_commit" HEAD --name-only $current_branch | \
                     grep -E 'tests/testthat' | sed 's:.*/::' ))
@@ -33,6 +32,8 @@ if [ -f DESCRIPTION ]; then
     done
     
     echo -e "Tests to run as: \n${R_script_test[*]}\n"
+    
+    R -e '.libPaths(c("/renv/library/R-4.1/x86_64-pc-linux-gnu",.libPaths()));.libPaths();ip = as.data.frame(installed.packages()[,c(1,3:4)]);ip = ip[is.na(ip$Priority),1:2,drop=FALSE];ip;sessionInfo();'
     
     for test_to_run in ${R_script_test[@]}
     do 
