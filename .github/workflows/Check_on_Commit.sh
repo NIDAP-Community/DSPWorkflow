@@ -12,6 +12,7 @@ echo "Checking latestest push to $current_branch"
 if [ -f DESCRIPTION ]; then
     echo "DESCRIPTION exist."
     
+    R -e 'getwd();ip = as.data.frame(installed.packages()[,c(1,3:4)]);ip = ip[is.na(ip$Priority),1:2,drop=FALSE];ip;sessionInfo();.libPaths()'
     
     R_script_test=($(git diff "$last_commit" HEAD --name-only $current_branch | \
                     grep -E 'tests/testthat' | sed 's:.*/::' ))
