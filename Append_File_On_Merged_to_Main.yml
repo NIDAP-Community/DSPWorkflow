@@ -9,7 +9,12 @@ jobs:
   Adding_NAMESPACE_and_man_files:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    container: ruihe864/dsp_github_workflow_env:R_env_v1.0
+    container: 
+      image: ghcr.io/nidap-community/dsp_github_workflow_env:r_env_v1.0
+      credentials:
+         username: ${{ github.actor }}
+         password: ${{ secrets.GITHUB_TOKEN }
+         
     steps:
       - run: echo "Running test in Official R-base docker container with devtools"
       - uses: actions/checkout@v3
