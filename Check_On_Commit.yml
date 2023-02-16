@@ -26,7 +26,7 @@ jobs:
            ref: ${{ steps.extract_branch.outputs.branch }}
            fetch-depth: 0
            
-      - id: Unit Test
+      - id: Unit_Test
         name: Unit test for changed scripts
         run: |
           export current_wd="/__w/${GITHUB_REPOSITORY#*/}/${GITHUB_REPOSITORY#*/}"
@@ -36,7 +36,7 @@ jobs:
           
           bash $current_wd/.github/workflows/Check_on_Commit.sh "$current_wd" "${{ github.event.before }}"
         
-      - id: Lint Check
+      - id: Lint_check
         name: Use lintr to check code
         run: |
           export current_wd="/__w/${GITHUB_REPOSITORY#*/}/${GITHUB_REPOSITORY#*/}"
