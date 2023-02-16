@@ -1,7 +1,6 @@
 test_that("Normalization Success for Kidney", {
   #load("/rstudio-files/ccr-dceg-data/users/Chad/DSP/tests/testthat/fixtures/target_demoDataNorm.Rdata") 
   #target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
-  
  
   target_demoDataNorm<- select_dataset_normalization("kidney")
   
