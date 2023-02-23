@@ -20,7 +20,7 @@ if [ -f DESCRIPTION ]; then
     echo -e "Test script changed: \n${R_script_test[*]}\n"
     
     R_script_func=($(git diff "$last_commit" HEAD --name-only $current_branch | \
-                    grep -E 'R/' | sed 's:.*/::' | grep -iE '*.R$')))
+                    grep -E 'R/' | sed 's:.*/::' | grep -iE '*.R$'))
                     
     echo -e "Function script changed: \n${R_script_func[*]}\n"
     

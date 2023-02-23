@@ -4,6 +4,12 @@
 
 #' Run a linear mixed model on GeoMxSet
 #'
+#' @description
+#' diffExpr returns a DEG table with fold changes and p-values
+#'
+#' @details
+#' This function will run mixedModelDE from the GeoMxTools package.
+#'
 #' @param object Name of the NanoStringGeoMxSet to perform DE analysis on
 #' @param analysis.type Analysis type either "Between Groups" or "Within Groups"
 #' @param groups One or more groups of interest (needs to be variables within group.col)
@@ -51,7 +57,8 @@ diffExpr <- function(object,
                      pval.lim.1 = 0.05,
                      pval.lim.2 = 0.01) {
   testClass <-
-    testRegion <- slide <- p.adjust <- Gene <- Subset <- Gene <- NULL
+    testRegion <-
+    slide <- p.adjust <- Gene <- Subset <- Gene <- NULL
   
   # convert test variables to factors after checking input
   reg.check <- regions[!regions %in% pData(object)[[region.col]]]
@@ -90,7 +97,7 @@ diffExpr <- function(object,
     if (param.na[1] == "testRegion") {
       regdiff <-
         setdiff(unique(pData(object)[[region.col]]), unique(levels(pData(object)$testRegion)))
-      regdiff <- paste0(regdiff,collapse = ", ")
+      regdiff <- paste0(regdiff, collapse = ", ")
       message(
         paste0(
           "At least one of the regions within the Region Column was not selected and is excluded:\n",
@@ -102,7 +109,7 @@ diffExpr <- function(object,
     else if (param.na[1] == "testClass") {
       classdiff <-
         setdiff(unique(pData(object)[[group.col]]), unique(levels(pData(object)$testClass)))
-      classdiff <- paste0(classdiff,collapse = ", ")
+      classdiff <- paste0(classdiff, collapse = ", ")
       message(
         "At least one of the groups within the Group Column was not selected and is excluded:\n",
         classdiff,
@@ -123,7 +130,7 @@ diffExpr <- function(object,
   met.sum %>% pivot_wider(names_from = slide, values_from = n) -> met.pivot
   colnames(met.pivot) <- str_wrap(colnames(met.pivot), 10)
   ind <- !(is.na(met.pivot$testClass) | is.na(met.pivot$testRegion))
-  met.pivot <- met.pivot[ind,]
+  met.pivot <- met.pivot[ind, ]
   grid.newpage()
   gt <- tableGrob(met.pivot, theme = ttheme_default(base_size = 8))
   
@@ -157,13 +164,13 @@ diffExpr <- function(object,
       )
       
       # format results as data.frame
-      r_test <- do.call(rbind, mixedOutmc["lsmeans", ])
+      r_test <- do.call(rbind, mixedOutmc["lsmeans",])
       tests <- rownames(r_test)
       r_test <- as.data.frame(r_test)
       r_test$Contrast <- tests
       r_test$Gene <-
         unlist(lapply(colnames(mixedOutmc),
-                      rep, nrow(mixedOutmc["lsmeans", ][[1]])))
+                      rep, nrow(mixedOutmc["lsmeans",][[1]])))
       r_test$Subset <- status
       r_test$FDR <- p.adjust(r_test$`Pr(>|t|)`, method = "fdr")
       r_test <-
@@ -202,7 +209,7 @@ diffExpr <- function(object,
         )
       
       # format results as data.frame
-      r_test <- do.call(rbind, mixedOutmc["lsmeans", ])
+      r_test <- do.call(rbind, mixedOutmc["lsmeans",])
       tests <- rownames(r_test)
       r_test <- as.data.frame(r_test)
       r_test$Contrast <- tests
@@ -211,7 +218,7 @@ diffExpr <- function(object,
       # correctly associate gene name with it's row in the results table
       r_test$Gene <-
         unlist(lapply(colnames(mixedOutmc),
-                      rep, nrow(mixedOutmc["lsmeans", ][[1]])))
+                      rep, nrow(mixedOutmc["lsmeans",][[1]])))
       r_test$Subset <- region
       r_test$FDR <- p.adjust(r_test$`Pr(>|t|)`, method = "fdr")
       r_test <-
@@ -238,7 +245,7 @@ diffExpr <- function(object,
     sub("Estimate", logFC.colname, colnames(results))
   colnames(results) <- sub("FDR", fdr.colname, colnames(results))
   FC <- 2 ^ (results[[logFC.colname]])
-  FC = ifelse(FC < 1,-1 / FC, FC)
+  FC = ifelse(FC < 1, -1 / FC, FC)
   results[[FC.colname]] <- FC
   results %>% select(Gene, Subset, .data[[FC.colname]], .data[[logFC.colname]],
                      .data[[pval.colname]], .data[[fdr.colname]]) -> results
@@ -350,12 +357,10 @@ diffExpr <- function(object,
   g1 <- gt
   g2 <- summary.table
   gg <- wrap_elements(g1) + wrap_elements(g2) +
-      plot_layout(ncol = 1, heights = c(0.1, 0.2))
+    plot_layout(ncol = 1, heights = c(0.1, 0.2))
   
   res.list <-
-    list(
-      "results" = results,
-      "tables" = gg
-    )
+    list("results" = results,
+         "tables" = gg)
   return(res.list)
 }
