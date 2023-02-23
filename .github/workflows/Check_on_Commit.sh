@@ -4,6 +4,7 @@ cd "$1"
 
 last_commit="$2"
 
+
 current_dir="$1"
 current_branch="$(git rev-parse --abbrev-ref HEAD)"
 echo "Checking latest push to $current_branch"
