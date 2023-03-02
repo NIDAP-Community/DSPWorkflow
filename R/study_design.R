@@ -30,7 +30,7 @@
 
 
 
-StudyDesign <- function(dccFiles, pkcFiles, phenoDataFile, phenoDataSheet = "Template",
+StudyDesign <- function(dccFiles, pkc.files, pheno.data.file, phenoDataSheet = "Template",
                          phenoDataDccColName = "Sample_ID",
                          protocolDataColNames = c("aoi", "roi"),
                          experimentDataColNames = c("panel")) {
@@ -40,8 +40,8 @@ StudyDesign <- function(dccFiles, pkcFiles, phenoDataFile, phenoDataSheet = "Tem
   # load data
   study.data <-
     readNanoStringGeoMxSet(dccFiles = dccFiles,
-                           pkcFiles = pkcFiles,
-                           phenoDataFile = phenoDataFile,
+                           pkcFiles = pkc.files,
+                           phenoDataFile = pheno.data.file,
                            phenoDataSheet = phenoDataSheet,
                            phenoDataDccColName = phenoDataDccColName,
                            protocolDataColNames = protocolDataColNames,
