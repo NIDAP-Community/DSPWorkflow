@@ -2,7 +2,7 @@
 #http://www.bioconductor.org/packages/release/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html#44_Limit_of_Quantification
 
 #' Normalize Nano String Digital Spatial Profile
-#' @param Data A NanoStringGeoMxSet dataset
+#' @param data A NanoStringGeoMxSet dataset
 #' @importFrom scales percent
 #' @importFrom Biobase pData
 #' @importFrom Biobase fData
@@ -15,13 +15,13 @@
 #importFrom Rmpfr pmax
 
 
-# To call function, must have Data = raw target_demoData, dsp.obj = QC demoData, 
-# LOQcutoff 2 is recommended, LOQmin 2 is recommend, 
-# Cutsegment = remove segments with less than 10% of the genes detected; .05-.1 recommended,
-# GOI = goi (genes of interest). Must be a vector of genes (i.e c("PDCD1", "CD274")),
-filtering <- function(Data, PKCS, LOQcutoff, LOQmin, CutSegment, GOI) {
+# To call function, must have data = raw target_demoData, dsp.obj = QC demoData, 
+# loq.cutoff 2 is recommended, loq.min 2 is recommend, 
+# cut.segment = remove segments with less than 10% of the genes detected; .05-.1 recommended,
+# goi = goi (genes of interest). Must be a vector of genes (i.e c("PDCD1", "CD274")),
+filtering <- function(data, pkcs, loq.cutoff, loq.min, cut.segment, goi) {
   
-  if(class(Data)[1] != "NanoStringGeoMxSet"){
+  if(class(data)[1] != "NanoStringGeoMxSet"){
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
   }
   
@@ -31,66 +31,64 @@ filtering <- function(Data, PKCS, LOQcutoff, LOQmin, CutSegment, GOI) {
   ### Start Function
   ##4.4Limit of Quantification
   # Define LOQ SD threshold and minimum value
-  cutoff <- LOQcutoff
-  if(class(LOQcutoff)[1] != "numeric"){
+  if(class(loq.cutoff)[1] != "numeric"){
     stop(paste0("Error: You have the wrong data class, must be numeric" ))
   }
-  minLOQ <- LOQmin
-  if(class(LOQmin)[1] != "numeric"){
+  if(class(loq.min)[1] != "numeric"){
     stop(paste0("Error: You have the wrong data class, must be numeric" ))
   }
   # Define Modules
-  pkcs <- PKCS
-  if(class(PKCS)[1] != "character"){
+  pkcs <- pkcs
+  if(class(pkcs)[1] != "character"){
     stop(paste0("Error: You have the wrong data class, must be character" ))
   }
   modules <- gsub(".pkc", "", pkcs)
   
   # Collapse probes to gene targets
-  #target_Data <- aggregateCounts(Data)
+  #target_Data <- aggregateCounts(data)
 
   # Calculate LOQ per module tested
-  LOQ <- data.frame(row.names = colnames(Data))
+  LOQ <- data.frame(row.names = colnames(data))
   for(module in modules) {
     vars <- paste0(c("NegGeoMean_", "NegGeoSD_"),
                    module)
-    if(all(vars[1:2] %in% colnames(pData(Data)))) {
+    if(all(vars[1:2] %in% colnames(pData(data)))) {
       LOQ[, module] <-
-        pmax(minLOQ,
-             pData(Data)[, vars[1]] * 
-               pData(Data)[, vars[2]] ^ cutoff)
+        pmax(loq.min,
+             pData(data)[, vars[1]] * 
+               pData(data)[, vars[2]] ^ loq.cutoff)
     }
   }
-  pData(Data)$LOQ <- LOQ
+  pData(data)$LOQ <- LOQ
   
   ## 4.5.0 Filtering
   LOQ_Mat <- c()
   for(module in modules) {
-    ind <- fData(Data)$Module == module
-    Mat_i <- t(esApply(Data[ind, ], MARGIN = 1,
+    ind <- fData(data)$Module == module
+    Mat_i <- t(esApply(data[ind, ], MARGIN = 1,
                        FUN = function(x) {
                          x > LOQ[, module]
                        }))
     LOQ_Mat <- rbind(LOQ_Mat, Mat_i)
   }
   # ensure ordering since this is stored outside of the geomxSet
-  LOQ_Mat <- LOQ_Mat[fData(Data)$TargetName, ]
+  LOQ_Mat <- LOQ_Mat[fData(data)$TargetName, ]
 
   ##4.5.1S egment Gene Detection
   # Save detection rate information to pheno data
-  pData(Data)$GenesDetected <- 
+  pData(data)$GenesDetected <- 
     colSums(LOQ_Mat, na.rm = TRUE)
-  pData(Data)$GeneDetectionRate <-
-    pData(Data)$GenesDetected / nrow(Data)
+  pData(data)$GeneDetectionRate <-
+    pData(data)$GenesDetected / nrow(data)
   
   # Determine detection thresholds: 1%, 5%, 10%, 15%, >15%
-  pData(Data)$DetectionThreshold <- 
-    cut(pData(Data)$GeneDetectionRate,
+  pData(data)$DetectionThreshold <- 
+    cut(pData(data)$GeneDetectionRate,
         breaks = c(0, 0.01, 0.05, 0.1, 0.15, 1),
         labels = c("<1%", "1-5%", "5-10%", "10-15%", ">15%"))
   
   # stacked bar plot of different cut points (1%, 5%, 10%, 15%)
-  StackedBarPlot<- ggplot(pData(Data),
+  StackedBarPlot<- ggplot(pData(data),
                           aes(x = DetectionThreshold)) +
                    geom_bar(aes(fill = region)) +
                    geom_text(stat = "count", aes(label = ..count..), vjust = -0.5) +
@@ -102,19 +100,19 @@ filtering <- function(Data, PKCS, LOQcutoff, LOQmin, CutSegment, GOI) {
   
   
   # cut percent genes detected at 1, 5, 10, 15
-  tab<- kable(table(pData(Data)$DetectionThreshold, pData(Data)$class))
-  if(class(CutSegment)[1] != "numeric"){
+  tab<- kable(table(pData(data)$DetectionThreshold, pData(data)$class))
+  if(class(cut.segment)[1] != "numeric"){
     stop(paste0("Error: You have the wrong data class, must be numeric" ))
   }
-  target_demoData <- Data[, pData(Data)$GeneDetectionRate >= CutSegment]
-  if(CutSegment > 1 | CutSegment < 0){
+  target_demoData <- data[, pData(data)$GeneDetectionRate >= cut.segment]
+  if(cut.segment > 1 | cut.segment < 0){
     stop(paste0("Error: You need perecentage in decimals between 0-1" ))
   }
 
   # select the annotations we want to show, use `` to surround column names with
   # spaces or special symbols
-  count_mat <- count(pData(Data), `slide name`, class, region, segment)
-  if(class(Data)[1] != "NanoStringGeoMxSet"){
+  count_mat <- count(pData(data), `slide name`, class, region, segment)
+  if(class(data)[1] != "NanoStringGeoMxSet"){
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
   }
   # simplify the slide names
@@ -148,8 +146,8 @@ filtering <- function(Data, PKCS, LOQcutoff, LOQmin, CutSegment, GOI) {
     fData(target_demoData)$DetectedSegments / nrow(pData(target_demoData))
   
   # Gene of interest detection table
-  goi <- GOI
-  if(class(GOI)[1] != "character"){
+  goi <- goi
+  if(class(goi)[1] != "character"){
     stop(paste0("Error: You have the wrong data class, must be character vector" ))
   }
   goi_df <- data.frame(Gene = goi,
