@@ -3,14 +3,14 @@ test_that("Test Human Kidney dataset", {
   kidney.dat <- select_normalized_RTD("kidney")
   
   output <-
-    DimReduct(
+    dimReduct(
       object = kidney.dat,
       point.size = 1,
       point.alpha = 1,
       color.variable1 = "region",
       shape.variable = "class"
     )
-  expected.elements = c("dsp.object", "plot.list")
+  expected.elements = c("object", "plot")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
   
 })
@@ -20,14 +20,14 @@ test_that("Test Colon Dataset", {
   colon.dat <- select_normalized_RTD("colon")
   
   output <-
-    DimReduct(
+    dimReduct(
       object = colon.dat,
       point.size = 1,
       point.alpha = 1,
       color.variable1 = "region",
       shape.variable = "class"
     )
-  expected.elements = c("dsp.object", "plot.list")
+  expected.elements = c("object", "plot")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
   
 })
@@ -37,14 +37,14 @@ test_that("Test Mouse Thymus Dataset", {
   thymus.dat <- select_normalized_RTD("thymus")
   
   output <-
-    DimReduct(
+    dimReduct(
       object = thymus.dat,
       point.size = 1,
       point.alpha = 1,
       color.variable1 = "region",
       shape.variable = "class"
     )
-  expected.elements = c("dsp.object", "plot.list")
+  expected.elements = c("object", "plot")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
   
 })
@@ -54,24 +54,24 @@ test_that("Test Human NSCLC Dataset", {
   nsclc.dat <- select_normalized_RTD("nsclc")
   
   output <-
-    DimReduct(
+    dimReduct(
       object = nsclc.dat,
       point.size = 1,
       point.alpha = 1,
       color.variable1 = "region",
       shape.variable = "class"
     )
-  expected.elements = c("dsp.object", "plot.list")
+  expected.elements = c("object", "plot")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
   
 })
 
-test_that("dimension reductions present in DSP object", {
+test_that("dimension reductions present in the input object", {
   
   kidney.dat <- select_normalized_RTD("kidney")
   
   output <-
-    DimReduct(
+    dimReduct(
       object = kidney.dat,
       point.size = 1,
       point.alpha = 1,
@@ -80,37 +80,43 @@ test_that("dimension reductions present in DSP object", {
     )
   
   expect_true(sum(grepl("PC1|PC2", colnames(
-    pData(output$dsp.object)
+    pData(output$object)
   ))) == 2)
   expect_true(sum(grepl("UMAP1|UMAP2", colnames(
-    pData(output$dsp.object)
+    pData(output$object)
   ))) == 2)
   expect_true(sum(grepl("tSNE1|tSNE2", colnames(
-    pData(output$dsp.object)
+    pData(output$object)
   ))) == 2)
   
 })
 
-test_that("Check warning message when replacing pre-existing analysis", {
+test_that("Check message when replacing pre-existing analysis", {
   
+  # Load object
   kidney.dat <- select_normalized_RTD("kidney")
   
-  output <-
-    DimReduct(
+  # Run first time and expect no message
+  expect_warning(output <-
+    dimReduct(
       object = kidney.dat,
       point.size = 1,
       point.alpha = 1,
       color.variable1 = "region",
       shape.variable = "class"
-    )
+    ), regexp = NA)
   
-  # Run again with different parameters to replace previous analysis
-  expect_warning(DimReduct(
-                     object = output$dsp.object,
-                     point.size = 5,
-                     point.alpha = 5,
-                     color.variable1 = "region",
-                     shape.variable = "segment"
-                   ), "found in the input DSP object and will be replaced by this calculation")
+  # Run again with the same parameters to replace previous analysis (expect message)
+  expect_warning(
+    output <-
+      dimReduct(
+      object = output$object,
+      point.size = 5,
+      point.alpha = 5,
+      color.variable1 = "region",
+      shape.variable = "class"
+    ),
+    regexp = "found in the input object and will be replaced by this calculation\n"
+  )
   
 })
