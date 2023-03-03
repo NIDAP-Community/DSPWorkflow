@@ -29,7 +29,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' # Default plots
 #' output <- dimReduct(object = object, color.variable1="region")
 #'
@@ -42,7 +42,7 @@
 #' output <- dimReduct(object = object, color.variable1="region", color.variable2="class")
 #' }
 #' @export
-#' @return A named list containing the NanoStringGeoMxSet-class object with the dimensional reduction coordinates ("object") and ggplot2 plots ("plot.list")
+#' @return A named list containing the NanoStringGeoMxSet-class object with the dimensional reduction coordinates ("object") and ggplot2 plots ("plot")
 
 
 dimReduct <-
@@ -57,25 +57,28 @@ dimReduct <-
            text.size = 16,
            print.plots = TRUE)
   {
-    
-    
     # Pre-run ####
-  
+    
     ## checks ####
-      
+    
     # stop if assayDataElement not present
-    if (!assay.data %in% assayDataElementNames(object)){
-      error.message <- sprintf("%s not found in the input object", assay.data)
+    if (!assay.data %in% assayDataElementNames(object)) {
+      error.message <-
+        sprintf("%s not found in the input object", assay.data)
       cat(stop(error.message))
     } else {
-      info.message <- sprintf("using %s in the dimensional reductions", assay.data)
+      info.message <-
+        sprintf("using %s in the dimensional reductions", assay.data)
       cat(message(info.message))
     }
     
     # warn when dimension reductions already present and will be replaced
     if (any(c("PC1", "PC2", "tSNE1", "UMAP1", "UMAP2") %in% colnames(pData(object)))) {
-      reductions <- colnames(pData(object))[grepl("PC|tSNE|UMAP", colnames(pData(object)))]
-      warn.message <- sprintf("%s found in the input object and will be replaced by this calculation\n", reductions)
+      reductions <-
+        colnames(pData(object))[grepl("PC|tSNE|UMAP", colnames(pData(object)))]
+      warn.message <-
+        sprintf("%s found in the input object and will be replaced by this calculation\n",
+                reductions)
       cat(warning(warn.message))
     } else {
       cat("adding PCA, tSNE, and UMAP coordinates to the input object\n")
@@ -84,33 +87,36 @@ dimReduct <-
     ## settings ####
     
     # bind variables
-    color.variable  <- PC1 <- PC2 <- tSNE1 <- tSNE2 <- UMAP1 <- UMAP2 <- NULL
+    color.variable  <-
+      PC1 <- PC2 <- tSNE1 <- tSNE2 <- UMAP1 <- UMAP2 <- NULL
     
     
     # Run Reductions ####
-
+    
     ## PCA ####
-
+    
     ### calculate PCA on user-defined assayData
     pca.stats <-
       prcomp(t(log2(
         Biobase::assayDataElement(object , elt = assay.data)
       )), scale. = TRUE)
     #### add PCA coordinates to the object
-    Biobase::pData(object)[, c("PC1", "PC2")] <-  pca.stats$"x"[, c(1, 2)]
+    Biobase::pData(object)[, c("PC1", "PC2")] <-
+      pca.stats$"x"[, c(1, 2)]
     
     ## tSNE ####
     
     ### set random seed
-    set.seed(42) 
-    ### calculate tSNE on user-defined assayData 
+    set.seed(42)
+    ### calculate tSNE on user-defined assayData
     tsne.stats <-
       Rtsne(t(log2(
         Biobase::assayDataElement(object , elt = assay.data)
       )),
       perplexity = ncol(object) * .15)
     ### add tSNE coordinates to the object
-    Biobase::pData(object)[, c("tSNE1", "tSNE2")] <- tsne.stats$Y[, c(1, 2)]
+    Biobase::pData(object)[, c("tSNE1", "tSNE2")] <-
+      tsne.stats$Y[, c(1, 2)]
     
     ## UMAP ####
     
@@ -125,14 +131,15 @@ dimReduct <-
       )),
       config = custom.umap)
     ### add UMAP coordinates to the object
-    Biobase::pData(object)[, c("UMAP1", "UMAP2")] <-  umap.stats$layout[, c(1, 2)]
+    Biobase::pData(object)[, c("UMAP1", "UMAP2")] <-
+      umap.stats$layout[, c(1, 2)]
     
     
     # Generate Plots ####
     
     
     ## plot input data ####
-
+    
     ### extract phenoData from the object
     df <- Biobase::pData(object)
     ### set color variable and its legend title; if color.variable2 is not NULL compute a factor which combines levels of the two variables separated by '.' using interaction()
@@ -141,7 +148,8 @@ dimReduct <-
       color.label <- color.variable1
     } else {
       df$color.variable <-
-        interaction(df[, color.variable1], df[, color.variable2], sep=".")
+        interaction(df[, color.variable1], df[, color.variable2], sep =
+                      ".")
       color.label <-
         paste(color.variable1, color.variable2, sep = ".")
     }
@@ -153,7 +161,7 @@ dimReduct <-
     
     
     ## PCA ggplot ####
-
+    
     pca.ggplot <- ggplot(
       df,
       aes(
@@ -218,13 +226,13 @@ dimReduct <-
     if (print.plots) {
       print(
         pca.ggplot +
-        tsne.ggplot +
-        umap.ggplot +
-        guide_area() +
-        plot_layout(ncol = 2, guides = "collect")  &
-        theme_bw(base_size = text.size) &
-        guides(colour = guide_legend(override.aes = list(size = symbol.size))) &
-        guides(shape = guide_legend(override.aes = list(size = symbol.size)))
+          tsne.ggplot +
+          umap.ggplot +
+          guide_area() +
+          plot_layout(ncol = 2, guides = "collect")  &
+          theme_bw(base_size = text.size) &
+          guides(colour = guide_legend(override.aes = list(size = symbol.size))) &
+          guides(shape = guide_legend(override.aes = list(size = symbol.size)))
       )
     }
     
