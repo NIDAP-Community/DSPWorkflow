@@ -1,8 +1,17 @@
-####This code comes from
+####This code is adapted from
 #http://www.bioconductor.org/packages/release/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html#2_Getting_started
 
 
-#' Ingest Nano String Digital Spatial Profile study
+#' Combine Nanostring Digital Spatial Profile read count and annotation files into a GeoMX object
+#'
+#' `StudyDesign` returns a Sankey Plot and a GeoMX object 
+#'
+#' For the function to run properly the annotation excel file must have the specific field names: 
+#' 'slide name', class, segment, region
+#' 
+#' and the corresponding fields that can be renamed:
+#' Sample_ID, aoi, roi, panel
+#' 
 #' @param dccFiles A character vector containing the paths to the DCC files.
 #' @param pkcFiles A character vector representing the path to the corresponding PKC file
 #' @param phenoDataFile An optional character string representing the path to the corresponding phenotypic excel data file. It is recommended to use the Lab Worksheet in the exact order samples are provided in.
@@ -30,22 +39,25 @@
 
 
 
-StudyDesign <- function(dccFiles, pkc.files, pheno.data.file, phenoDataSheet = "Template",
-                         phenoDataDccColName = "Sample_ID",
-                         protocolDataColNames = c("aoi", "roi"),
-                         experimentDataColNames = c("panel")) {
+StudyDesign <- function(dcc.files, 
+                        pkc.files, 
+                        pheno.data.file, 
+                        pheno.data.sheet = "Template",
+                        pheno.data.dcc.col.name = "Sample_ID",
+                        protocol.data.col.names = c("aoi", "roi"),
+                        experiment.data.col.names = c("panel")) {
 
   region <- segment <- x <- id <- y <- n <-NULL
   `slide name` <- NULL
   # load data
   study.data <-
-    readNanoStringGeoMxSet(dccFiles = dccFiles,
+    readNanoStringGeoMxSet(dccFiles = dcc.files,
                            pkcFiles = pkc.files,
                            phenoDataFile = pheno.data.file,
-                           phenoDataSheet = phenoDataSheet,
-                           phenoDataDccColName = phenoDataDccColName,
-                           protocolDataColNames = protocolDataColNames,
-                           experimentDataColNames = experimentDataColNames)
+                           phenoDataSheet = pheno.data.sheet,
+                           phenoDataDccColName = pheno.data.dcc.col.name,
+                           protocolDataColNames = protocol.data.col.names,
+                           experimentDataColNames = experiment.data.col.names)
 
 
   pkcs <- annotation(study.data)
@@ -63,9 +75,12 @@ StudyDesign <- function(dccFiles, pkc.files, pheno.data.file, phenoDataSheet = "
     }
   }
 
+  # example ====
+  # other 
+
   # select the annotations we want to show, use `` to surround column names with
   # spaces or special symbols
-  count_mat <- count(pData(study.data), `slide name`, class, region, segment)
+  count.mat <- count(pData(study.data), `slide name`, class, region, segment)
   #count_mat <- count(pData(study.data), class, region, segment)
   # simplify the slide names
   #count_mat$`slide name` <- gsub("disease", "d",
