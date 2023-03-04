@@ -97,16 +97,18 @@ test_that("Check message when replacing pre-existing analysis", {
   kidney.dat <- select_normalized_RTD("kidney")
   
   # Run first time and expect no message
-  expect_warning(output <-
+  expect_message(output <-
     dimReduct(
       object = kidney.dat,
       point.size = 1,
       point.alpha = 1,
       color.variable1 = "region",
-      shape.variable = "class"
-    ), regexp = NA)
+      color.variable2 = "class",
+      shape.variable = "segment"
+    ), regexp = "adding in the phenoData")
   
-  # Run again with the same parameters to replace previous analysis (expect message)
+  # Run again with different  parameters to replace previous analysis
+  # (expect message)
   expect_warning(
     output <-
       dimReduct(
@@ -114,9 +116,10 @@ test_that("Check message when replacing pre-existing analysis", {
       point.size = 5,
       point.alpha = 5,
       color.variable1 = "region",
-      shape.variable = "class"
+      color.variable2 = "class",
+      shape.variable = NULL
     ),
-    regexp = "found in the input object and will be replaced by this calculation\n"
+    regexp = "found in the phenoData"
   )
   
 })
