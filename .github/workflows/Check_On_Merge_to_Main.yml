@@ -6,24 +6,9 @@ on:
       - opened
     branches:
       - main 
+
 jobs:
   Integration_Test_and_Check:
-    runs-on: ubuntu-latest
-    container: 
-      image: ghcr.io/nidap-community/dsp_github_workflow_env:r_env_v1.0
-      credentials:
-         username: ${{ github.actor }}
-         password: ${{ secrets.GITHUB_TOKEN }}
-         
-    steps:
-      - run: echo "Running test in Official R-base docker container with devtools"
-      - uses: actions/checkout@v3
-        with:
-          token: ${{secrets.GITHUB_TOKEN}}
-      
-      - id: Build_check
-        name: R Build and Checks
-        run: |
-          export current_wd="/__w/${GITHUB_REPOSITORY#*/}/${GITHUB_REPOSITORY#*/}"
-          echo "$current_wd"
-          bash $current_wd/.github/workflows/Check_On_Merge_Main.sh "$current_wd"
+    uses: fnlcr-bids-sdsi/gitflow-R/.github/workflows/Check_On_Merge_to_Main.yml@master
+    with:
+      image_to_use: ghcr.io/nidap-community/dsp_github_workflow_env:r_env_v1.0
