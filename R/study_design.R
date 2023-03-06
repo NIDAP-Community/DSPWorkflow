@@ -1,24 +1,30 @@
-####This code is adapted from
-#http://www.bioconductor.org/packages/release/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html#2_Getting_started
+# This code is a modification from
+# "Analyzing GeoMx-NGS RNA Expression Data with GeomxTools" vignette
+# https://tinyurl.com/228bs2bp
 
-
-#' Combine Nanostring Digital Spatial Profile read count and annotation files into a GeoMX object
-#'
-#' `StudyDesign` returns a Sankey Plot and a GeoMX object 
-#'
-#' For the function to run properly the annotation excel file must have the specific field names: 
-#' 'slide name', class, segment, region
-#' 
-#' and the corresponding fields that can be renamed:
-#' Sample_ID, aoi, roi, panel
+#' studyDesign: Study Design
+#' @description Combine Nanostring Digital Spatial Profile read count and 
+#' annotation files into a GeoMX object
+#' @details `StudyDesign` returns a Sankey Plot and a GeoMX object. 
+#' For the function to run properly the annotation excel file must have the 
+#' specific field names: slide name', class, segment, region
+#' and the corresponding fields that can be renamed: Sample_ID, aoi, roi, panel
 #' 
 #' @param dccFiles A character vector containing the paths to the DCC files.
-#' @param pkcFiles A character vector representing the path to the corresponding PKC file
-#' @param phenoDataFile An optional character string representing the path to the corresponding phenotypic excel data file. It is recommended to use the Lab Worksheet in the exact order samples are provided in.
-#' @param phenoDataSheet An optional character string representing the excel sheet name containing the phenotypic data.
-#' @param phenoDataDccColName Character string identifying unique sample identifier column in phenoDataFile.
-#' @param protocolDataColNames  Character list of column names from phenoDataFile containing data about the experimental protocol or sequencing data.
-#' @param experimentDataColNames  Character list of column names from phenoDataFile containing data about the experiment's meta-data.
+#' @param pkcFiles A character vector representing the path to the 
+#' corresponding PKC file
+#' @param phenoDataFile An optional character string representing the path to 
+#' the corresponding phenotypic excel data file. It is recommended to use the 
+#' Lab Worksheet in the exact order samples are provided in.
+#' @param phenoDataSheet An optional character string representing the excel 
+#' sheet name containing the phenotypic data.
+#' @param phenoDataDccColName Character string identifying unique sample 
+#' identifier column in phenoDataFile.
+#' @param protocolDataColNames  Character list of column names from 
+#' phenoDataFile containing data about the experimental protocol or 
+#' sequencing data.
+#' @param experimentDataColNames  Character list of column names from 
+#' phenoDataFile containing data about the experiment's meta-data.
 #'
 #' @importFrom GeomxTools readNanoStringGeoMxSet
 #' @importFrom knitr kable
@@ -46,10 +52,10 @@ StudyDesign <- function(dcc.files,
                         pheno.data.dcc.col.name = "Sample_ID",
                         protocol.data.col.names = c("aoi", "roi"),
                         experiment.data.col.names = c("panel")) {
-
+  
   region <- segment <- x <- id <- y <- n <-NULL
   `slide name` <- NULL
-  # load data
+  # load all input data into a GeoMX object
   study.data <-
     readNanoStringGeoMxSet(dccFiles = dcc.files,
                            pkcFiles = pkc.files,
@@ -59,40 +65,35 @@ StudyDesign <- function(dcc.files,
                            protocolDataColNames = protocol.data.col.names,
                            experimentDataColNames = experiment.data.col.names)
 
-
+  
+  # Review the PKC mapping files linked in the GeoMX object
   pkcs <- annotation(study.data)
   modules <- gsub(".pkc", "", pkcs)
   kable(data.frame(PKCs = pkcs, modules = modules))
-
-  # Set up a list of required field names
-  required.field.names = c("slide name", "class", "segment", "region")
   
   # Check each of the required fields for correct naming
+  required.field.names = c("slide name", "class", "segment", "region")
   given.field.names = colnames(sData(study.data))
   for(field in required.field.names){
     if(!(field %in% given.field.names)){
-      stop(paste0(field, " is required and NOT found in the annotation. Please correct annotation sheet fields.\n"))
+      stop(paste0(field, " is required and NOT found in the annotation. 
+                  Please correct annotation sheet fields.\n"))
     }
   }
 
-  # example ====
-  # other 
 
-  # select the annotations we want to show, use `` to surround column names with
-  # spaces or special symbols
+
+  # select the annotations we want to show, use `` to surround column 
+  # names with spaces or special symbols
   count.mat <- count(pData(study.data), `slide name`, class, region, segment)
-  #count_mat <- count(pData(study.data), class, region, segment)
-  # simplify the slide names
-  #count_mat$`slide name` <- gsub("disease", "d",
-  #                               gsub("normal", "n", count_mat$`slide name`))
+
   # gather the data and plot in order: class, slide name, region, segment
-  test_gr <- gather_set_data(count_mat, 1:4)
-  test_gr$x <- factor(test_gr$x,
+  test.gr <- gather_set_data(count.mat, 1:4)
+  test.gr$x <- factor(test.gr$x,
                       levels = c("class", "slide name", "region", "segment"))
-  #test_gr$x <- factor(test_gr$x,
-  #                    levels = c("class", "region", "segment"))
+
   # plot Sankey
-  p <- ggplot(test_gr, aes(x, id = id, split = y, value = n)) +
+  p <- ggplot(test.gr, aes(x, id = id, split = y, value = n)) +
     geom_parallel_sets(aes(fill = region), alpha = 0.5, axis.width = 0.1) +
     geom_parallel_sets_axes(axis.width = 0.2) +
     geom_parallel_sets_labels(color = "gray", size = 5, angle = 0) +
