@@ -2,16 +2,16 @@
 % Please edit documentation in R/study_design.R
 \name{StudyDesign}
 \alias{StudyDesign}
-\title{Ingest Nano String Digital Spatial Profile study}
+\title{Combine Nanostring Digital Spatial Profile read count and annotation files into a GeoMX object}
 \usage{
 StudyDesign(
-  dccFiles,
-  pkcFiles,
-  phenoDataFile,
-  phenoDataSheet = "Template",
-  phenoDataDccColName = "Sample_ID",
-  protocolDataColNames = c("aoi", "roi"),
-  experimentDataColNames = c("panel")
+  dcc.files,
+  pkc.files,
+  pheno.data.file,
+  pheno.data.sheet = "Template",
+  pheno.data.dcc.col.name = "Sample_ID",
+  protocol.data.col.names = c("aoi", "roi"),
+  experiment.data.col.names = c("panel")
 )
 }
 \arguments{
@@ -33,5 +33,12 @@ StudyDesign(
 A list containing the NanoString Object and the Sankey plot.
 }
 \description{
-Ingest Nano String Digital Spatial Profile study
+\code{StudyDesign} returns a Sankey Plot and a GeoMX object
+}
+\details{
+For the function to run properly the annotation excel file must have the specific field names:
+'slide name', class, segment, region
+
+and the corresponding fields that can be renamed:
+Sample_ID, aoi, roi, panel
 }
