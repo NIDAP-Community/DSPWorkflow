@@ -150,6 +150,10 @@ heatMap <- function(## Basic Parameters
   ## log2 transformation
   #log2.data <- Biobase::assayDataElement(object = target.data, elt = "log_q") <-
   #  assayDataApply(target.data, 2, FUN = log, base = 2, elt = "q_norm")
+
+  if((norm.method != "quant") && (norm.method != "neg")){
+    stop(paste0("Error: Normalization method should be either quant or neg"))
+  }
   
   if (norm.method == "quant")
     elt.value <- "q_norm"  # Upper quartile (Q3) normalization
