@@ -1,7 +1,14 @@
 #This code comes from:
 #http://www.bioconductor.org/packages/release/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html#5_Normalization
 
-#' Normalize Nano String Digital Spatial Profile
+#' @title Normalization function
+#'
+#' @description Returns a dataset that are normalized with various normalized options
+#'              showing data after normalization.
+#'
+#' @details normalization function that takes in gene expression data from 
+#'          NanostringGeoMxSet, outputs a normalized NanostringGeoMxSet
+#'          
 #' @param data A NanoStringGeoMxSet dataset
 #' @param norm A vector with options of c(quant or neg)
 #' @importFrom ggplot2 ggplot
@@ -26,7 +33,6 @@
 #' @return A list containing the ggplot grid, a boxplot, an normalized dataframe.
 
 
-# target_deoData will need to be changed at some point
 # To call function, must have data = data; norm = c(quant or neg)
 geomxnorm <- function(data, norm) {
   
@@ -39,20 +45,21 @@ geomxnorm <- function(data, norm) {
     Value <- Statistic <- NegProbe <- Q3 <- Annotation <- NULL
   
   # Start Function
-  neg_probes<- "NegProbe-WTX"
-  ann_of_interest <- "region"
+  neg.probes<- "NegProbe-WTX"
+  ann.of.interest <- "region"
   
-  Stat_data <- base::data.frame(row.names = colnames(exprs(data)),
-                           Segment = colnames(exprs(data)),
-                           Annotation = Biobase::pData(data)[, ann_of_interest],
-                           Q3 = unlist(apply(exprs(data), 2,
-                                             quantile, 0.75, na.rm = TRUE)),
-                           NegProbe = exprs(data)[neg_probes, ])
+  Stat.data <- base::data.frame(row.names = colnames(exprs(data)),
+                                Segment = colnames(exprs(data)),
+                                Annotation = Biobase::pData(data)[, ann.of.interest],
+                                Q3 = unlist(apply(exprs(data), 2,
+                                                  quantile, 0.75, na.rm = TRUE)),
+                                NegProbe = exprs(data)[neg.probes, ])
   
-  Stat_data_m <- melt(Stat_data, measures.vars = c("Q3", "NegProbe"),
-                       variable.name = "Statistic", value.name = "Value")
+  Stat.data.m <- melt(Stat.data, measures.vars = c("Q3", "NegProbe"),
+                      variable.name = "Statistic", value.name = "Value")
   
-  plt1 <- ggplot(Stat_data_m,
+  
+  plt1 <- ggplot(Stat.data.m,
                  aes(x = Value, fill = Statistic)) +
     geom_histogram(bins = 40) + theme_bw() +
     scale_x_continuous(trans = "log2") +
@@ -60,7 +67,7 @@ geomxnorm <- function(data, norm) {
     scale_fill_brewer(palette = 3, type = "qual") +
     labs(x = "Counts", y = "Segments, #")
   
-  plt2 <- ggplot(Stat_data,
+  plt2 <- ggplot(Stat.data,
                  aes(x = NegProbe, y = Q3, color = Annotation)) +
     geom_abline(intercept = 0, slope = 1, lty = "dashed", color = "darkgray") +
     geom_point() + guides(color = "none") + theme_bw() +
@@ -69,7 +76,7 @@ geomxnorm <- function(data, norm) {
     theme(aspect.ratio = 1) +
     labs(x = "Negative Probe GeoMean, Counts", y = "Q3 Value, Counts")
   
-  plt3 <- ggplot(Stat_data,
+  plt3 <- ggplot(Stat.data,
                  aes(x = NegProbe, y = Q3 / NegProbe, color = Annotation)) +
     geom_hline(yintercept = 1, lty = "dashed", color = "darkgray") +
     geom_point() + theme_bw() +
@@ -78,28 +85,28 @@ geomxnorm <- function(data, norm) {
     theme(aspect.ratio = 1) +
     labs(x = "Negative Probe GeoMean, Counts", y = "Q3/NegProbe Value, Counts")
   
-  btm_row <- plot_grid(plt2, plt3, nrow = 1, labels = c("B", ""),
+  btm.row <- plot_grid(plt2, plt3, nrow = 1, labels = c("B", ""),
                        rel_widths = c(0.43,0.57))
-  p <- plot_grid(plt1, btm_row, ncol = 1, labels = c("A", ""))
+  p <- plot_grid(plt1, btm.row, ncol = 1, labels = c("A", ""))
   
   if(norm == "quant"){
     # Q3 norm (75th percentile) for WTA/CTA  with or without custom spike-ins
-    target_demoData <- normalize(data,
-                                  norm_method = "quant", 
-                                  desiredQuantile = .75,
-                                  toElt = "q_norm")
-    # take old boxplot assayDataElement(target_demoData[,1:10], elt = "q_norm")
-    transform1<- assayDataElement(target_demoData[,1:10], elt = "q_norm")
+    object <- normalize(data,
+                        norm_method = "quant", 
+                        desiredQuantile = .75,
+                        toElt = "q_norm")
+    
+    transform1<- assayDataElement(object[,1:10], elt = "q_norm")
     transform2<- as.data.frame(transform1)
     transform3<- melt(transform2)
-    b<- ggplot(transform3, aes(variable, value)) +
-         stat_boxplot(geom = "errorbar") +
-         geom_boxplot(fill="#2CA02C") +
-         scale_y_log10() +
-         xlab("Segment") + 
-         ylab("Counts, Quant. Normailzed") +
-         ggtitle("Quant Norm Counts") +
-         scale_x_discrete(labels=c(1:10))
+    ggboxplot <- ggplot(transform3, aes(variable, value)) +
+      stat_boxplot(geom = "errorbar") +
+      geom_boxplot(fill="#2CA02C") +
+      scale_y_log10() +
+      xlab("Segment") + 
+      ylab("Counts, Quant. Normailzed") +
+      ggtitle("Quant Norm Counts") +
+      scale_x_discrete(labels=c(1:10))
   }
   if(norm == "Quant"){
     stop(paste0("Error: Quant needs to be quant" ))
@@ -113,22 +120,22 @@ geomxnorm <- function(data, norm) {
   
   if(norm == "neg"){
     # Background normalization for WTA/CTA without custom spike-in
-    target_demoData <- normalize(data,
-                                  norm_method = "neg", 
-                                  fromElt = "exprs",
-                                  toElt = "neg_norm")
-    # take old boxplot assayDataElement(target_demoData[,1:10], elt = "q_norm")
-    transform1<- assayDataElement(target_demoData[,1:10], elt = "neg_norm")
+    object <- normalize(data,
+                        norm_method = "neg", 
+                        fromElt = "exprs",
+                        toElt = "neg_norm")
+    
+    transform1<- assayDataElement(object[,1:10], elt = "neg_norm")
     transform2<- as.data.frame(transform1)
     transform3<- melt(transform2)
-    b<- ggplot(transform3, aes(variable, value)) +
-         stat_boxplot(geom = "errorbar") +
-         geom_boxplot(fill="#FF7F0E") +
-         scale_y_log10() +
-         xlab("Segment") + 
-         ylab("Counts, Neg. Normailzed") +
-         ggtitle("Neg Norm Counts") +
-         scale_x_discrete(labels=c(1:10))
+    ggboxplot <- ggplot(transform3, aes(variable, value)) +
+      stat_boxplot(geom = "errorbar") +
+      geom_boxplot(fill="#FF7F0E") +
+      scale_y_log10() +
+      xlab("Segment") + 
+      ylab("Counts, Neg. Normailzed") +
+      ggtitle("Neg Norm Counts") +
+      scale_x_discrete(labels=c(1:10))
   }
   if(norm == "Neg"){
     stop(paste0("Error: Neg needs to be neg" ))
@@ -140,5 +147,5 @@ geomxnorm <- function(data, norm) {
     stop(paste0("Error: Negative needs to be neg" ))
   }
   
-  return(list("plot" = p, "Boxplot" = b, "Normalized Dataframe" = target_demoData))
+  return(list("plot" = p, "Boxplot" = ggboxplot, "Normalized Dataframe" = object))
 }
