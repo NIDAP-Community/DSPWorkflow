@@ -1,5 +1,5 @@
 test_that("Run Diff Exp Analysis with default parameters - kidney data", {
-  kidney_data <- getsubset("kidney", "Within")
+  kidney_data <- getSubset("kidney", "Within")
   reslist.1 <-
     do.call(diffExpr, kidney_data) #Runs with default parameters
   
@@ -22,7 +22,7 @@ test_that("Run Diff Exp Analysis with default parameters - kidney data", {
   expect_setequal(names(reslist.1), expected.elements)
   
   ###Testing Between groups:
-  kidney_data <- getsubset("kidney", "Between")
+  kidney_data <- getSubset("kidney", "Between")
   reslist.2 <- do.call(diffExpr, kidney_data)
   
   #Test saving images and calculated FC and pvals
@@ -43,7 +43,7 @@ test_that("Run Diff Exp Analysis with default parameters - kidney data", {
 })
 
 test_that("Run Diff Exp Analysis with wrong selected group column", {
-  kidney_data <- getsubset("kidney", "Between")
+  kidney_data <- getSubset("kidney", "Between")
   kidney_data$group.col <- "segment" #Wrong selected group column
   
   expect_error(
@@ -54,7 +54,7 @@ test_that("Run Diff Exp Analysis with wrong selected group column", {
 })
 
 test_that("Run Diff Exp Analysis with wrong selected region column", {
-  kidney_data <- getsubset("kidney", "Within")
+  kidney_data <- getSubset("kidney", "Within")
   kidney_data$region.col <- "segment" #Wrong selected region column
   expect_error(
     do.call(diffExpr, kidney_data),
@@ -65,7 +65,7 @@ test_that("Run Diff Exp Analysis with wrong selected region column", {
 })
 
 test_that("Run Diff Exp Analysis with wrong entry for Groups", {
-  kidney_data <- getsubset("kidney", "Within")
+  kidney_data <- getSubset("kidney", "Within")
   kidney_data$groups <-
     c("Dkd", "normal") #Misspecifying the group name
   expect_error(do.call(diffExpr, kidney_data),
@@ -75,7 +75,7 @@ test_that("Run Diff Exp Analysis with wrong entry for Groups", {
 })
 
 test_that("Run Diff Exp Analysis with wrong entry for regions", {
-  kidney_data <- getsubset("kidney", "Within")
+  kidney_data <- getSubset("kidney", "Within")
   kidney_data$regions <- c("glomerul", "tubule") #
   expect_error(do.call(diffExpr, kidney_data),
                fixed = TRUE,
@@ -85,7 +85,7 @@ test_that("Run Diff Exp Analysis with wrong entry for regions", {
 
 test_that("Run Within Group Analysis with fewer than 2 regions (wrong variable entry)",
           {
-            kidney_data <- getsubset("kidney", "Within")
+            kidney_data <- getSubset("kidney", "Within")
             kidney_data$regions <- "tubule"
             expect_error(
               do.call(diffExpr, kidney_data),
@@ -96,7 +96,7 @@ test_that("Run Within Group Analysis with fewer than 2 regions (wrong variable e
 
 test_that("Run Between Group Analysis with fewer than 2 groups (wrong variable entry)",
           {
-            kidney_data <- getsubset("kidney", "Between")
+            kidney_data <- getSubset("kidney", "Between")
             kidney_data$groups = c("DKD")
             expect_error(
               do.call(diffExpr, kidney_data),
@@ -107,7 +107,7 @@ test_that("Run Between Group Analysis with fewer than 2 groups (wrong variable e
 
 test_that("Run Diff Exp Analysis with default parameters - Mouse Thymus data",
           {
-            thymus_data <- getsubset("thymus", "Within")
+            thymus_data <- getSubset("thymus", "Within")
             reslist.1 <-
               do.call(diffExpr, thymus_data) #Runs with default parameters
             
@@ -130,7 +130,7 @@ test_that("Run Diff Exp Analysis with default parameters - Mouse Thymus data",
             expect_setequal(names(reslist.1), expected.elements)
             
             ###Testing Between groups:
-            thymus_data <- getsubset("thymus", "Between")
+            thymus_data <- getSubset("thymus", "Between")
             
             #Setting parameters for testing Between Groups:
             reslist.2 <- do.call(diffExpr, thymus_data)
@@ -154,7 +154,7 @@ test_that("Run Diff Exp Analysis with default parameters - Mouse Thymus data",
           })
 
 test_that("Run Diff Exp Analysis with default parameters - Colon data", {
-  colon_data <- getsubset("colon", "Within")
+  colon_data <- getSubset("colon", "Within")
   reslist.1 <-
     do.call(diffExpr, colon_data) #Runs with default parameters
   
@@ -177,7 +177,7 @@ test_that("Run Diff Exp Analysis with default parameters - Colon data", {
   expect_setequal(names(reslist.1), expected.elements)
   
   ###Testing Between groups:
-  colon_data <- getsubset("colon", "Between")
+  colon_data <- getSubset("colon", "Between")
   
   #Setting parameters for testing Between Groups:
   reslist.2 <- do.call(diffExpr, colon_data)
@@ -201,7 +201,7 @@ test_that("Run Diff Exp Analysis with default parameters - Colon data", {
 })
 
 test_that("Run Diff Exp Analysis with default parameters - NSCLC data", {
-  nsclc_data <- getsubset("nsclc", "Within")
+  nsclc_data <- getSubset("nsclc", "Within")
   reslist.1 <-
     do.call(diffExpr, nsclc_data) #Runs with default parameters
   
@@ -224,7 +224,7 @@ test_that("Run Diff Exp Analysis with default parameters - NSCLC data", {
   expect_setequal(names(reslist.1), expected.elements)
   
   ###Testing Between groups:
-  nsclc_data <- getsubset("nsclc", "Between")
+  nsclc_data <- getSubset("nsclc", "Between")
   
   #Setting parameters for testing Between Groups:
   reslist.2 <- do.call(diffExpr, nsclc_data)
