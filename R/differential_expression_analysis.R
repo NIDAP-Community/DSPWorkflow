@@ -260,14 +260,16 @@ diffExpr <- function(object,
     as.numeric(format(results[[fdr.colname]], digits = 3))
   
   #Run Summary Lists:
-  getgenelists <- function(groups, FClimit, pvallimit, pval) {
+  .getGeneLists <- function(groups, FClimit, pvallimit, pval) {
     upreggenes <- list()
     downreggenes <- list()
     for (i in 1:length(groups)) {
       if (pval == "pval") {
-        results %>% dplyr::filter(Subset == groups[i] &
+        upreggenes[[i]] <- results %>% dplyr::filter(Subset == groups[i] &
                                     .data[[FC.colname]] > FClimit &
-                                    .data[[pval.colname]] < pvallimit) %>% pull(Gene) %>% length() -> upreggenes[[i]]
+                                    .data[[pval.colname]] < pvallimit) %>% 
+            pull(Gene) %>% 
+            length() 
         results %>% dplyr::filter(Subset == groups[i] &
                                     .data[[FC.colname]] < -FClimit &
                                     .data[[pval.colname]] < pvallimit) %>% pull(Gene) %>% length() -> downreggenes[[i]]
