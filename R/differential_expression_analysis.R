@@ -1,28 +1,38 @@
-####This code derives from
-#http://www.bioconductor.org/packages/release/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html#7_Differential_Expression
-#https://rdrr.io/github/Nanostring-Biostats/GeomxTools/src/R/NanoStringGeoMxSet-de.R
+####This code derives from the following vignette:
+# http://www.bioconductor.org/packages/release/workflows/vignettes/
+# GeoMxWorkflows/inst/doc/
+# GeomxTools_RNA-NGS_Analysis.html#7_Differential_Expression
+# https://rdrr.io/github/Nanostring-Biostats/GeomxTools/src/R/
+# NanoStringGeoMxSet-de.R
 
-#' Run a linear mixed model on GeoMxSet
+#' @title Run a linear mixed model on GeoMxSet
 #'
-#' @description
-#' diffExpr returns a DEG table with fold changes and p-values
+#' @description diffExpr returns a DEG table with fold changes and p-values
 #'
-#' @details
-#' This function will run mixedModelDE from the GeoMxTools package.
+#' @details This function will run mixedModelDE from the GeoMxTools package.
 #'
 #' @param object Name of the NanoStringGeoMxSet to perform DE analysis on
 #' @param analysis.type Analysis type either "Between Groups" or "Within Groups"
-#' @param groups One or more groups of interest (needs to be variables within group.col)
-#' @param group.col Column for group (groups are usually found in different slides)
-#' @param regions One or more regions of interest (needs to be variables within region.col)
-#' @param region.col Column for region (regions are usually found within a slide)
+#' @param groups One or more groups of interest (needs to be variables within
+#'  group.col)
+#' @param group.col Column for group (groups are usually found in different
+#'  slides)
+#' @param regions One or more regions of interest (needs to be variables within
+#'  region.col)
+#' @param region.col Column for region (regions are usually found within a
+#'  slide)
 #' @param slide.col Column for slide name
 #' @param element assayDataElement of the geoMxSet object to run the DE on
-#' @param fc.lim Fold Change limit for summarizing genes of interest (default is 1.2)
-#' @param n.cores Number of cores to use, set to 1 if running in serial mode (default is 1)
-#' @param multi.core Set to TRUE to use multicore, FALSE to run in cluster mode (default is TRUE)
-#' @param p.adjust Method to use for pvalue adjustment. Choices are "holm","hochberg","hommel","bonferroni","BH","BY","fdr","none". Default is "BH"
-#' @param pairwise Boolean to calculate least-square means pairwise differences (default is NULL)
+#' @param fc.lim Fold Change limit for summarizing genes of interest (default
+#'  is 1.2)
+#' @param n.cores Number of cores to use, set to 1 if running in serial mode
+#'  (default is 1)
+#' @param multi.core Set to TRUE to use multicore, FALSE to run in cluster mode
+#'  (default is TRUE)
+#' @param p.adjust Method to use for pvalue adjustment. Choices are "holm",
+#'  "hochberg","hommel","bonferroni","BH","BY","fdr","none". Default is "BH"
+#' @param pairwise Boolean to calculate least-square means pairwise differences
+#'  (default is NULL)
 #'
 #' @importFrom GeomxTools mixedModelDE
 #' @importFrom stringr str_wrap
@@ -35,11 +45,13 @@
 #' @importFrom tibble rownames_to_column
 #' @importFrom gridExtra tableGrob
 #' @importFrom BiocGenerics rownames colnames rbind
-#' @import NanoStringNCTools
-#' @import Biobase
+#' @importFrom magrittr %>%
+#' @importFrom Biobase pData assayDataElement
+#' @importFrom NanoStringNCTools mixedModelDE
 #' @export
 #'
-#' @return a list containing mixed model output data frame, grid tables for samples and summary of genelists
+#' @return a list containing mixed model output data frame, grid tables for
+#' samples and summary of genelists
 
 diffExpr <- function(object,
                      analysis.type,
@@ -89,18 +101,20 @@ diffExpr <- function(object,
                    base = 2,
                    elt = element)
   
-  #Test for correct selection of parameter columns and/or filling out of factors:
+  #Test for correct selection of parameter column and/or factors
   ind.na <- colSums(is.na(pData(object)))
   param.na <- names(ind.na[ind.na > 0])
   
   if (length(param.na) > 0) {
     if (param.na[1] == "testRegion") {
       regdiff <-
-        setdiff(unique(pData(object)[[region.col]]), unique(levels(pData(object)$testRegion)))
+        setdiff(unique(pData(object)[[region.col]]),
+                unique(levels(pData(object)$testRegion)))
       regdiff <- paste0(regdiff, collapse = ", ")
       message(
         paste0(
-          "At least one of the regions within the Region Column was not selected and is excluded:\n",
+          "At least one of the regions within the Region Column was not selected
+            and is excluded:\n",
           regdiff,
           "\n"
         )
@@ -108,20 +122,17 @@ diffExpr <- function(object,
     }
     else if (param.na[1] == "testClass") {
       classdiff <-
-        setdiff(unique(pData(object)[[group.col]]), unique(levels(pData(object)$testClass)))
+        setdiff(unique(pData(object)[[group.col]]),
+                unique(levels(pData(object)$testClass)))
       classdiff <- paste0(classdiff, collapse = ", ")
       message(
-        "At least one of the groups within the Group Column was not selected and is excluded:\n",
+        "At least one of the groups within the Group Column was not selected and
+          is excluded:\n",
         classdiff,
         "\n"
       )
     }
   }
-  
-  reg.length <-
-    length(unique(pData(object)$testRegion)[!is.na(unique(pData(object)$testRegion))]) #has to be 2 for first test
-  grp.length <-
-    length(unique(pData(object)$testClass)[!is.na(unique(pData(object)$testClass))]) #has to be 2 for second test
   
   #Print Metadata Pivot Table
   metadata <- pData(object) %>% rownames_to_column("sample")
@@ -130,9 +141,15 @@ diffExpr <- function(object,
   met.sum %>% pivot_wider(names_from = slide, values_from = n) -> met.pivot
   colnames(met.pivot) <- str_wrap(colnames(met.pivot), 10)
   ind <- !(is.na(met.pivot$testClass) | is.na(met.pivot$testRegion))
-  met.pivot <- met.pivot[ind, ]
+  met.pivot <- met.pivot[ind,]
   grid.newpage()
   gt <- tableGrob(met.pivot, theme = ttheme_default(base_size = 8))
+  
+  #Check for numbers of groups and regions listed for comparison
+  reg.length <-
+    length(unique(pData(object)$testRegion)[!is.na(unique(pData(object)$testRegion))])
+  grp.length <-
+    length(unique(pData(object)$testClass)[!is.na(unique(pData(object)$testClass))])
   
   #Run DEG Analysis
   options(digits = 9)
@@ -151,7 +168,7 @@ diffExpr <- function(object,
       ind[is.na(ind)] <- FALSE
       ind2 <- pData(object)$testRegion %in% regions
       ind2[is.na(ind2)] <- FALSE
-      mixedOutmc <- mixedModelDE(
+      mixed.out <- mixedModelDE(
         object[, ind & ind2],
         elt = element,
         modelFormula = ~ testRegion + (1 + testRegion |
@@ -164,23 +181,24 @@ diffExpr <- function(object,
       )
       
       # format results as data.frame
-      r_test <- do.call(rbind, mixedOutmc["lsmeans",])
-      tests <- rownames(r_test)
-      r_test <- as.data.frame(r_test)
-      r_test$Contrast <- tests
-      r_test$Gene <-
-        unlist(lapply(colnames(mixedOutmc),
-                      rep, nrow(mixedOutmc["lsmeans",][[1]])))
-      r_test$Subset <- status
-      r_test$FDR <- p.adjust(r_test$`Pr(>|t|)`, method = "fdr")
-      r_test <-
-        r_test[, c("Gene",
-                   "Subset",
-                   "Contrast",
-                   "Estimate",
-                   "Pr(>|t|)",
-                   "FDR")]
-      results <- rbind(results, r_test)
+      test.results <- do.call(rbind, mixed.out["lsmeans", ])
+      tests <- rownames(test.results)
+      test.results <- as.data.frame(test.results)
+      test.results$Contrast <- tests
+      test.results$Gene <-
+        unlist(lapply(colnames(mixed.out),
+                      rep, nrow(mixed.out["lsmeans", ][[1]])))
+      test.results$Subset <- status
+      test.results$FDR <-
+        p.adjust(test.results$`Pr(>|t|)`, method = "fdr")
+      test.results <-
+        test.results[, c("Gene",
+                         "Subset",
+                         "Contrast",
+                         "Estimate",
+                         "Pr(>|t|)",
+                         "FDR")]
+      results <- rbind(results, test.results)
     }
   } else {
     cat("Running Between Group Analysis for Regions")
@@ -196,7 +214,7 @@ diffExpr <- function(object,
       ind[is.na(ind)] <- FALSE
       ind2 <- pData(object)$testClass %in% groups
       ind2[is.na(ind2)] <- FALSE
-      mixedOutmc <-
+      mixed.out <-
         mixedModelDE(
           object[, ind & ind2],
           elt = element,
@@ -209,29 +227,29 @@ diffExpr <- function(object,
         )
       
       # format results as data.frame
-      r_test <- do.call(rbind, mixedOutmc["lsmeans",])
-      tests <- rownames(r_test)
-      r_test <- as.data.frame(r_test)
-      r_test$Contrast <- tests
+      test.results <- do.call(rbind, mixed.out["lsmeans", ])
+      tests <- rownames(test.results)
+      test.results <- as.data.frame(test.results)
+      test.results$Contrast <- tests
       
       # use lapply in case you have multiple levels of your test factor to
       # correctly associate gene name with it's row in the results table
-      r_test$Gene <-
-        unlist(lapply(colnames(mixedOutmc),
-                      rep, nrow(mixedOutmc["lsmeans",][[1]])))
-      r_test$Subset <- region
-      r_test$FDR <- p.adjust(r_test$`Pr(>|t|)`, method = "fdr")
-      r_test <-
-        r_test[, c("Gene",
-                   "Subset",
-                   "Contrast",
-                   "Estimate",
-                   "Pr(>|t|)",
-                   "FDR")]
-      results <- rbind(results, r_test)
+      test.results$Gene <-
+        unlist(lapply(colnames(mixed.out),
+                      rep, nrow(mixed.out["lsmeans", ][[1]])))
+      test.results$Subset <- region
+      test.results$FDR <-
+        p.adjust(test.results$`Pr(>|t|)`, method = "fdr")
+      test.results <-
+        test.results[, c("Gene",
+                         "Subset",
+                         "Contrast",
+                         "Estimate",
+                         "Pr(>|t|)",
+                         "FDR")]
+      results <- rbind(results, test.results)
     }
   }
-  
   
   #Change the names of columns for table:
   conname <- gsub(" ", "", unique(results$Contrast))
@@ -247,9 +265,11 @@ diffExpr <- function(object,
   FC <- 2 ^ (results[[logFC.colname]])
   FC = ifelse(FC < 1, -1 / FC, FC)
   results[[FC.colname]] <- FC
-  results %>% select(Gene, Subset, .data[[FC.colname]], .data[[logFC.colname]],
-                     .data[[pval.colname]], .data[[fdr.colname]]) -> results
-  results %>% arrange(.data[[pval.colname]]) -> results
+  results <- results %>%
+    select(Gene, Subset, .data[[FC.colname]], .data[[logFC.colname]],
+           .data[[pval.colname]], .data[[fdr.colname]])
+  results <- results %>%
+    arrange(.data[[pval.colname]])
   results[[FC.colname]] <-
     as.numeric(format(results[[FC.colname]], digits = 3))
   results[[logFC.colname]] <-
@@ -265,21 +285,31 @@ diffExpr <- function(object,
     downreggenes <- list()
     for (i in 1:length(groups)) {
       if (pval == "pval") {
-        upreggenes[[i]] <- results %>% dplyr::filter(Subset == groups[i] &
-                                    .data[[FC.colname]] > FClimit &
-                                    .data[[pval.colname]] < pvallimit) %>% 
-            pull(Gene) %>% 
-            length() 
-        results %>% dplyr::filter(Subset == groups[i] &
-                                    .data[[FC.colname]] < -FClimit &
-                                    .data[[pval.colname]] < pvallimit) %>% pull(Gene) %>% length() -> downreggenes[[i]]
+        upreggenes[[i]] <- results %>%
+          dplyr::filter(Subset == groups[i] &
+                          .data[[FC.colname]] > FClimit &
+                          .data[[pval.colname]] < pvallimit) %>%
+          pull(Gene) %>%
+          length()
+        downreggenes[[i]] <- results %>%
+          dplyr::filter(Subset == groups[i] &
+                          .data[[FC.colname]] < -FClimit &
+                          .data[[pval.colname]] < pvallimit) %>%
+          pull(Gene) %>%
+          length()
       } else {
-        results %>% dplyr::filter(Subset == groups[i] &
-                                    .data[[FC.colname]] > FClimit &
-                                    .data[[fdr.colname]] < pvallimit) %>% pull(Gene) %>% length() -> upreggenes[[i]]
-        results %>% dplyr::filter(Subset == groups[i] &
-                                    .data[[FC.colname]] < -FClimit &
-                                    .data[[fdr.colname]] < pvallimit) %>% pull(Gene) %>% length() -> downreggenes[[i]]
+        upreggenes[[i]] <- results %>%
+          dplyr::filter(Subset == groups[i] &
+                          .data[[FC.colname]] > FClimit &
+                          .data[[fdr.colname]] < pvallimit) %>%
+          pull(Gene) %>%
+          length()
+        downreggenes[[i]] <- results %>%
+          dplyr::filter(Subset == groups[i] &
+                          .data[[FC.colname]] < -FClimit &
+                          .data[[fdr.colname]] < pvallimit) %>%
+          pull(Gene) %>%
+          length()
       }
     }
     names(upreggenes) <- groups
@@ -293,39 +323,43 @@ diffExpr <- function(object,
     return(allreggenes)
   }
   
-  wraplines <- function(y) {
+  .wraplines <- function(y) {
     j = unlist(strsplit(y, "-"))
     k = strwrap(j, width = 10)
     l = paste(k, collapse = "\n-")
     return(l)
   }
   
-  #Return summary table of DEG results using different fold change and pvalue thresholds:
-  runSummary <- function(selectGroups) {
+  # Return summary table of DEG results using different fold change and p-value
+  # thresholds:
+  .runSummary <- function(select.groups) {
     FCpval1 <-
-      getgenelists(selectGroups,
-                   FClimit = fc.lim,
-                   pvallimit = pval.lim.1,
-                   "pval")
+      .getGeneLists(select.groups,
+                    FClimit = fc.lim,
+                    pvallimit = pval.lim.1,
+                    "pval")
     FCpval2 <-
-      getgenelists(selectGroups,
-                   FClimit = fc.lim,
-                   pvallimit = pval.lim.2,
-                   "pval")
+      .getGeneLists(select.groups,
+                    FClimit = fc.lim,
+                    pvallimit = pval.lim.2,
+                    "pval")
     FCadjpval1 <-
-      getgenelists(selectGroups,
-                   FClimit = fc.lim,
-                   pvallimit = pval.lim.1,
-                   "adjpval")
+      .getGeneLists(select.groups,
+                    FClimit = fc.lim,
+                    pvallimit = pval.lim.1,
+                    "adjpval")
     FCadjpval2 <-
-      getgenelists(selectGroups,
-                   FClimit = fc.lim,
-                   pvallimit = pval.lim.2,
-                   "adjpval")
+      .getGeneLists(select.groups,
+                    FClimit = fc.lim,
+                    pvallimit = pval.lim.2,
+                    "adjpval")
+    
     pvaltab <- rbind(FCpval1, FCpval2, FCadjpval1, FCadjpval2)
+    
     colnames(pvaltab) <-
       sapply(colnames(pvaltab), function(x)
-        wraplines(x))
+        .wraplines(x))
+    
     table <-
       tableGrob(pvaltab, theme = ttheme_default(base_size = 8))
     title2 <- unique(results$Contrast)
@@ -349,13 +383,14 @@ diffExpr <- function(object,
     return(table)
   }
   
+  # Get Summary of significant genes for analysis run and return table 
   if (analysis.type == "Within Groups") {
-    summary.table <- runSummary(selectGroups = groups)
+    summary.table <- .runSummary(select.groups = groups)
   } else {
-    summary.table <- runSummary(selectGroups = regions)
+    summary.table <- .runSummary(select.groups = regions)
   }
   
-  #Create image for tables:
+  #Create image for summary tables:
   g1 <- gt
   g2 <- summary.table
   gg <- wrap_elements(g1) + wrap_elements(g2) +
