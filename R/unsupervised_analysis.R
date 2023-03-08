@@ -2,7 +2,7 @@
 # "Analyzing GeoMx-NGS RNA Expression Data with GeomxTools" vignette
 # https://tinyurl.com/2wn2rtt9
 
-#' dimReduct: Dimensional Reduction
+#' @title dimReduct: Dimensional Reduction
 #' @description Reduces data to two dimensions using PCA, tSNE, and UMAP. Adds
 #' the sample embeddings of each dimensional reduction technique to the input
 #' object (phenoData) and plots them on 2D scatter plots.
@@ -65,12 +65,10 @@ dimReduct <-
            point.alpha = 1,
            symbol.size = 2,
            text.size = 16,
-           print.plots = TRUE) {
+           print.plots = FALSE) {
     
     # Pre-run ####
-    
     ## checks ####
-    
     ## stop if assayDataElement not present
     if (!assay.data %in% assayDataElementNames(object)) {
       error.message <-
@@ -95,9 +93,7 @@ dimReduct <-
         "adding in the phenoData PCA, tSNE, and UMAP coordinates\n"
       cat(message(info.message))
     }
-    
     ## settings ####
-    
     ## bind variables
     color.variable  <-
       PC1 <- PC2 <- tSNE1 <- tSNE2 <- UMAP1 <- UMAP2 <- NULL
@@ -116,27 +112,20 @@ dimReduct <-
         dat <- log2(dat)
       }
     }
-    
     # Run Reductions ####
-    
     ## PCA ####
-    
     ## calculate PCA on user-defined assayData
     pca.stats <- prcomp(t(dat), scale. = TRUE)
     ##  add PCA coordinates to the object
     Biobase::pData(object)[, c("PC1", "PC2")] <- pca.stats$"x"[,c(1, 2)]
-    
     ## tSNE ####
-    
     ## set random seed
     set.seed(42)
     ### calculate tSNE on user-defined assayData
     tsne.stats <- Rtsne(t(dat), perplexity = ncol(object) * .15)
     ## add tSNE coordinates to the object
     Biobase::pData(object)[, c("tSNE1", "tSNE2")] <- tsne.stats$Y[,c(1, 2)]
-    
     ## UMAP ####
-    
     ## retrieve UMAP defaults
     custom.umap <- umap::umap.defaults
     ## set random seed
@@ -145,11 +134,8 @@ dimReduct <-
     umap.stats <- umap(t(dat), config = custom.umap)
     ## add UMAP coordinates to the object
     Biobase::pData(object)[,c("UMAP1", "UMAP2")] <- umap.stats$layout[, c(1, 2)]
-    
     # Generate Plots ####
-    
     ## plot input data ####
-    
     ## extract phenoData from the object
     df <- Biobase::pData(object)
     ## set color variable and its legend title; if color.variable2 is not NULL
@@ -179,9 +165,8 @@ dimReduct <-
       legend.title <-
         labs(shape = shape.label, colour = color.label)
     }
-    
     ## PCA ggplot ####
-    
+    ## use guide_legend() to set symbol size in the legend
     pca.ggplot <- ggplot(
       df,
       aes(x = PC1,
@@ -195,15 +180,14 @@ dimReduct <-
       ggtitle("PCA") +
       labs(x = "PC 1",
            y = "PC 2") +
-      theme_linedraw(base_size = text.size) +
+      theme_bw(base_size = text.size) +
       theme(axis.title = element_text(size=text.size-2)) +
       guides(colour =
                guide_legend(override.aes = list(size = symbol.size))) +
       guides(shape =
                guide_legend(override.aes = list(size = symbol.size)))
-    
     ## tSNE ggplot ####
-    
+    ## use guide_legend() to set symbol size in the legend
     tsne.ggplot <- ggplot(
       df,
       aes(x = tSNE1,
@@ -214,7 +198,7 @@ dimReduct <-
     ) +
       add.points +
       legend.title +
-      theme_linedraw(base_size = text.size) +
+      theme_bw(base_size = text.size) +
       ggtitle("tSNE") +
       labs(x = "tSNE 1",
            y = "tSNE 2") +
@@ -223,9 +207,8 @@ dimReduct <-
                guide_legend(override.aes = list(size = symbol.size))) +
       guides(shape =
                guide_legend(override.aes = list(size = symbol.size)))
-    
     ## UMAP ggplot ####
-    
+    ## use guide_legend() to set symbol size in the legend
     umap.ggplot <- ggplot(
       df,
       aes(x = UMAP1,
@@ -236,7 +219,7 @@ dimReduct <-
     ) +
       add.points +
       legend.title +
-      theme_linedraw(base_size = text.size) +
+      theme_bw(base_size = text.size) +
       ggtitle("UMAP") +
       labs(x = "UMAP 1",
            y = "UMAP 2") +
@@ -245,9 +228,9 @@ dimReduct <-
                guide_legend(override.aes = list(size = symbol.size))) +
       guides(shape =
                guide_legend(override.aes = list(size = symbol.size)))
-    
     # Print Plots ####
-    
+    ## use patchwork to assemble plots
+    ## and add legend space with guide_area()
     if (print.plots) {
       print(
         pca.ggplot +
@@ -257,12 +240,10 @@ dimReduct <-
           plot_layout(ncol = 2, guides = "collect")
       )
     }
-    
     # List Plots ####
     plot.list <- list("PCA" = pca.ggplot,
                       "tSNE" = tsne.ggplot,
                       "UMAP" = umap.ggplot)
-    
     # Return ####
     output <- list("object" = object, "plot" = plot.list)
     invisible(output)

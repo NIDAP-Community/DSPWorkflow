@@ -1,6 +1,6 @@
 test_that("Test Human Kidney dataset", {
   
-  kidney.dat <- select_normalized_RTD("kidney")
+  kidney.dat <- selectNormalizedRtd("kidney")
   
   output <-
     dimReduct(
@@ -17,7 +17,7 @@ test_that("Test Human Kidney dataset", {
 
 test_that("Test Colon Dataset", {
   
-  colon.dat <- select_normalized_RTD("colon")
+  colon.dat <- selectNormalizedRtd("colon")
   
   output <-
     dimReduct(
@@ -34,7 +34,7 @@ test_that("Test Colon Dataset", {
 
 test_that("Test Mouse Thymus Dataset", {
   
-  thymus.dat <- select_normalized_RTD("thymus")
+  thymus.dat <- selectNormalizedRtd("thymus")
   
   output <-
     dimReduct(
@@ -51,7 +51,7 @@ test_that("Test Mouse Thymus Dataset", {
 
 test_that("Test Human NSCLC Dataset", {
   
-  nsclc.dat <- select_normalized_RTD("nsclc")
+  nsclc.dat <- selectNormalizedRtd("nsclc")
   
   output <-
     dimReduct(
@@ -68,7 +68,7 @@ test_that("Test Human NSCLC Dataset", {
 
 test_that("dimension reductions present in the input object", {
   
-  kidney.dat <- select_normalized_RTD("kidney")
+  kidney.dat <- selectNormalizedRtd("kidney")
   
   output <-
     dimReduct(
@@ -94,7 +94,7 @@ test_that("dimension reductions present in the input object", {
 test_that("Check message when replacing pre-existing analysis", {
   
   # Load object
-  kidney.dat <- select_normalized_RTD("kidney")
+  kidney.dat <- selectNormalizedRtd("kidney")
   
   # Run first time and expect no message
   expect_message(output <-
