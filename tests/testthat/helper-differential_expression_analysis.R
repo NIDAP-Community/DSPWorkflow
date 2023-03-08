@@ -1,6 +1,6 @@
-get_de_params <- function(data, test) {
+getDeParams <- function(data, test) {
   if (data == "kidney") {
-    object <- select_normalized_RTD("kidney")
+    object <- selectNormalizedRtd("kidney")
     groups = c("DKD", "normal")
     group.col = "class"
     regions = c("glomerulus", "tubule")
@@ -13,7 +13,7 @@ get_de_params <- function(data, test) {
       analysis.type = "Between Groups"
     }
   } else if (data == "thymus") {
-    object <- select_normalized_RTD("thymus")
+    object <- selectNormalizedRtd("thymus")
     slide.col = "slide name"
     n.cores = 4
     if (test == "Within") {
@@ -30,7 +30,7 @@ get_de_params <- function(data, test) {
       region.col = "segment"
     }
   } else if (data == "colon") {
-    object <- select_normalized_RTD("colon")
+    object <- selectNormalizedRtd("colon")
     slide.col = "slide name"
     n.cores = 4
     if (test == "Within") {
@@ -47,7 +47,7 @@ get_de_params <- function(data, test) {
       groups = c("Lymphoid", "Lamina")
     }
   } else if (data == "nsclc") {
-    object <- select_normalized_RTD("nsclc")
+    object <- selectNormalizedRtd("nsclc")
     slide.col = "slide name"
     n.cores = 4
     if (test == "Within") {
@@ -79,9 +79,9 @@ get_de_params <- function(data, test) {
 }
 
 
-getsubset <- function(data, test) {
+getSubset <- function(data, test) {
   if (data == "kidney") {
-    dataset <- get_de_params("kidney", test)
+    dataset <- getDeParams("kidney", test)
     goi <- c("CD274",
              "CD8A",
              "CD68",
@@ -91,10 +91,10 @@ getsubset <- function(data, test) {
              "NPHS2",
              "CALB1",
              "CLDN8")
-    dataset$object <- dataset$object[goi, ]
+    dataset$object <- dataset$object[goi,]
     
   } else if (data == "thymus") {
-    dataset <- get_de_params("thymus", test)
+    dataset <- getDeParams("thymus", test)
     goi <-
       c(
         "Plb1",
@@ -110,10 +110,10 @@ getsubset <- function(data, test) {
         "Tfdp1",
         "Foxn1"
       )
-    dataset$object <- dataset$object[goi, ]
+    dataset$object <- dataset$object[goi,]
     
   } else if (data == "colon") {
-    dataset <- get_de_params("colon", test)
+    dataset <- getDeParams("colon", test)
     goi <- c(
       "IGHA1",
       "JCHAIN",
@@ -127,10 +127,10 @@ getsubset <- function(data, test) {
       "CCL19",
       "CCL21"
     )
-    dataset$object <- dataset$object[goi, ]
+    dataset$object <- dataset$object[goi,]
     
   } else if (data == "nsclc") {
-    dataset <- get_de_params("nsclc", test)
+    dataset <- getDeParams("nsclc", test)
     goi <-
       c("ALDOC",
         "NCAM1",
@@ -140,7 +140,7 @@ getsubset <- function(data, test) {
         "COL1A1",
         "COL4A1",
         "FN1")
-    dataset$object <- dataset$object[goi, ]
+    dataset$object <- dataset$object[goi,]
     
   }
   return(dataset)
