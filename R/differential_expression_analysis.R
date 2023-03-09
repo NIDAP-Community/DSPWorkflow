@@ -7,7 +7,10 @@
 
 #' @title Run a linear mixed model on GeoMxSet
 #'
-#' @description diffExpr returns a DEG table with fold changes and p-values
+#' @description diffExpr returns a DEG table with fold changes and p-values and 
+#'  an image containing 2 tables, one showing the breakdown of number of samples
+#'  used in the analysis and a summary table for number of differentially 
+#'  expressed genes (DEG) given manually set fold-change and p-value thresholds.  
 #'
 #' @details This function will run mixedModelDE from the GeoMxTools package.
 #'
@@ -21,18 +24,22 @@
 #'  region.col)
 #' @param region.col Column for region (regions are usually found within a
 #'  slide)
-#' @param slide.col Column for slide name
+#' @param slide.col Column for slide name (default is "slide name")
 #' @param element assayDataElement of the geoMxSet object to run the DE on
-#' @param fc.lim Fold Change limit for summarizing genes of interest (default
-#'  is 1.2)
-#' @param n.cores Number of cores to use, set to 1 if running in serial mode
-#'  (default is 1)
 #' @param multi.core Set to TRUE to use multicore, FALSE to run in cluster mode
 #'  (default is TRUE)
+#' @param n.cores Number of cores to use, set to 1 if running in serial mode
+#'  (default is 1)
 #' @param p.adjust Method to use for pvalue adjustment. Choices are "holm",
-#'  "hochberg","hommel","bonferroni","BH","BY","fdr","none". Default is "BH"
+#'  "hochberg","hommel","bonferroni","BH","BY","fdr","none". (default is "BY")
 #' @param pairwise Boolean to calculate least-square means pairwise differences
 #'  (default is NULL)
+#' @param fc.lim Fold Change limit for summarizing genes of interest (default
+#'  is 1.2)
+#' @param pval.lim.1 P-value limit for summarizing differentially expressed 
+#'  (DEG) genes, usually more stringent (default is 0.05)
+#' @param pval.lim.2 P-value limit for summarizing differentially expressed 
+#'  (DEG) genes, usually more lenient (default is 0.10)
 #'
 #' @importFrom GeomxTools mixedModelDE
 #' @importFrom stringr str_wrap
@@ -263,7 +270,7 @@ diffExpr <- function(object,
     sub("Estimate", logFC.colname, colnames(results))
   colnames(results) <- sub("FDR", fdr.colname, colnames(results))
   FC <- 2 ^ (results[[logFC.colname]])
-  FC = ifelse(FC < 1, -1 / FC, FC)
+  FC <- ifelse(FC < 1, -1 / FC, FC)
   results[[FC.colname]] <- FC
   results <- results %>%
     select(Gene, Subset, .data[[FC.colname]], .data[[logFC.colname]],
