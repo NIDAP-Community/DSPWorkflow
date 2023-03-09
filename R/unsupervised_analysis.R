@@ -73,11 +73,11 @@ dimReduct <-
     if (!assay.data %in% assayDataElementNames(object)) {
       error.message <-
         sprintf("%s not found in assayData", assay.data)
-      cat(stop(error.message))
+      stop(error.message)
     } else {
       info.message <-
         sprintf("using %s in the dimensional reductions", assay.data)
-      cat(message(info.message))
+      message(info.message)
     }
     ## warn when dimension reductions already present and will be replaced
     if (any(c("PC1", "PC2", "tSNE1", "UMAP1", "UMAP2") %in%
@@ -87,11 +87,11 @@ dimReduct <-
       warn.message <-
         sprintf("%s found in the phenoData and will be replaced\n",
                 reductions)
-      cat(warning(warn.message))
+      warning(warn.message)
     } else {
       info.message <-
         "adding in the phenoData PCA, tSNE, and UMAP coordinates\n"
-      cat(message(info.message))
+      message(info.message)
     }
     ## settings ####
     ## bind variables
