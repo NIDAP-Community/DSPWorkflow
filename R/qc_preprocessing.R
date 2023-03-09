@@ -11,7 +11,7 @@ GeomxTools.defaults <- getAnywhere("DEFAULTS")$objs[[1]]
 #' reach the *min.probe.ratio* threshold or the probe is an outlier according to
 #'  Grubb’s test in at least *percent.fail.grubbs* of segments. A probe is
 #'  removed locally (from a given segment) if the probe is an outlier in that
-#'  segment and *remove.local.outliers* is set to TRUE (default).
+#'  segment and *remove.local.outliers* is set to TRUE.
 #'
 #' The count for any gene with multiple probes per segment is calculated as the
 #' geometric mean of those probes.
@@ -25,7 +25,6 @@ GeomxTools.defaults <- getAnywhere("DEFAULTS")$objs[[1]]
 #' @param percent.saturation minimum sequencing saturation
 #' @param min.negative.count minimum negative control counts
 #' @param max.ntc.count maximum counts observed in NTC well
-#' @param high.count.cutoff  ???
 #' @param min.nuclei minimum # of nuclei estimated
 #' @param min.area minimum segment area
 #' @param min.probe.ratio numeric between 0 and 1 to flag probes that have
