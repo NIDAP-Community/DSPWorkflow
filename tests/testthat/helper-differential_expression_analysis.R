@@ -91,7 +91,7 @@ getSubset <- function(data, test) {
              "NPHS2",
              "CALB1",
              "CLDN8")
-    dataset$object <- dataset$object[goi,]
+    dataset$object <- dataset$object[goi, ]
     
   } else if (data == "thymus") {
     dataset <- getDeParams("thymus", test)
@@ -110,7 +110,7 @@ getSubset <- function(data, test) {
         "Tfdp1",
         "Foxn1"
       )
-    dataset$object <- dataset$object[goi,]
+    dataset$object <- dataset$object[goi, ]
     
   } else if (data == "colon") {
     dataset <- getDeParams("colon", test)
@@ -127,7 +127,7 @@ getSubset <- function(data, test) {
       "CCL19",
       "CCL21"
     )
-    dataset$object <- dataset$object[goi,]
+    dataset$object <- dataset$object[goi, ]
     
   } else if (data == "nsclc") {
     dataset <- getDeParams("nsclc", test)
@@ -140,80 +140,110 @@ getSubset <- function(data, test) {
         "COL1A1",
         "COL4A1",
         "FN1")
-    dataset$object <- dataset$object[goi,]
+    dataset$object <- dataset$object[goi, ]
     
   }
   return(dataset)
 }
 
 
-calcfc <- function(data, result, test) {
-  lfc_col <- colnames(result)[grepl("logFC", colnames(result))]
-  pval_col <- colnames(result)[grepl("_pval", colnames(result))]
+calcFC <- function(data, result, test) {
+  lfc.col <- colnames(result)[grepl("logFC", colnames(result))]
+  pval.col <- colnames(result)[grepl("_pval", colnames(result))]
   
   if (data == "kidney") {
     if (test == "Within") {
-      lfc <-
-        result %>% dplyr::filter(Gene == "CALB1" &
-                                   Subset == "normal") %>% pull(lfc_col) %>% as.numeric()
-      pval <-
-        result %>% dplyr::filter(Gene == "CALB1" &
-                                   Subset == "normal") %>% pull(pval_col) %>% as.numeric()
+      lfc <- result %>%
+        dplyr::filter(Gene == "CALB1" &
+                        Subset == "normal") %>%
+        pull(lfc.col) %>%
+        as.numeric()
+      pval <- result %>%
+        dplyr::filter(Gene == "CALB1" &
+                        Subset == "normal") %>%
+        pull(pval.col) %>%
+        as.numeric()
     } else{
-      lfc <-
-        result %>% dplyr::filter(Gene == "CALB1" &
-                                   Subset == "tubule") %>% pull(lfc_col) %>% as.numeric()
-      pval <-
-        result %>% dplyr::filter(Gene == "CALB1" &
-                                   Subset == "tubule") %>% pull(pval_col) %>% as.numeric()
+      lfc <- result %>%
+        dplyr::filter(Gene == "CALB1" &
+                        Subset == "tubule") %>%
+        pull(lfc.col) %>%
+        as.numeric()
+      pval <- result %>%
+        dplyr::filter(Gene == "CALB1" &
+                        Subset == "tubule") %>%
+        pull(pval.col) %>%
+        as.numeric()
     }
   } else if (data == "thymus") {
     if (test == "Within") {
-      lfc <-
-        result %>% dplyr::filter(Gene == "Ccr7" &
-                                   Subset == "Thymus") %>% pull(lfc_col) %>% as.numeric()
-      pval <-
-        result %>% dplyr::filter(Gene == "Ccr7" &
-                                   Subset == "Thymus") %>% pull(pval_col) %>% as.numeric()
+      lfc <- result %>%
+        dplyr::filter(Gene == "Ccr7" &
+                        Subset == "Thymus") %>%
+        pull(lfc.col) %>%
+        as.numeric()
+      pval <- result %>%
+        dplyr::filter(Gene == "Ccr7" &
+                        Subset == "Thymus") %>%
+        pull(pval.col) %>%
+        as.numeric()
     } else{
-      lfc <-
-        result %>% dplyr::filter(Gene == "Ccr7" &
-                                   Subset == "PanCK") %>% pull(lfc_col) %>% as.numeric()
-      pval <-
-        result %>% dplyr::filter(Gene == "Ccr7" &
-                                   Subset == "PanCK") %>% pull(pval_col) %>% as.numeric()
+      lfc <- result %>%
+        dplyr::filter(Gene == "Ccr7" &
+                        Subset == "PanCK") %>%
+        pull(lfc.col) %>% as.numeric()
+      pval <- result %>%
+        dplyr::filter(Gene == "Ccr7" &
+                        Subset == "PanCK") %>%
+        pull(pval.col) %>% as.numeric()
     }
   } else if (data == "colon") {
     if (test == "Within") {
-      lfc <-
-        result %>% dplyr::filter(Gene == "JCHAIN" &
-                                   Subset == "Lamina") %>% pull(lfc_col) %>% as.numeric()
-      pval <-
-        result %>% dplyr::filter(Gene == "JCHAIN" &
-                                   Subset == "Lamina")  %>% pull(pval_col) %>% as.numeric()
+      lfc <- result %>%
+        dplyr::filter(Gene == "JCHAIN" &
+                        Subset == "Lamina") %>%
+        pull(lfc.col) %>%
+        as.numeric()
+      pval <- result %>%
+        dplyr::filter(Gene == "JCHAIN" &
+                        Subset == "Lamina")  %>%
+        pull(pval.col) %>%
+        as.numeric()
     } else{
-      lfc <-
-        result %>% dplyr::filter(Gene == "JCHAIN" &
-                                   Subset == "colon") %>% pull(lfc_col) %>% as.numeric()
-      pval <-
-        result %>% dplyr::filter(Gene == "JCHAIN" &
-                                   Subset == "colon") %>% pull(pval_col) %>% as.numeric()
+      lfc <- result %>%
+        dplyr::filter(Gene == "JCHAIN" &
+                        Subset == "colon") %>%
+        pull(lfc.col) %>%
+        as.numeric()
+      pval <- result %>%
+        dplyr::filter(Gene == "JCHAIN" &
+                        Subset == "colon") %>%
+        pull(pval.col) %>%
+        as.numeric()
     }
   } else if (data == "nsclc") {
     if (test == "Within") {
-      lfc <-
-        result %>% dplyr::filter(Gene == "VIM" &
-                                   Subset == "cancer") %>% pull(lfc_col) %>% as.numeric()
-      pval <-
-        result %>% dplyr::filter(Gene == "VIM" &
-                                   Subset == "cancer")  %>% pull(pval_col) %>% as.numeric()
+      lfc <- result %>%
+        dplyr::filter(Gene == "VIM" &
+                        Subset == "cancer") %>%
+        pull(lfc.col) %>%
+        as.numeric()
+      pval <- result %>%
+        dplyr::filter(Gene == "VIM" &
+                        Subset == "cancer")  %>%
+        pull(pval.col) %>%
+        as.numeric()
     } else{
-      lfc <-
-        result %>% dplyr::filter(Gene == "VIM" &
-                                   Subset == "brain") %>% pull(lfc_col) %>% as.numeric()
-      pval <-
-        result %>% dplyr::filter(Gene == "VIM" &
-                                   Subset == "brain") %>% pull(pval_col) %>% as.numeric()
+      lfc <- result %>%
+        dplyr::filter(Gene == "VIM" &
+                        Subset == "brain") %>%
+        pull(lfc.col) %>%
+        as.numeric()
+      pval <- result %>%
+        dplyr::filter(Gene == "VIM" &
+                        Subset == "brain") %>%
+        pull(pval.col) %>%
+        as.numeric()
     }
   }
   return(list("lfc" = lfc , "pval" = pval))
