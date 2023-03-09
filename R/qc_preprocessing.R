@@ -131,7 +131,7 @@ qcProc <- function(object,
     message.info <-
       sprintf("\nParameter %s is not numeric. Please specify a numeric value",
               names(bad.param))
-    cat(stop(message.info))
+    stop(message.info)
   }
   ## Check whether an optional param is specified as numeric if found in the
   ## annotation
@@ -140,34 +140,34 @@ qcProc <- function(object,
     if (is.null(max.ntc.count)) {
       message.info <-
         paste("NTC is part of the annotation, please specify a numeric value for max.ntc.count")
-      cat(stop(message.info))
+      stop(message.info)
     } else {
       if (is.numeric(max.ntc.count)) {
         qc.params$maxNTCCount <- max.ntc.count
       } else {
         message.info <-
           paste("max.ntc.count is not numeric. Please specify a numeric value")
-        cat(stop(message.info))
+        stop(message.info)
       }
     }
   } else {
     message.info <- 
       paste("NTC is not found in the annotation, max.ntc.count will not be considered")
-    cat(warning(message.info))
+    warning(message.info)
   }
   ## nuclei column and min.nuclei
   if ("nuclei" %in% colnames(sData(object))) {
     if (is.null(min.nuclei)) {
       message.info <-
         paste("nuclei is part of the annotation, please specify a numeric value for min.nuclei")
-      cat(stop(message.info))
+      stop(message.info)
     } else {
       if (is.numeric(min.nuclei)) {
         qc.params$minNuclei <- min.nuclei
       } else {
         message.info <-
           paste("min.nuclei is not numeric. Please specify a numeric value")
-        cat(stop(message.info))
+        stop(message.info)
       }
     }
   } else {
@@ -180,21 +180,21 @@ qcProc <- function(object,
     if (is.null(min.area)) {
       message.info <-
         paste("area is part of the annotation, please specify a numeric value for min.area")
-      cat(stop(message.info))
+      stop(message.info)
     } else {
       if (is.numeric(min.area)) {
         qc.params$minArea <- min.area
       } else {
         message.info <-
           paste("min.area is not numeric. Please specify a numeric value")
-        cat(stop(message.info))
+        stop(message.info)
       }
     }
   } else {
     message.info <-
       paste("area is not found in the annotation, min.area will not be
             considered")
-    cat(warning(message.info))
+    warning(message.info)
   }
   # Segment QC ####
   ## add segment QC flags to protocolData
