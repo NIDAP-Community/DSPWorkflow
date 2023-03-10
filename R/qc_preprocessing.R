@@ -4,7 +4,7 @@
 # GeomxTools NAMESPACE default QC cutoffs https://tinyurl.com/5n6wv8uc
 geomxToolsDefaults <- getAnywhere("DEFAULTS")$objs[[1]]
 
-#' @title qcProc: Quality Control and Preprocessing#'
+#' @title qcProc: Quality Control and Preprocessing
 #' @description  Selects ROI/AOI segments and target probes based on quality
 #' control and then generates gene-level count data.
 #' @details A probe is removed globally from the dataset if either it does not
