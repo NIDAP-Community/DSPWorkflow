@@ -1,9 +1,6 @@
 ####This code derives from the following vignette:
-# http://www.bioconductor.org/packages/release/workflows/vignettes/
-# GeoMxWorkflows/inst/doc/
-# GeomxTools_RNA-NGS_Analysis.html#7_Differential_Expression
-# https://rdrr.io/github/Nanostring-Biostats/GeomxTools/src/R/
-# NanoStringGeoMxSet-de.R
+# http://www.bioconductor.org/packages/release/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html#7_Differential_Expression
+# https://rdrr.io/github/Nanostring-Biostats/GeomxTools/src/R/NanoStringGeoMxSet-de.R
 
 #' @title Run a linear mixed model on GeoMxSet
 #'
@@ -75,9 +72,8 @@ diffExpr <- function(object,
                      fc.lim = 1.2,
                      pval.lim.1 = 0.05,
                      pval.lim.2 = 0.01) {
-  testClass <-
-    testRegion <-
-    slide <- p.adjust <- Gene <- Subset <- Gene <- NULL
+  
+  testClass <- testRegion <- Gene <- Subset <- NULL
   
   # convert test variables to factors after checking input
   reg.check <- regions[!regions %in% pData(object)[[region.col]]]
@@ -153,10 +149,11 @@ diffExpr <- function(object,
   gt <- tableGrob(met.pivot, theme = ttheme_default(base_size = 8))
   
   #Check for numbers of groups and regions listed for comparison
-  reg.length <-
-    length(unique(pData(object)$testRegion)[!is.na(unique(pData(object)$testRegion))])
-  grp.length <-
-    length(unique(pData(object)$testClass)[!is.na(unique(pData(object)$testClass))])
+  
+  reg.col <- unique(pData(object)$testRegion)
+  reg.length <- length(reg.col[!is.na(reg.col)])
+  grp.col <- unique(pData(object)$testClass)
+  grp.length <- length(grp.col[!is.na(grp.col)])
   
   #Run DEG Analysis
   options(digits = 9)
