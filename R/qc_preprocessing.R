@@ -53,7 +53,7 @@ geomxToolsDefaults <- getAnywhere("DEFAULTS")$objs[[1]]
 #'  and the *QCFlags* data.frame appended to *protocolData* ("object")
 #' - QC plots in a list of ggplot objects ("plot")
 
-qcProc <- function(object,
+qcProc <-  function(object,
                    min.segment.reads = 1000,
                    percent.trimmed = 80,
                    percent.stitched = 80,
