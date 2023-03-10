@@ -75,7 +75,6 @@ selectDatasetQC <- function(dataset) {
     percent.fail.grubbs = 20
     remove.local.outliers = FALSE
     print.plots = FALSE
-    
   }
   return(
     list(
@@ -98,7 +97,6 @@ selectDatasetQC <- function(dataset) {
     )
   )
 }
-
 ## assign NULL values to args directly
 ## replacing element of a list with NULL removes it entirely from the list
 ## e.g., output$min.nuclei <- NULL removes $min.nuclei and causes test failure

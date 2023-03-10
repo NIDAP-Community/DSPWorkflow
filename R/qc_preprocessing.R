@@ -2,9 +2,9 @@
 # "Analyzing GeoMx-NGS RNA Expression Data with GeomxTools" vignette
 # https://tinyurl.com/2p8x3hss
 # GeomxTools NAMESPACE default QC cutoffs https://tinyurl.com/5n6wv8uc
-GeomxTools.defaults <- getAnywhere("DEFAULTS")$objs[[1]]
+geomxToolsDefaults <- getAnywhere("DEFAULTS")$objs[[1]]
 
-#' @title qcProc: Quality Control and Preprocessing
+#' @title qcProc: Quality Control and Preprocessing#'
 #' @description  Selects ROI/AOI segments and target probes based on quality
 #' control and then generates gene-level count data.
 #' @details A probe is removed globally from the dataset if either it does not
@@ -15,7 +15,6 @@ GeomxTools.defaults <- getAnywhere("DEFAULTS")$objs[[1]]
 #'
 #' The count for any gene with multiple probes per segment is calculated as the
 #' geometric mean of those probes.
-#'
 #' @param object object of class *NanoStringGeoMxSet* with raw data and metadata
 #'  supplied
 #' @param min.segment.reads minimum number of reads
@@ -38,7 +37,6 @@ GeomxTools.defaults <- getAnywhere("DEFAULTS")$objs[[1]]
 #'  excluded from exprs matrix
 #' @param print.plots boolean to display plots or set to FALSE otherwise; ggplot
 #' objects are returned in either case
-#'
 #' @importFrom Biobase protocolData pData fData featureData
 #' @importFrom BiocGenerics annotation
 #' @importFrom GeomxTools shiftCountsOne setSegmentQCFlags setBioProbeQCFlags
@@ -49,11 +47,11 @@ GeomxTools.defaults <- getAnywhere("DEFAULTS")$objs[[1]]
 #' @importFrom knitr kable
 #' @importFrom NanoStringNCTools esBy negativeControlSubset assayDataApply sData
 #' @importFrom patchwork plot_layout plot_annotation patchworkGrob wrap_plots
-#'
 #' @export
-#' @return A list of two objects: QC-filtered *NanoStringGeoMxSet* object with
-#' gene-level targets as features and the *QCFlags* data frame appended to
-#' *protocolData*, and QC plots
+#' @return A list of two objects:  
+#' - QC-filtered *NanoStringGeoMxSet* object with gene-level targets as features
+#'  and the *QCFlags* data.frame appended to *protocolData* ("object")
+#' - QC plots in a list of ggplot objects ("plot")
 
 qcProc <- function(object,
                    min.segment.reads = 1000,
@@ -102,15 +100,11 @@ qcProc <- function(object,
     }
     plt
   }
-  ## change from GeomxTools to DSPWorkflow dimReduct args
-  .toDottedLower <- function(camelCase) {
-    gsub("([a-z])([A-Z])", "\\1.\\L\\2", camelCase, perl = TRUE)
-  }
   ## settings ####
   ## shift counts (useDALogic=TRUE adds 1 only to 0s)
   object <- shiftCountsOne(object, useDALogic = TRUE)
-  ## list of user-defined segment QC params for variables expected to be
-  ## always present in the input object
+  ## list of user-defined segment QC params for annotations and variables
+  ## expected to be always present in the input object
   qc.params <-
     list(
       minSegmentReads = min.segment.reads,
@@ -123,78 +117,80 @@ qcProc <- function(object,
   ## checks ####
   ## create alternative qc.params with qcProc args names for use in messages
   alt.params <- qc.params
-  names(alt.params) <- .toDottedLower(names(qc.params))
-  ## Check whether required parameters are specified as numeric
+  names(alt.params) <-
+    c(
+      "min.segment.reads",
+      "percent.trimmed",
+      "percent.stitched",
+      "percent.aligned",
+      "percent.saturation",
+      "min.negative.count"
+    )
+  ## check whether required parameters are specified as numeric
   param.is.numeric <- sapply(alt.params, is.numeric)
   if (!all(param.is.numeric)) {
     bad.param <- alt.params[!param.is.numeric]
     message.info <-
-      sprintf("\nParameter %s is not numeric. Please specify a numeric value",
+      sprintf("%s is not numeric, please specify a numeric value\n",
               names(bad.param))
     stop(message.info)
   }
-  ## Check whether an optional param is specified as numeric if found in the
-  ## annotation
-  ## NTC column and max.ntc.count
-  if ("NTC" %in% colnames(sData(object))) {
-    if (is.null(max.ntc.count)) {
-      message.info <-
-        paste("NTC is part of the annotation, please specify a numeric value for max.ntc.count")
-      stop(message.info)
-    } else {
-      if (is.numeric(max.ntc.count)) {
-        qc.params$maxNTCCount <- max.ntc.count
-      } else {
-        message.info <-
-          paste("max.ntc.count is not numeric. Please specify a numeric value")
-        stop(message.info)
-      }
-    }
-  } else {
-    message.info <- 
-      paste("NTC is not found in the annotation, max.ntc.count will not be considered")
+  ## check whether optional param are specified as numeric and found in the
+  ## annotation table
+  ## annotation columns names
+  opt.columns <- c("NTC", "nuclei", "area")
+  ## qc.params list with optional params
+  opt.params <-
+    list(
+      "maxNTCCount" = max.ntc.count,
+      "minNuclei" = min.nuclei,
+      "minArea" = min.area
+    )
+  ## alternative qc params list named with DSPWorkflow args
+  alt.params <-
+    list(
+      "max.ntc.count" = max.ntc.count,
+      "min.nuclei" = min.nuclei,
+      "min.area" = min.area
+    )
+  ## check if params are NULL
+  param.is.null <- sapply(alt.params, is.null)
+  ## check if params are numeric
+  param.is.numeric <- sapply(alt.params, is.numeric)
+  ## check if params are found in the annotation
+  param.is.found <- sapply(opt.columns, `%in%`, colnames(sData(object)))
+  ## define bad params
+  is.bad <- param.is.found & (param.is.null | !param.is.numeric)
+  ## define good params
+  is.good <- param.is.found & param.is.numeric
+  ## warn if params are not found
+  if (any(!param.is.found)) {
+    ann.columns <- opt.columns[!param.is.found]
+    params <- names(alt.params)[!param.is.found]
+    message.info <-
+      sprintf(
+        "%s not found in the annotation, %s will not be considered\n",
+        paste(ann.columns, collapse = ", "),
+        paste(params, collapse = ", ")
+      )
     warning(message.info)
   }
-  ## nuclei column and min.nuclei
-  if ("nuclei" %in% colnames(sData(object))) {
-    if (is.null(min.nuclei)) {
-      message.info <-
-        paste("nuclei is part of the annotation, please specify a numeric value for min.nuclei")
-      stop(message.info)
-    } else {
-      if (is.numeric(min.nuclei)) {
-        qc.params$minNuclei <- min.nuclei
-      } else {
-        message.info <-
-          paste("min.nuclei is not numeric. Please specify a numeric value")
-        stop(message.info)
-      }
-    }
-  } else {
+  ## stop if there are bad params
+  if (any(is.bad)) {
+    ann.columns <- opt.columns[is.bad]
+    bad.params <- names(alt.params)[is.bad]
     message.info <-
-      paste("nuclei is not found in the annotation, min.nuclei will not be considered")
-    warning(message.info)
+      sprintf(
+        "%s is part of the annotation, please specify a numeric value for %s\n",
+        paste(ann.columns, collapse = ", "),
+        paste(bad.params, collapse = ", ")
+      )
+    stop(message.info)
   }
-  ## area column and min.area
-  if ("area" %in% colnames(sData(object))) {
-    if (is.null(min.area)) {
-      message.info <-
-        paste("area is part of the annotation, please specify a numeric value for min.area")
-      stop(message.info)
-    } else {
-      if (is.numeric(min.area)) {
-        qc.params$minArea <- min.area
-      } else {
-        message.info <-
-          paste("min.area is not numeric. Please specify a numeric value")
-        stop(message.info)
-      }
-    }
-  } else {
-    message.info <-
-      paste("area is not found in the annotation, min.area will not be
-            considered")
-    warning(message.info)
+  ## if there are add good params, add them to qc.params list
+  if (any(is.good)) {
+    opt.params <- opt.params[is.good]
+    qc.params <- c(qc.params, opt.params)
   }
   # Segment QC ####
   ## add segment QC flags to protocolData
@@ -208,7 +204,7 @@ qcProc <- function(object,
   seg.qc.results$QCStatus <- apply(seg.qc.results, 1L, function(x) {
     ifelse(sum(x) == 0L, "PASS", "WARNING")
   })
-  seg.qc.summary["TOTAL FLAGS", ] <-
+  seg.qc.summary["TOTAL FLAGS",] <-
     c(sum(seg.qc.results[, "QCStatus"] == "PASS"),
       sum(seg.qc.results[, "QCStatus"] == "WARNING"))
   # Segment QC plots
@@ -272,7 +268,8 @@ qcProc <- function(object,
     "neg.plot" = neg.plot
   )
   ## remove NULL plots for optional params if not used
-  find.plots <- sapply(plot.list, function(x) !is.null(x))
+  find.plots <- sapply(plot.list, function(x)
+    ! is.null(x))
   plot.list <- plot.list[find.plots]
   ## print plots if TRUE
   if (print.plots) {
@@ -331,7 +328,7 @@ qcProc <- function(object,
     data.frame(
       Passed = sum(rowSums(probe.qc.results[, -1]) == 0),
       Global = sum(probe.qc.results$GlobalGrubbsOutlier),
-      Local = sum( 
+      Local = sum(
         rowSums(probe.qc.results[, -2:-1]) > 0 &
           !probe.qc.results$GlobalGrubbsOutlier
       )

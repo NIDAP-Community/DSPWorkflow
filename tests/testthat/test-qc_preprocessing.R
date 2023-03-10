@@ -16,7 +16,6 @@ test_that("Test Colon Dataset", {
   expected.elements = c("object", "plot")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
 })
-
 test_that("Test Human NSCLC Dataset", {
 nsclc.dat <- selectDatasetQC("nsclc")
 expect_warning(output <- do.call(qcProc, nsclc.dat), regexp = NULL)
@@ -35,35 +34,26 @@ test_that(
     expect_error(
       output <- do.call(qcProc, kidney.dat),
       fixed = TRUE,
-      "is not numeric. Please specify a numeric value"
+      "min.segment.reads is not numeric, please specify a numeric value"
     )
     expect_error(
       output <- do.call(qcProc, thymus.dat),
       fixed = TRUE,
-      "is not numeric. Please specify a numeric value"
+      "percent.aligned is not numeric, please specify a numeric value"
     )
   }
 )
-
 test_that("Check for a warning message when running QC for a dataset missing an
           optional parameter",          {
             colon.dat <- selectDatasetQC("colon")
             expect_warning(
               output <- do.call(qcProc, colon.dat),
-              "nuclei is not found in the annotation")
+        "nuclei not found in the annotation, min.nuclei will not be considered")
             
              nsclc.dat <- selectDatasetQC("nsclc")
             expect_warning(
             output <- do.call(qcProc, nsclc.dat),
-            "NTC is not found in the annotation"
-            )
-            expect_warning(
-              output <- do.call(qcProc, nsclc.dat),
-              "nuclei is not found in the annotation"
-            )
-            expect_warning(
-              output <- do.call(qcProc, nsclc.dat),
-              "area is not found in the annotation"
+"NTC, nuclei, area not found in the annotation, max.ntc.count, min.nuclei, min.area will not be considered"
             )
 })
 test_that(
@@ -75,12 +65,12 @@ test_that(
     expect_error(
       output <- do.call(qcProc, kidney.dat),
       fixed = TRUE,
-      "nuclei is part of the annotation",
+"nuclei is part of the annotation, please specify a numeric value for min.nuclei",
     )
     expect_error(
       output <- do.call(qcProc, thymus.dat),
       fixed = TRUE,
-      "area is part of the annotation"
+  "area is part of the annotation, please specify a numeric value for min.area"
     )
     
   }
