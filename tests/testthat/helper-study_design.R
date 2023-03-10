@@ -3,22 +3,21 @@ selectDatasetSD <- function(dataset) {
   if (dataset == "kidney") {
     print("selected kidney dataset")
     
+    tar.file.path <- "fixtures/Human_Kidney/downloaded/kidney_dccs.tar.gz"
+    
     # Check if dcc files were previously downloaded
-    if (!dir.exists("data/kidney/dccs")) {
+    if (!file.exists(tar.file.path)) {
       
       # Download dcc files and place in data folder
       data.url <- "http://hpc.nih.gov/~CCBR/DSPWorkflow/kidney_dccs.tar.gz"
-      file.name <- "data/kidney_dccs.tar.gz"
-      download.file(data.url, file.name)
-      untar(file.name, exdir = "data/kidney/")
-      
-      # Remove the downloaded tar.gz 
-      unlink(file.name)
+      download.file(data.url, tar.file.path)
+      untar(tar.file.path, exdir = "fixtures/Human_Kidney/downloaded/")
+
     }
     
     dcc.files <- dir(
       file.path(
-        "/data/kidney",
+        "fixtures/Human_Kidney/downloaded",
         "dccs"
       ),
       pattern = ".dcc$",
@@ -29,29 +28,29 @@ selectDatasetSD <- function(dataset) {
     pkc.files <-
       test_path("fixtures/Human_Kidney", "TAP_H_WTA_v1.0.pkc")
     pheno.data.file <-
-      "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset/annotation/kidney_AOI_Annotations_all_vignette.xlsx"
+      "fixtures/Human_Kidney/kidney_annotations.xlsx"
     pheno.data.sheet = "Template"
+    
     
     # Mouse thymus cancer dataset from PMID 36049655
   } else if (dataset == "thymus") {
     print("selected thymus dataset")
     
-  # Check if dcc files were previously downloaded
-    if (!dir.exists("data/thymus/dccs")) {
+    tar.file.path <- "fixtures/Mouse_Thymus/downloaded/thymus_dccs.tar.gz"
     
+    # Check if dcc files were previously downloaded
+    if (!file.exists(tar.file.path)) {
+      
       # Download dcc files and place in data folder
       data.url <- "http://hpc.nih.gov/~CCBR/DSPWorkflow/thymus_dccs.tar.gz"
-      file.name <- "data/thymus_dccs.tar.gz"
-      download.file(data.url, file.name)
-      untar(file.name, exdir = "data/thymus/")
+      download.file(data.url, tar.file.path)
+      untar(tar.file.path, exdir = "fixtures/Mouse_Thymus/downloaded/")
       
-      # Remove the downloaded tar.gz 
-      unlink(file.name)
     }
     
     dcc.files <- dir(
       file.path(
-        "/data/thymus",
+        "fixtures/Mouse_Thymus/downloaded",
         "dccs"
       ),
       pattern = ".dcc$",
@@ -62,29 +61,28 @@ selectDatasetSD <- function(dataset) {
     pkc.files <-
       test_path("fixtures/Mouse_Thymus", "Mm_R_NGS_WTA_v1.0.pkc")
     pheno.data.file <-
-      "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset/annotations/Thymus_Annotation_updated_3.xlsx"
+      "fixtures/Mouse_Thymus/Thymus_Annotation_updated_3.xlsx"
     pheno.data.sheet = "Annotation"
     
     # Human colon cancer dataset from Nanostring Spatial Organ Atlas
   } else if (dataset == "colon") {
     print("selected colon dataset")
     
+    tar.file.path <- "fixtures/Human_Colon/downloaded/colon_dccs.tar.gz"
+    
     # Check if dcc files were previously downloaded
-    if (!dir.exists("data/colon/dccs")) {
+    if (!file.exists(tar.file.path)) {
       
       # Download dcc files and place in data folder
       data.url <- "http://hpc.nih.gov/~CCBR/DSPWorkflow/colon_dccs.tar.gz"
-      file.name <- "data/colon_dccs.tar.gz"
-      download.file(data.url, file.name)
-      untar(file.name, exdir = "data/colon/")
+      download.file(data.url, tar.file.path)
+      untar(tar.file.path, exdir = "fixtures/Human_Colon/downloaded/")
       
-      # Remove the downloaded tar.gz 
-      unlink(file.name)
     }
     
     dcc.files <- dir(
       file.path(
-        "/data/colon",
+        "fixtures/Human_Colon/downloaded",
         "dccs"
       ),
       pattern = ".dcc$",
@@ -94,37 +92,28 @@ selectDatasetSD <- function(dataset) {
     
     pkc.files <-
       test_path("fixtures/Human_Colon", "Hs_R_NGS_WTA_v1.0.pkc")
-    pheno.data.file <- dir(
-      file.path(
-        "/rstudio-files/ccr-dceg-data/data/Colon_Dataset/",
-        "annotation"
-      ),
-      pattern = ".xlsx$",
-      full.names = TRUE,
-      recursive = TRUE
-    )
+    pheno.data.file <- "fixtures/Human_Colon/colon_soa_annotation.xlsx"
     pheno.data.sheet = "SegmentProperties"
     
     # Human non-small cell lung carcinoma dataset from PMID 36216799
   } else if (dataset == "nsclc") {
     print("selected nsclc dataset")
     
+    tar.file.path <- "fixtures/Human_NSCLC/downloaded/nsclc_dccs.tar.gz"
+    
     # Check if dcc files were previously downloaded
-    if (!dir.exists("data/nsclc/dccs")) {
+    if (!file.exists(tar.file.path)) {
       
-      # Download dcc files into data folder
+      # Download dcc files and place in data folder
       data.url <- "http://hpc.nih.gov/~CCBR/DSPWorkflow/nsclc_dccs.tar.gz"
-      file.name <- "data/nsclc_dccs.tar.gz"
-      download.file(data.url, file.name)
-      untar(file.name, exdir = "data/nsclc/")
+      download.file(data.url, tar.file.path)
+      untar(tar.file.path, exdir = "fixtures/Human_NSCLC/downloaded/")
       
-      # Remove the downloaded tar.gz 
-      unlink(file.name)
-    } 
+    }
     
     dcc.files <- dir(
       file.path(
-        "data/nsclc",
+        "fixtures/Human_NSCLC/downloaded",
         "dccs"
       ),
       pattern = ".dcc$",
@@ -134,15 +123,7 @@ selectDatasetSD <- function(dataset) {
     
     pkc.files <-
       test_path("fixtures/Human_NSCLC", "Hs_R_NGS_WTA_v1.0.pkc")
-    pheno.data.file <- dir(
-      file.path(
-        "/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset/",
-        "annotation"
-      ),
-      pattern = ".xlsx$",
-      full.names = TRUE,
-      recursive = TRUE
-    )
+    pheno.data.file <- "fixtures/Human_NSCLC/NSCLC_annotation.xlsx"
     pheno.data.sheet = "Template"
     
   }
