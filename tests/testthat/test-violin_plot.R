@@ -1,111 +1,111 @@
-## Test to see that violin code works for different DSP datasets ##
-
+# Data Testing
 test_that("Violin Plot works for Human Kidney data", {
   
-  kidney_dat <- select_dataset_violin("kidney")
+  kidney.data <- getViolinParam("kidney")
   
-  violin_plot_test <- violinPlot(data = kidney_dat$object, genes = kidney_dat$test_genes, expr.type = kidney_dat$test_expr_type,
-                                      group = kidney_dat$test_group)
-  
-  violin_output <- class(violin_plot_test)
+  violin.out <- class(do.call(violinPlot, kidney.data))
   
   expected.elements <- c("gtable", "gTree", "grob", "gDesc")
-  expect_equal(length(setdiff(expected.elements, violin_output)), 0)
+  expect_equal(length(setdiff(expected.elements, violin.out)), 0)
   
 })
 
 test_that("Violin Plot works for Mouse Thymus data", {
   
-  thymus_dat <- select_dataset_violin("thymus")
+  thymus.data <- getViolinParam("thymus")
   
-  violin_plot_test <- violinPlot(data = thymus_dat$object, genes = thymus_dat$test_genes, expr.type = thymus_dat$test_expr_type,
-                                      group = thymus_dat$test_group)
-  
-  violin_output <- class(violin_plot_test)
+  violin.out <- class(do.call(violinPlot, thymus.data))
   
   expected.elements <- c("gtable", "gTree", "grob", "gDesc")
-  expect_equal(length(setdiff(expected.elements, violin_output)), 0)
+  expect_equal(length(setdiff(expected.elements, violin.out)), 0)
   
 })
 
 test_that("Violin Plot works for Human Colon data", {
   
-  colon_dat <- select_dataset_violin("colon")
+  colon.data <- getViolinParam("colon")
   
-  violin_plot_test <- violinPlot(data = colon_dat$object, genes = colon_dat$test_genes, expr.type = colon_dat$test_expr_type,
-                                      group = colon_dat$test_group)
-  
-  violin_output <- class(violin_plot_test)
+  violin.out <- class(do.call(violinPlot, colon.data))
   
   expected.elements <- c("gtable", "gTree", "grob", "gDesc")
-  expect_equal(length(setdiff(expected.elements, violin_output)), 0)
+  expect_equal(length(setdiff(expected.elements, violin.out)), 0)
   
 })
 
 test_that("Violin Plot works for Human NSCLC data", {
   
-  nsclc_dat <- select_dataset_violin("nsclc")
+  nsclc.data <- getViolinParam("nsclc")
   
-  violin_plot_test <- violinPlot(data = nsclc_dat$object, genes = nsclc_dat$test_genes, expr.type = nsclc_dat$test_expr_type,
-                            group = nsclc_dat$test_group)
+  violin.out <- class(do.call(violinPlot, nsclc.data))
 
-  violin_output <- class(violin_plot_test)
-  
   expected.elements <- c("gtable", "gTree", "grob", "gDesc")
-  expect_equal(length(setdiff(expected.elements, violin_output)), 0)
+  expect_equal(length(setdiff(expected.elements, violin.out)), 0)
   
 })
 
 test_that("Violin Plot works when using a facet parameter", {
   
-  nsclc_dat <- select_dataset_violin("nsclc")
+  nsclc.data <- getViolinParam("nsclc")
   
-  violin_plot_test <- violinPlot(data = nsclc_dat$object, genes = nsclc_dat$test_genes, expr.type = nsclc_dat$test_expr_type,
-                                      group = nsclc_dat$test_group, facet.by = "segment")
-  
-  violin_output <- class(violin_plot_test)
+  violin.out <- class(violinPlot(object = nsclc.data$object,
+                                 expr.type = nsclc.data$expr.type,
+                                 genes = nsclc.data$genes, 
+                                 group = nsclc.data$group, 
+                                 facet.by = "segment"))
   
   expected.elements <- c("gtable", "gTree", "grob", "gDesc")
-  expect_equal(length(setdiff(expected.elements, violin_output)), 0)
+  expect_equal(length(setdiff(expected.elements, violin.out)), 0)
   
 })
 
-## Error Testing ##
-
+# Error Testing
 test_that("Violin Plot stops when incorrect gene expression set is selected", {
   
-  kidney_dat <- select_dataset_violin("kidney")
+  kidney.data <- getViolinParam("kidney")
   
-  expect_error(violinPlot(data = kidney_dat$object, genes = kidney_dat$test_genes, expr.type = "jibberish",
-                               group = kidney_dat$test_group), "expression data type was not found in DSP data")
+  expect_error(violinPlot(object = kidney.data$object,
+                          expr.type = "wrong_expr_type",
+                          genes = kidney.data$genes, 
+                          group = kidney.data$group), 
+               "expression data type was not found in DSP object")
   
 })
 
 test_that("Violin Plot stops when no genes are present", {
   
-  kidney_dat <- select_dataset_violin("kidney")
+  kidney.data <- getViolinParam("kidney")
   
-  incorrect_genes <- paste0("jibberish",1:10)
+  incorrect.genes <- paste0("wrong_gene",1:10)
   
-  expect_error(violinPlot(data = kidney_dat$object, genes = incorrect_genes, expr.type = kidney_dat$test_expr_type,
-                               group = kidney_dat$test_group), "no genes were found in DSP data")
+  expect_error(violinPlot(object = kidney.data$object, 
+                          expr.type = kidney.data$expr.type,
+                          genes = incorrect.genes, 
+                          group = kidney.data$group), 
+               "no genes were found in DSP object")
   
 })
 
 test_that("Violin Plot stops when incorrect grouping parameter is selected", {
   
-  kidney_dat <- select_dataset_violin("kidney")
+  kidney.data <- getViolinParam("kidney")
   
-  expect_error(violinPlot(data = kidney_dat$object, genes = kidney_dat$test_genes, expr.type = kidney_dat$test_expr_type,
-                               group = "jibberish"), "grouping parameter was not found in DSP data")
+  expect_error(violinPlot(object = kidney.data$object, 
+                          expr.type = kidney.data$expr.type,
+                          genes = kidney.data$genes, 
+                          group = "wrong_group"), 
+               "grouping parameter was not found in DSP object")
   
 })
 
 test_that("Violin Plot stops when incorrect faceting parameter is selected", {
   
-  kidney_dat <- select_dataset_violin("kidney")
+  kidney.data <- getViolinParam("kidney")
   
-  expect_error(violinPlot(data = kidney_dat$object, genes = kidney_dat$test_genes, expr.type = kidney_dat$test_expr_type,
-                               group = kidney_dat$test_group, facet.by = "jibberish"), "facet parameter was not found in DSP data")
+  expect_error(violinPlot(object = kidney.data$object, 
+                          expr.type = kidney.data$expr.type,
+                          genes = kidney.data$genes, 
+                          group = kidney.data$group, 
+                          facet.by = "wrong_facet"),
+               "facet parameter was not found in DSP object")
   
 })
