@@ -48,7 +48,7 @@ geomxToolsDefaults <- getAnywhere("DEFAULTS")$objs[[1]]
 #' @importFrom NanoStringNCTools esBy negativeControlSubset assayDataApply sData
 #' @importFrom patchwork plot_layout plot_annotation patchworkGrob wrap_plots
 #' @export
-#' @return A list of two objects:  
+#' @return A list of two objects:
 #' - QC-filtered *NanoStringGeoMxSet* object with gene-level targets as features
 #'  and the *QCFlags* data.frame appended to *protocolData* ("object")
 #' - QC plots in a list of ggplot objects ("plot")
@@ -158,7 +158,8 @@ qcProc <- function(object,
   ## check if params are numeric
   param.is.numeric <- sapply(alt.params, is.numeric)
   ## check if params are found in the annotation
-  param.is.found <- sapply(opt.columns, `%in%`, colnames(sData(object)))
+  param.is.found <-
+    sapply(opt.columns, `%in%`, colnames(sData(object)))
   ## define bad params
   is.bad <- param.is.found & (param.is.null | !param.is.numeric)
   ## define good params
@@ -204,7 +205,7 @@ qcProc <- function(object,
   seg.qc.results$QCStatus <- apply(seg.qc.results, 1L, function(x) {
     ifelse(sum(x) == 0L, "PASS", "WARNING")
   })
-  seg.qc.summary["TOTAL FLAGS",] <-
+  seg.qc.summary["TOTAL FLAGS", ] <-
     c(sum(seg.qc.results[, "QCStatus"] == "PASS"),
       sum(seg.qc.results[, "QCStatus"] == "WARNING"))
   # Segment QC plots

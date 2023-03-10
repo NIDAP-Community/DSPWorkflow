@@ -12,15 +12,16 @@ test_that("Test Mouse Thymus Dataset", {
 })
 test_that("Test Colon Dataset", {
   colon.dat <- selectDatasetQC("colon")
-  expect_warning(output <- do.call(qcProc, colon.dat), regexp = NULL)
+  expect_warning(output <-
+                   do.call(qcProc, colon.dat), regexp = NULL)
   expected.elements = c("object", "plot")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
 })
 test_that("Test Human NSCLC Dataset", {
-nsclc.dat <- selectDatasetQC("nsclc")
-expect_warning(output <- do.call(qcProc, nsclc.dat), regexp = NULL)
-expected.elements = c("object", "plot")
-expect_equal(length(setdiff(expected.elements, names(output))), 0)
+  nsclc.dat <- selectDatasetQC("nsclc")
+  expect_warning(output <- do.call(qcProc, nsclc.dat), regexp = NULL)
+  expected.elements = c("object", "plot")
+  expect_equal(length(setdiff(expected.elements, names(output))), 0)
 })
 test_that(
   "Check for an error message when running QC for a dataset with a required
@@ -44,18 +45,20 @@ test_that(
   }
 )
 test_that("Check for a warning message when running QC for a dataset missing an
-          optional parameter",          {
+          optional parameter",
+          {
             colon.dat <- selectDatasetQC("colon")
             expect_warning(
               output <- do.call(qcProc, colon.dat),
-        "nuclei not found in the annotation, min.nuclei will not be considered")
-            
-             nsclc.dat <- selectDatasetQC("nsclc")
-            expect_warning(
-            output <- do.call(qcProc, nsclc.dat),
-"NTC, nuclei, area not found in the annotation, max.ntc.count, min.nuclei, min.area will not be considered"
+              "nuclei not found in the annotation, min.nuclei will not be considered"
             )
-})
+            
+            nsclc.dat <- selectDatasetQC("nsclc")
+            expect_warning(
+              output <- do.call(qcProc, nsclc.dat),
+              "NTC, nuclei, area not found in the annotation, max.ntc.count, min.nuclei, min.area will not be considered"
+            )
+          })
 test_that(
   "Check for an error message when running QC for a dataset with an optional
   parameter listed as NULL",
@@ -65,12 +68,12 @@ test_that(
     expect_error(
       output <- do.call(qcProc, kidney.dat),
       fixed = TRUE,
-"nuclei is part of the annotation, please specify a numeric value for min.nuclei",
+      "nuclei is part of the annotation, please specify a numeric value for min.nuclei",
     )
     expect_error(
       output <- do.call(qcProc, thymus.dat),
       fixed = TRUE,
-  "area is part of the annotation, please specify a numeric value for min.area"
+      "area is part of the annotation, please specify a numeric value for min.area"
     )
     
   }
