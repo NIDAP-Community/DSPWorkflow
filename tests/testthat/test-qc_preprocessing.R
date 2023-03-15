@@ -1,26 +1,25 @@
 test_that("Test Human Kidney dataset", {
   kidney.dat <- selectDatasetQC("kidney")
-  expect_warning(output <- do.call(qcProc, kidney.dat), regexp = NA)
-  expected.elements = c("object", "plot")
+  output <- do.call(qcProc, kidney.dat)
+  expected.elements <- c("object", "plot")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
 })
 test_that("Test Mouse Thymus Dataset", {
   thymus.dat <- selectDatasetQC("thymus")
-  expect_warning(output <- do.call(qcProc, thymus.dat), regexp = NA)
-  expected.elements = c("object", "plot")
+  output <- do.call(qcProc, thymus.dat)
+  expected.elements <- c("object", "plot")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
 })
 test_that("Test Colon Dataset", {
   colon.dat <- selectDatasetQC("colon")
-  expect_warning(output <-
-                   do.call(qcProc, colon.dat), regexp = NULL)
-  expected.elements = c("object", "plot")
+  expect_warning(output <- do.call(qcProc, colon.dat), regexp = NULL)
+  expected.elements <- c("object", "plot")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
 })
 test_that("Test Human NSCLC Dataset", {
-  nsclc.dat <- selectDatasetQC("nsclc")
+  nsclc.dat <- selectDatasetQC("nsclc") 
   expect_warning(output <- do.call(qcProc, nsclc.dat), regexp = NULL)
-  expected.elements = c("object", "plot")
+  expected.elements <- c("object", "plot")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
 })
 test_that(
@@ -33,12 +32,12 @@ test_that(
     kidney.dat$min.segment.reads <- "one thousand"
     thymus.dat$percent.aligned <- "80"
     expect_error(
-      output <- do.call(qcProc, kidney.dat),
+      do.call(qcProc, kidney.dat),
       fixed = TRUE,
       "min.segment.reads is not numeric, please specify a numeric value"
     )
     expect_error(
-      output <- do.call(qcProc, thymus.dat),
+      do.call(qcProc, thymus.dat),
       fixed = TRUE,
       "percent.aligned is not numeric, please specify a numeric value"
     )
@@ -49,32 +48,46 @@ test_that("Check for a warning message when running QC for a dataset missing an
           {
             colon.dat <- selectDatasetQC("colon")
             expect_warning(
-              output <- do.call(qcProc, colon.dat),
-              "nuclei not found in the annotation, min.nuclei will not be considered"
+              do.call(qcProc, colon.dat),
+              paste0(
+                "nuclei not found in the annotation, min.nuclei will not ",
+                "be considered"
+              )
             )
-            
             nsclc.dat <- selectDatasetQC("nsclc")
             expect_warning(
-              output <- do.call(qcProc, nsclc.dat),
-              "NTC, nuclei, area not found in the annotation, max.ntc.count, min.nuclei, min.area will not be considered"
+              do.call(qcProc, nsclc.dat),
+              paste0(
+                "NTC, nuclei, area not found in the annotation, max.ntc.",
+                "count, min.nuclei, min.area will not be considered"
+              )
             )
           })
 test_that(
   "Check for an error message when running QC for a dataset with an optional
   parameter listed as NULL",
   {
-    kidney.dat <- selectNullDatasetQC("kidney")
-    thymus.dat <- selectNullDatasetQC("thymus")
+    kidney.dat <- selectDatasetQC("kidney")
+    kidney.dat$min.nuclei <- list(NULL)
+    kidney.dat <- lapply(kidney.dat, unlist)
+    thymus.dat <- selectDatasetQC("thymus")
+    thymus.dat$min.area <- list(NULL)
+    thymus.dat <- lapply(thymus.dat, unlist)
     expect_error(
-      output <- do.call(qcProc, kidney.dat),
+      do.call(qcProc, kidney.dat),
       fixed = TRUE,
-      "nuclei is part of the annotation, please specify a numeric value for min.nuclei",
+      paste0(
+        "nuclei is part of the annotation, please specify a numeric ",
+        "value for min.nuclei"
+      ),
     )
     expect_error(
-      output <- do.call(qcProc, thymus.dat),
+      do.call(qcProc, thymus.dat),
       fixed = TRUE,
-      "area is part of the annotation, please specify a numeric value for min.area"
+      paste0(
+        "area is part of the annotation, please specify a numeric ",
+        "value for min.area"
+      )
     )
-    
   }
 )

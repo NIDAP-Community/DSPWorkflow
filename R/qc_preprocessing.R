@@ -34,7 +34,9 @@ geomxToolsDefaults <- getAnywhere("DEFAULTS")$objs[[1]]
 #' @param percent.fail.grubbs numeric to flag probes that fail Grubb's test in
 #' greater than or equal this percent of segments
 #' @param remove.local.outliers boolean to determine if local outliers should be
-#'  excluded from exprs matrix
+#' excluded from exprs matrix
+#' @param shift.count.zero boolean to shift 0 counts (if TRUE shift 0s by 1,
+#' otherwise shift all counts by 1)
 #' @param print.plots boolean to display plots or set to FALSE otherwise; ggplot
 #' objects are returned in either case
 #' @importFrom Biobase protocolData pData fData featureData
@@ -68,6 +70,7 @@ qcProc <-  function(object,
                    outlier.test.alpha = 0.01,
                    percent.fail.grubbs = 20,
                    remove.local.outliers = FALSE,
+                   shift.counts.zero = TRUE,
                    print.plots = FALSE) {
   # Prerun ####
   ## functions ####
@@ -102,7 +105,7 @@ qcProc <-  function(object,
   }
   ## settings ####
   ## shift counts (useDALogic=TRUE adds 1 only to 0s)
-  object <- shiftCountsOne(object, useDALogic = TRUE)
+  object <- shiftCountsOne(object, useDALogic = shift.counts.zero)
   ## list of user-defined segment QC params for annotations and variables
   ## expected to be always present in the input object
   qc.params <-
@@ -116,8 +119,8 @@ qcProc <-  function(object,
     )
   ## checks ####
   ## create alternative qc.params with qcProc args names for use in messages
-  alt.params <- qc.params
-  names(alt.params) <-
+  qc.params.alias <- qc.params
+  names(qc.params.alias) <-
     c(
       "min.segment.reads",
       "percent.trimmed",
@@ -127,9 +130,9 @@ qcProc <-  function(object,
       "min.negative.count"
     )
   ## check whether required parameters are specified as numeric
-  param.is.numeric <- sapply(alt.params, is.numeric)
+  param.is.numeric <- sapply(qc.params.alias, is.numeric)
   if (!all(param.is.numeric)) {
-    bad.param <- alt.params[!param.is.numeric]
+    bad.param <- qc.params.alias[!param.is.numeric]
     message.info <-
       sprintf("%s is not numeric, please specify a numeric value\n",
               names(bad.param))
@@ -147,16 +150,16 @@ qcProc <-  function(object,
       "minArea" = min.area
     )
   ## alternative qc params list named with DSPWorkflow args
-  alt.params <-
+  opt.params.alias <-
     list(
       "max.ntc.count" = max.ntc.count,
       "min.nuclei" = min.nuclei,
       "min.area" = min.area
     )
   ## check if params are NULL
-  param.is.null <- sapply(alt.params, is.null)
+  param.is.null <- sapply(opt.params.alias, is.null)
   ## check if params are numeric
-  param.is.numeric <- sapply(alt.params, is.numeric)
+  param.is.numeric <- sapply(opt.params.alias, is.numeric)
   ## check if params are found in the annotation
   param.is.found <-
     sapply(opt.columns, `%in%`, colnames(sData(object)))
@@ -167,7 +170,7 @@ qcProc <-  function(object,
   ## warn if params are not found
   if (any(!param.is.found)) {
     ann.columns <- opt.columns[!param.is.found]
-    params <- names(alt.params)[!param.is.found]
+    params <- names(opt.params.alias)[!param.is.found]
     message.info <-
       sprintf(
         "%s not found in the annotation, %s will not be considered\n",
@@ -179,7 +182,7 @@ qcProc <-  function(object,
   ## stop if there are bad params
   if (any(is.bad)) {
     ann.columns <- opt.columns[is.bad]
-    bad.params <- names(alt.params)[is.bad]
+    bad.params <- names(opt.params.alias)[is.bad]
     message.info <-
       sprintf(
         "%s is part of the annotation, please specify a numeric value for %s\n",
@@ -269,8 +272,7 @@ qcProc <-  function(object,
     "neg.plot" = neg.plot
   )
   ## remove NULL plots for optional params if not used
-  find.plots <- sapply(plot.list, function(x)
-    ! is.null(x))
+  find.plots <- sapply(plot.list, function(x) !is.null(x))
   plot.list <- plot.list[find.plots]
   ## print plots if TRUE
   if (print.plots) {
@@ -327,10 +329,10 @@ qcProc <-  function(object,
   ## define QC table for Probe QC
   probe.qc.df <-
     data.frame(
-      Passed = sum(rowSums(probe.qc.results[, -1]) == 0),
+      Passed = sum(rowSums(probe.qc.results[, - 1]) == 0),
       Global = sum(probe.qc.results$GlobalGrubbsOutlier),
       Local = sum(
-        rowSums(probe.qc.results[, -2:-1]) > 0 &
+        rowSums(probe.qc.results[, - 2 : - 1]) > 0 &
           !probe.qc.results$GlobalGrubbsOutlier
       )
     )
@@ -340,7 +342,6 @@ qcProc <-  function(object,
            fData(object)[["QCFlags"]][, c("LowProbeRatio")] == FALSE &
              fData(object)[["QCFlags"]][, c("GlobalGrubbsOutlier")] == FALSE)
   object <- probe.qc.passed
-  
   ## summarize Probe QC removal
   print(kable(probe.qc.df,
               caption = "Summary for Probe QC Calls (Grubb's Outlier Test)"))
