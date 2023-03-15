@@ -1,8 +1,8 @@
 test_that("making heatmap plot---Test Human Kidney dataset", {
   
-  kidney.data <- getDataset("kidney")
+  data <- getDataset("kidney")
   
-  invisible(capture.output(res <- do.call(heatMap, kidney.data)))
+  invisible(capture.output(res <- do.call(heatMap, data)))
   
   expected.elements <- c("plot.genes","plot")
   expect_setequal(names(res), expected.elements)
@@ -11,9 +11,9 @@ test_that("making heatmap plot---Test Human Kidney dataset", {
 
 test_that("making heatmap plot---Test Huamn Colon Dataset", {
   
-  kidney.data <- getDataset("colon")
+  data <- getDataset("colon")
   
-  invisible(capture.output(res <- do.call(heatMap, kidney.data)))
+  invisible(capture.output(res <- do.call(heatMap, data)))
   
   expected.elements <- c("plot.genes","plot")
   expect_setequal(names(res), expected.elements)
@@ -22,9 +22,9 @@ test_that("making heatmap plot---Test Huamn Colon Dataset", {
 
 test_that("making heatmap plot---Test Mouse Thymus Dataset", {
   
-  kidney.data <- getDataset("thymus")
+  data <- getDataset("thymus")
   
-  invisible(capture.output(res <- do.call(heatMap, kidney.data)))
+  invisible(capture.output(res <- do.call(heatMap, data)))
   
   expected.elements <- c("plot.genes","plot")
   expect_setequal(names(res), expected.elements)
@@ -33,11 +33,31 @@ test_that("making heatmap plot---Test Mouse Thymus Dataset", {
 
 test_that("making heatmap plot---Test Human NSCLC Dataset", {
   
-  kidney.data <- getDataset("nsclc")
+  data <- getDataset("nsclc")
   
-  invisible(capture.output(res <- do.call(heatMap, kidney.data)))
+  invisible(capture.output(res <- do.call(heatMap, data)))
   
   expected.elements <- c("plot.genes","plot")
   expect_setequal(names(res), expected.elements)
   
+})
+
+test_that("making heatmap plot---with wrong ngenes", {
+  
+  data <- getDataset("nsclc")
+  data$ngenes <- 1
+  
+  expect_error(do.call(heatMap, data),
+               fixed = TRUE,
+               "ngenes must be interger > 1.\n")
+})
+
+test_that("making heatmap plot---with wrong ngenes", {
+  
+  data <- getDataset("nsclc")
+  data$ngenes <- "TP53"
+  
+  expect_error(do.call(heatMap, data),
+               fixed = TRUE,
+               "ngenes must be interger > 1.\n")
 })

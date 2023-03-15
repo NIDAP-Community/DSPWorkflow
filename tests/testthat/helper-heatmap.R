@@ -24,10 +24,6 @@ getDataset <- function(data) {
   clustering.distance.rows = "correlation"
   clustering.distance.cols = "correlation"
   annotation.row = NA
-  image.width = 3600
-  image.height = 1800
-  image.resolution = 300
-  image.filename = "heatmap.clust.highCVgenes.png"
   breaks.by.values = seq(-3, 3, 0.05) # 6/0.05=120 colors
   heatmap.color = colorRampPalette(c("blue", "white", "red"))(120)  
 
@@ -46,10 +42,6 @@ getDataset <- function(data) {
       "clustering.distance.rows" = clustering.distance.rows,
       "clustering.distance.cols" = clustering.distance.cols,
       "annotation.row" = annotation.row,
-      "image.width" = image.width,
-      "image.height" = image.height,
-      "image.resolution" = image.resolution,
-      "image.filename" = image.filename,
       "breaks.by.values" = breaks.by.values,
       "heatmap.color" = heatmap.color 
     )
