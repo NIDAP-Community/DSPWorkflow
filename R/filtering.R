@@ -192,5 +192,5 @@ filtering <- function(data, pkcs, loq.cutoff, loq.min, cut.segment, goi) {
   # retain only detected genes of interest
   goi <- goi[goi %in% rownames(object)]
   
-  return(list("Stacked Bar Plot" = stacked.bar.plot, "Table of Cuts" = tab, "Sankey Plot" = Sankey.plot, "Genes Detected Plot" = genes.detected, "object Dataset" = object))
+  return(list("Stacked Bar Plot" = stacked.bar.plot, "Table of Cuts" = tab, "Sankey Plot" = sankey.plot, "Genes Detected Plot" = genes.detected, "object Dataset" = object))
 }

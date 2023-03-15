@@ -8,7 +8,7 @@ test_that("Test Kidney Data", {
   
   dsp.list <- filtering(data = input.data.object, pkcs = input.data.pkc, loq.cutoff = 2, loq.min = 2, cut.segment = .1, goi = genes)
   
-  expected.elements = c("Stacked Bar Plot", "Table of Cuts", "Sankey Plot", "Genes Deccted Plot", "target_demoData Dataset")
+  expected.elements = c("Stacked Bar Plot", "Table of Cuts", "Sankey Plot", "Genes Detected Plot", "target_demoData Dataset")
   expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
   
 })
@@ -23,7 +23,7 @@ test_that("Test Colon Data", {
   
   dsp.list <- filtering(data = input.data.object, pkcs = input.data.pkc, loq.cutoff = 2, loq.min = 2, cut.segment = .1, goi = genes)
   
-  expected.elements = c("Stacked Bar Plot", "Table of Cuts", "Sankey Plot", "Genes Deccted Plot", "target_demoData Dataset")
+  expected.elements = c("Stacked Bar Plot", "Table of Cuts", "Sankey Plot", "Genes Detected Plot", "target_demoData Dataset")
   expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
   
 })
@@ -38,7 +38,7 @@ test_that("Test thymus Data", {
   
   dsp.list <- filtering(data = input.data.object, pkcs = input.data.pkc, loq.cutoff = 2, loq.min = 2, cut.segment = .1, goi = genes)
   
-  expected.elements = c("Stacked Bar Plot", "Table of Cuts", "Sankey Plot", "Genes Deccted Plot", "target_demoData Dataset")
+  expected.elements = c("Stacked Bar Plot", "Table of Cuts", "Sankey Plot", "Genes Detected Plott", "target_demoData Dataset")
   expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
   
 })
@@ -53,7 +53,7 @@ test_that("Test nsclc Data", {
   
   dsp.list <- filtering(data = input.data.object, pkcs = input.data.pkc, loq.cutoff = 2, loq.min = 2, cut.segment = .1, goi = genes)
   
-  expected.elements = c("Stacked Bar Plot", "Table of Cuts", "Sankey Plot", "Genes Deccted Plot", "target_demoData Dataset")
+  expected.elements = c("Stacked Bar Plot", "Table of Cuts", "Sankey Plot", "Genes Detected Plot", "target_demoData Dataset")
   expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
   
 })
