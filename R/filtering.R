@@ -72,7 +72,7 @@ filtering <- function(data, pkcs, loq.cutoff, loq.min, cut.segment, goi) {
     ind <- fData(data)$Module == module
     mat_i <- t(esApply(data[ind, ], MARGIN = 1,
                        FUN = function(x) {
-                         x > LOQ[, module]
+                         x > loq[, module]
                        }))
     loq_mat <- rbind(loq_mat, mat_i)
   }
