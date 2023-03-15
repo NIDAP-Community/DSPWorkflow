@@ -69,8 +69,8 @@ filtering <- function(data, pkcs, loq.cutoff, loq.min, cut.segment, goi) {
   ## 4.5.0 Filtering
   loq_mat <- c()
   for(module in modules) {
-    ind <- fData(Data)$Module == module
-    mat_i <- t(esApply(Data[ind, ], MARGIN = 1,
+    ind <- fData(data)$Module == module
+    mat_i <- t(esApply(data[ind, ], MARGIN = 1,
                        FUN = function(x) {
                          x > LOQ[, module]
                        }))
