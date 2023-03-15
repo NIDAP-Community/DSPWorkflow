@@ -1,7 +1,5 @@
 test_that("Test Human Kidney dataset", {
-  
   kidney.dat <- selectNormalizedRtd("kidney")
-  
   output <-
     dimReduct(
       object = kidney.dat,
@@ -12,13 +10,9 @@ test_that("Test Human Kidney dataset", {
     )
   expected.elements = c("object", "plot")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
-  
 })
-
 test_that("Test Colon Dataset", {
-  
   colon.dat <- selectNormalizedRtd("colon")
-  
   output <-
     dimReduct(
       object = colon.dat,
@@ -29,13 +23,9 @@ test_that("Test Colon Dataset", {
     )
   expected.elements = c("object", "plot")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
-  
 })
-
 test_that("Test Mouse Thymus Dataset", {
-  
   thymus.dat <- selectNormalizedRtd("thymus")
-  
   output <-
     dimReduct(
       object = thymus.dat,
@@ -46,13 +36,9 @@ test_that("Test Mouse Thymus Dataset", {
     )
   expected.elements = c("object", "plot")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
-  
 })
-
 test_that("Test Human NSCLC Dataset", {
-  
   nsclc.dat <- selectNormalizedRtd("nsclc")
-  
   output <-
     dimReduct(
       object = nsclc.dat,
@@ -63,13 +49,9 @@ test_that("Test Human NSCLC Dataset", {
     )
   expected.elements = c("object", "plot")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
-  
 })
-
 test_that("dimension reductions present in the input object", {
-  
   kidney.dat <- selectNormalizedRtd("kidney")
-  
   output <-
     dimReduct(
       object = kidney.dat,
@@ -78,7 +60,6 @@ test_that("dimension reductions present in the input object", {
       color.variable1 = "region",
       shape.variable = "class"
     )
-  
   expect_true(sum(grepl("PC1|PC2", colnames(
     pData(output$object)
   ))) == 2)
@@ -88,14 +69,10 @@ test_that("dimension reductions present in the input object", {
   expect_true(sum(grepl("tSNE1|tSNE2", colnames(
     pData(output$object)
   ))) == 2)
-  
 })
-
 test_that("Check message when replacing pre-existing analysis", {
-  
   # Load object
   kidney.dat <- selectNormalizedRtd("kidney")
-  
   # Run first time and expect no message
   expect_message(output <-
     dimReduct(
@@ -106,7 +83,6 @@ test_that("Check message when replacing pre-existing analysis", {
       color.variable2 = "class",
       shape.variable = "segment"
     ), regexp = "adding in the phenoData")
-  
   # Run again with different  parameters to replace previous analysis
   # (expect message)
   expect_warning(
@@ -121,5 +97,4 @@ test_that("Check message when replacing pre-existing analysis", {
     ),
     regexp = "found in the phenoData"
   )
-  
 })

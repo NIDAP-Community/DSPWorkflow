@@ -5,13 +5,13 @@
 #' @title dimReduct: Dimensional Reduction
 #' @description Reduces data to two dimensions using PCA, tSNE, and UMAP. Adds
 #' the sample embeddings of each dimensional reduction technique to the input
-#' object (phenoData) and plots them on 2D scatter plots.
+#' object (*phenoData*) and plots them on 2D scatter plots.
 #' @details If both color.variable1 and color.variable2 are defined, points in
 #'  the scatter plots are colored by a factor which combines the levels of
 #'  these two variables.
-#' @param object of class NanoStringGeoMxSet
+#' @param object of class *NanoStringGeoMxSet*
 #' @param color.variable1 categorical variable to be used for coloring points
-#' @param assay.data  assayDataElement of the NanoStringGeoMxSet-class object to
+#' @param assay.data  *assayDataElement* of the *NanoStringGeoMxSet*-class object to
 #'  be used for dimensional reductions
 #' @param  do.log boolean to apply log2 transformation to the data to be used
 #' in the dimensional reduction algorithms (TRUE by default)
@@ -23,7 +23,7 @@
 #' @param point.alpha point color transparency
 #' @param symbol.size symbols size in legends
 #' @param text.size base font size
-#' @param print.plots boolean to display plots or set to FALSE otherwise; ggplot
+#' @param print.plots boolean to display plots or set to FALSE otherwise; *ggplot*
 #' objects are returned in either case
 #' @importFrom Biobase assayDataElement pData
 #' @importFrom ggplot2 ggplot aes geom_point guides element_text ggtitle labs
@@ -50,8 +50,8 @@
 #' color.variable2="class")
 #' }
 #' @export
-#' @return A named list containing the NanoStringGeoMxSet-class object with the
-#' dimensional reduction coordinates added ("object") and a list of ggplot
+#' @return A named list containing the *NanoStringGeoMxSet*-class object with the
+#' dimensional reduction coordinates added ("object") and a list of *ggplot*
 #' objects ("plot")
 
 dimReduct <-
