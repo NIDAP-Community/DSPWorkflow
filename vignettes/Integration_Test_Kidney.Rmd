@@ -22,28 +22,54 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
 
 ```{r Study Design, echo=FALSE}
   
-  datadir <- "/rstudio-files/ccr-dceg-data/data/WTA_NGS_Example"
-  DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
-                  full.names = TRUE, recursive = TRUE) 
-  PKCFiles <- test_path("fixtures/Human_Kidney", "TAP_H_WTA_v1.0.pkc")
-  #SampleAnnotationFile <- "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset/annotation/kidney_demo_AOI_Annotations.xlsx"
-  SampleAnnotationFile <- "/rstudio-files/ccr-dceg-data/data/Kidney_Dataset/annotation/kidney_AOI_Annotations_all_vignette.xlsx"
+  setwd('..')  
+
+  downloads.path <- test_path("fixtures/Human_Kidney/downloaded/")
+  tar.file.name <- "kidney_dccs.tar.gz"
+  full.tar.path <- paste0(downloads.path,tar.file.name)
   
-  sdesign.list <- StudyDesign(dccFiles = DCCFiles, 
-                                pkcFiles = PKCFiles,
-                                phenoDataFile = SampleAnnotationFile,
-                                phenoDataSheet = "Template",
-                                phenoDataDccColName = "Sample_ID",
-                                protocolDataColNames = c("aoi", "roi"),
-                                experimentDataColNames = c("panel"))
+  # Check if dcc files were previously downloaded
+  if (!file.exists(full.tar.path)) {
+    
+    # Download dcc files and place in data folder
+    data.url <- "http://hpc.nih.gov/~CCBR/DSPWorkflow/kidney_dccs.tar.gz"
+    download.file(data.url, full.tar.path)
+    untar(full.tar.path, exdir = downloads.path)
+  }
+  
+  dcc.files <- dir(
+    file.path(
+      downloads.path,
+      "dccs"
+    ),
+    pattern = ".dcc$",
+    full.names = TRUE,
+    recursive = TRUE
+  )
+    
+  pkc.files <-
+    test_path("fixtures/Human_Kidney/TAP_H_WTA_v1.0.pkc")
+  pheno.data.file <-
+    test_path("fixtures/Human_Kidney/kidney_annotations.xlsx")
+  
+  sdesign.list <- studyDesign(dcc.files = dcc.files, 
+                                pkc.files = pkc.files,
+                                pheno.data.file = pheno.data.file,
+                                pheno.data.sheet = "Template",
+                                pheno.data.dcc.col.name = "Sample_ID",
+                                protocol.data.col.names = c("aoi", "roi"),
+                                experiment.data.col.names = c("panel"))
   
   # For creating fixture RDS
-  #studyDesignHumanKidney <- sdesign.list$dsp.obj
-  #saveRDS(studyDesignHumanKidney, file = "studyDesignHumanKidney.RDS")
+  create.rds <- FALSE
+  if(create.rds) {
+    study.design.human.kidney <- sdesign.list$object
+    saveRDS(study.design.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/studyDesignHumanKidney.RDS")
+  }
   
-  print(sdesign.list$plot)
+  print(sdesign.list$sankey.plot)
   print("Created GeoMx Object\n\n")
-  pData(sdesign.list$dsp.obj)[,c("slide name","class","segment")]  
+  pData(sdesign.list$object)[,c("slide name","class","segment")]  
   
   
 ```
