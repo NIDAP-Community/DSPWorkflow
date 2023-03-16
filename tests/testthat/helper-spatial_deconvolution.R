@@ -1,55 +1,64 @@
-select_dataset_spat_decon <- function(dataset) {
+getSpatDeconData <- function(dataset) {
   
   if (dataset == "kidney"){
     
     print("selected kidney dataset") 
-    object <- readRDS(test_path("fixtures/Human_Kidney", "normalizationHumanKidney.RDS"))
+    object = selectNormalizedRtd("kidney")
     
-    # Set parameters and reference datasets
-    norm.expr.type <- "q_norm"
-    ref.mtx <- read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), row.names=1, check.names=FALSE)
-    # For reference matrix, fake rownames with 1500 random genes from object
-    rownames(ref.mtx) <- sample(rownames(object), size = 1500, replace = FALSE)
-    ref.annot <- read.csv(test_path("fixtures", "ref_annot.csv"))
+    expr.type = "q_norm"
+    ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
+                       row.names=1, check.names=FALSE)
+    rownames(ref.mtx) = sample(rownames(object), size = 1500, replace = FALSE)
+    ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
+    cell.id.col = "CellID"
+    celltype.col = "LabeledCellType"
     
   } else if (dataset == "thymus"){
     
     print("selected thymus dataset")
-    object <- readRDS(test_path("fixtures/Mouse_Thymus", "normalizationMouseThymus.RDS"))
+    object = selectNormalizedRtd("thymus")
     
-    # Set parameters and reference datasets
-    norm.expr.type <- "q_norm"
-    ref.mtx <- read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), row.names=1, check.names=FALSE)
-    # For reference matrix, fake rownames with 1500 random genes from object
-    rownames(ref.mtx) <- sample(rownames(object), size = 1500, replace = FALSE)
-    ref.annot <- read.csv(test_path("fixtures", "ref_annot.csv"))
+    expr.type = "q_norm"
+    ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
+                       row.names=1, check.names=FALSE)
+    rownames(ref.mtx) = sample(rownames(object), size = 1500, replace = FALSE)
+    ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
+    cell.id.col = "CellID"
+    celltype.col = "LabeledCellType"
     
   } else if (dataset == "colon"){
     
     print("selected colon dataset")
-    object <- readRDS(test_path("fixtures/Human_Colon", "normalizationHumanColon.RDS"))
+    object = selectNormalizedRtd("colon")
     
-    # Set parameters and reference datasets
-    norm.expr.type <- "q_norm"
-    ref.mtx <- read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), row.names=1, check.names=FALSE)
-    # For reference matrix, fake rownames with 1500 random genes from object
-    rownames(ref.mtx) <- sample(rownames(object), size = 1500, replace = FALSE)
-    ref.annot <- read.csv(test_path("fixtures", "ref_annot.csv"))
+    expr.type <- "q_norm"
+    ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
+                       row.names=1, check.names=FALSE)
+    rownames(ref.mtx) = sample(rownames(object), size = 1500, replace = FALSE)
+    ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
+    cell.id.col = "CellID"
+    celltype.col = "LabeledCellType"
     
   } else if (dataset == "nsclc"){
     
     print("selected nsclc dataset")
-    object <- readRDS(test_path("fixtures/Human_NSCLC", "normalizationHumanNSCLC.RDS"))
+    object = selectNormalizedRtd("nsclc")
     
-    # Set parameters and reference datasets
-    norm.expr.type <- "q_norm"
-    ref.mtx <- read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), row.names=1, check.names=FALSE)
-    # For reference matrix, fake rownames with 1500 random genes from object
-    rownames(ref.mtx) <- sample(rownames(object), size = 1500, replace = FALSE)
-    ref.annot <- read.csv(test_path("fixtures", "ref_annot.csv"))
+    expr.type <- "q_norm"
+    ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
+                       row.names=1, check.names=FALSE)
+    rownames(ref.mtx) = sample(rownames(object), size = 1500, replace = FALSE)
+    ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
+    cell.id.col = "CellID"
+    celltype.col = "LabeledCellType"
 
   }
   
-  return(list("object" = object, "norm.expr.type" = norm.expr.type, "ref.mtx" = ref.mtx, "ref.annot" = ref.annot))
+  return(list("object" = object, 
+              "expr.type" = expr.type, 
+              "ref.mtx" = ref.mtx, 
+              "ref.annot" = ref.annot,
+              "cell.id.col" = cell.id.col, 
+              "celltype.col" = celltype.col))
   
 }
