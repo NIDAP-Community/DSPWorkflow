@@ -3,7 +3,7 @@ getSpatDeconData <- function(dataset) {
   if (dataset == "kidney"){
     
     print("selected kidney dataset") 
-    object = select_normalized_RTD("kidney")
+    object = selectNormalizedRtd("kidney")
     
     expr.type = "q_norm"
     ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
@@ -16,7 +16,7 @@ getSpatDeconData <- function(dataset) {
   } else if (dataset == "thymus"){
     
     print("selected thymus dataset")
-    object = select_normalized_RTD("thymus")
+    object = selectNormalizedRtd("thymus")
     
     expr.type = "q_norm"
     ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
@@ -29,7 +29,7 @@ getSpatDeconData <- function(dataset) {
   } else if (dataset == "colon"){
     
     print("selected colon dataset")
-    object = select_normalized_RTD("colon")
+    object = selectNormalizedRtd("colon")
     
     expr.type <- "q_norm"
     ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
@@ -42,7 +42,7 @@ getSpatDeconData <- function(dataset) {
   } else if (dataset == "nsclc"){
     
     print("selected nsclc dataset")
-    object = select_normalized_RTD("nsclc")
+    object = selectNormalizedRtd("nsclc")
     
     expr.type <- "q_norm"
     ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
