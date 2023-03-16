@@ -3,7 +3,7 @@ test_that("Normalization Success for Kidney", {
   #target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
  
   
-  target_demoDataNorm<- select_dataset_normalization("kidney")
+  target_demoDataNorm<- selectNormalizedRtd("kidney")
   
   dsp.list <- geomxnorm(target_demoDataNorm$object, "quant")
   #dsp.list <- GeoMxNorm(Data = target_demoData, Norm = "quant")
@@ -15,7 +15,7 @@ test_that("Normalization Success for thymus", {
   #load("/rstudio-files/ccr-dceg-data/users/Chad/DSP/tests/testthat/fixtures/target_demoDataNorm.Rdata") 
   #target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
   
-  target_demoDataNorm<- select_dataset_normalization("thymus")
+  target_demoDataNorm<- selectNormalizedRtd("thymus")
   
   dsp.list <- geomxnorm(target_demoDataNorm$object, "quant")
   #dsp.list <- GeoMxNorm(Data = target_demoData, Norm = "quant")
@@ -27,7 +27,7 @@ test_that("Normalization Success for colon", {
   #load("/rstudio-files/ccr-dceg-data/users/Chad/DSP/tests/testthat/fixtures/target_demoDataNorm.Rdata") 
   #target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
   
-  target_demoDataNorm<- select_dataset_normalization("colon")
+  target_demoDataNorm<- selectNormalizedRtd("colon")
   
   dsp.list <- geomxnorm(target_demoDataNorm$object, "quant")
   #dsp.list <- GeoMxNorm(Data = target_demoData, Norm = "quant")
@@ -39,7 +39,7 @@ test_that("Normalization Success for nsclc", {
   #load("/rstudio-files/ccr-dceg-data/users/Chad/DSP/tests/testthat/fixtures/target_demoDataNorm.Rdata") 
   #target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
   
-  target_demoDataNorm<- select_dataset_normalization("nsclc")
+  target_demoDataNorm<- selectNormalizedRtd("nsclc")
   
   dsp.list <- geomxnorm(target_demoDataNorm$object, "quant")
   #dsp.list <- GeoMxNorm(Data = target_demoData, Norm = "quant")

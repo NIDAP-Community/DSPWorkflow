@@ -1,4 +1,4 @@
-select_dataset_normalization <- function(dataset) {
+selectNormalizedRtd <- function(dataset) {
   
   if (dataset == "kidney"){
     
