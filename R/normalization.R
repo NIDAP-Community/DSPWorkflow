@@ -9,7 +9,7 @@
 #' @details normalization function that takes in gene expression data from 
 #'          NanostringGeoMxSet, outputs a normalized NanostringGeoMxSet
 #'          
-#' @param data A NanoStringGeoMxSet dataset
+#' @param object A NanoStringGeoMxSet dataset
 #' @param norm A vector with options of c(quant or neg)
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 geom_histogram
@@ -33,10 +33,10 @@
 #' @return A list containing the ggplot grid, a boxplot, an normalized dataframe.
 
 
-# To call function, must have data = data; norm = c(quant or neg)
-geomxnorm <- function(data, norm) {
+# To call function, must have object = object; norm = c(quant or neg)
+geomxnorm <- function(object, norm) {
   
-  if(class(data)[1] != "NanoStringGeoMxSet"){
+  if(class(object)[1] != "NanoStringGeoMxSet"){
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
   }
   
@@ -48,12 +48,12 @@ geomxnorm <- function(data, norm) {
   neg.probes<- "NegProbe-WTX"
   ann.of.interest <- "region"
   
-  Stat.data <- base::data.frame(row.names = colnames(exprs(data)),
-                                Segment = colnames(exprs(data)),
-                                Annotation = Biobase::pData(data)[, ann.of.interest],
-                                Q3 = unlist(apply(exprs(data), 2,
+  Stat.data <- base::data.frame(row.names = colnames(exprs(object)),
+                                Segment = colnames(exprs(object)),
+                                Annotation = Biobase::pData(object)[, ann.of.interest],
+                                Q3 = unlist(apply(exprs(object), 2,
                                                   quantile, 0.75, na.rm = TRUE)),
-                                NegProbe = exprs(data)[neg.probes, ])
+                                NegProbe = exprs(object)[neg.probes, ])
   
   Stat.data.m <- melt(Stat.data, measures.vars = c("Q3", "NegProbe"),
                       variable.name = "Statistic", value.name = "Value")
@@ -87,11 +87,11 @@ geomxnorm <- function(data, norm) {
   
   btm.row <- plot_grid(plt2, plt3, nrow = 1, labels = c("B", ""),
                        rel_widths = c(0.43,0.57))
-  p <- plot_grid(plt1, btm.row, ncol = 1, labels = c("A", ""))
+  multi.plot <- plot_grid(plt1, btm.row, ncol = 1, labels = c("A", ""))
   
   if(norm == "quant"){
     # Q3 norm (75th percentile) for WTA/CTA  with or without custom spike-ins
-    object <- normalize(data,
+    object <- normalize(object,
                         norm_method = "quant", 
                         desiredQuantile = .75,
                         toElt = "q_norm")
@@ -120,7 +120,7 @@ geomxnorm <- function(data, norm) {
   
   if(norm == "neg"){
     # Background normalization for WTA/CTA without custom spike-in
-    object <- normalize(data,
+    object <- normalize(object,
                         norm_method = "neg", 
                         fromElt = "exprs",
                         toElt = "neg_norm")
@@ -147,5 +147,5 @@ geomxnorm <- function(data, norm) {
     stop(paste0("Error: Negative needs to be neg" ))
   }
   
-  return(list("plot" = p, "Boxplot" = ggboxplot, "Normalized Dataframe" = object))
+  return(list("multi.plot" = multi.plot, "boxplot" = ggboxplot, "object" = object))
 }
