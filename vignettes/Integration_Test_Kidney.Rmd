@@ -78,20 +78,24 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
 
 ```{r QC Preprocessing, echo=FALSE}
 
-QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
-                        minSegmentReads = 1000, 
-                        percentTrimmed = 80,    
-                        percentStitched = 80,   
-                        percentAligned = 75,    
-                        percentSaturation = 50, 
-                        minNegativeCount = 1,   
-                        maxNTCCount = 9000,     
-                        minNuclei = 20,         
-                        minArea = 1000)
-    print(QCoutput$segments.qc)
+qc.output <-  qcProc(object = sdesign.list$object,
+                        min.segment.reads = 1000, 
+                        percent.trimmed = 80,    
+                        percent.stitched = 80,   
+                        percent.aligned = 75,    
+                        percent.saturation = 50, 
+                        min.negative.count = 1,   
+                        max.ntc.count = 9000,     
+                        min.nuclei = 20,         
+                        min.area = 1000,
+                        print.plots = TRUE)
+    print(qc.output$segments.qc)
     
-    #qcHumanKidney <- QCoutput$dsp.target
-    #saveRDS(qcHumanKidney, file = "qcHumanKidney.RDS")
+  create.rds <- TRUE
+  if(create.rds) {
+    qc.human.kidney <- qc.output$object
+    saveRDS(qc.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/qcHumanKidney.RDS")
+  }
 
 ```
 
@@ -99,26 +103,27 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 
 ```{r Filtering, echo=FALSE}
     
-    PKFil <- annotation(QCoutput$dsp.target)
-    target_demoDataFil <- QCoutput$dsp.target
+    setwd('..') 
+  
+    goi <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
-    genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+    filtering.output <- filtering(object = qc.output$object, 
+                            pkc.file = annotation(qc.output$object), 
+                            loq.cutoff = 2, 
+                            loq.min = 2, 
+                            cut.segment = .1, 
+                            goi = goi)
     
-    FiltOutput <- filtering(Data = target_demoDataFil, 
-                            PKCS = PKFil, 
-                            LOQcutoff = 2, 
-                            LOQmin = 2, 
-                            CutSegment = .1, 
-                            GOI = genes)
+    print(filtering.output$`stacked.bar.plot`)
+    print(filtering.output$`tab`)
+    print(filtering.output$`sankey.plot`)
+    print(filtering.output$`genes.detected.plot`)
     
-    print(FiltOutput$`Stacked Bar Plot`)
-    print(FiltOutput$`Table of Cuts`)
-    print(FiltOutput$`Sankey Plot`)
-    print(FiltOutput$`Genes Deccted Plot`)
-    
-    #filteringHumanKidney <- FiltOutput$`target_demoData Dataset`
-    
-    #saveRDS(filteringHumanKidney, file = "filteringHumanKidney.RDS")
+  create.rds <- FALSE
+  if(create.rds) {
+    filtering.human.kidney <- sdesign.list$object
+    saveRDS(filtering.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/filteringHumanKidney.RDS")
+  }
 
 ```
 
@@ -127,17 +132,18 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
   
 ```{r Normalization, echo=FALSE}
   
-    target_demoDataNorm <- FiltOutput$`target_demoData Dataset`
+    normalization.output <- geomxnorm(
+                                  object = filtering.output$object, 
+                                  norm = "quant")
     
-    NormOut.list <- GeoMxNorm(target_demoDataNorm, "quant")
+    print(normalization.output$multi.plot)
+    print(normalization.output$boxplot)
     
-    #normalizationHumanKidney <- NormOut.list$`Normalized Dataframe`
-    
-    #saveRDS(normalizationHumanKidney, file = "normalizationHumanKidney.RDS")
-  
-    
-    print(NormOut.list$plot)
-    print(NormOut.list$Boxplot)
+    create.rds <- FALSE
+    if(create.rds) {
+      normalization.human.kidney <- normalization.output$object
+      saveRDS(normalization.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/normalizationHumanKidney.RDS")
+    }
     
 ```
 
@@ -147,21 +153,22 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 ```{r Unsupervised Analysis, echo=FALSE}
 
     #Test Unsupervised Analysis:
-    target.Data <- NormOut.list$`Normalized Dataframe`
-    UnSupervisedoutput <- DimReduct(object = target.Data,
+    unsupervised.output <- dimReduct(object = normalization.output$object,
                         point.size = 3,
                         point.alpha = 1,
                         color.variable1 = "region",
                         shape.variable = "class"
     )
     
-    #unsupervisedAnalysisHumanKidney <- UnSupervisedoutput$dsp.object
+    print(unsupervised.output$plot$PCA)
+    print(unsupervised.output$plot$tSNE)
+    print(unsupervised.output$plot$UMAP)
     
-    #saveRDS(unsupervisedAnalysisHumanKidney, file = "unsupervisedAnalysisHumanKidney.RDS")
-    
-    print(UnSupervisedoutput$plot.list$PCA)
-    print(UnSupervisedoutput$plot.list$tSNE)
-    print(UnSupervisedoutput$plot.list$UMAP)
+    create.rds <- FALSE
+    if(create.rds) {
+      unsupervised.human.kidney <- unsupervised.output$object
+      saveRDS(unsupervised.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/unsupervisedAnalysisHumanKidney.RDS")
+    }
 
 ```
 
@@ -170,15 +177,9 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 
  
 ```{r Clustering high CV Genes, echo=FALSE}
-
-    target.Data <- UnSupervisedoutput$dsp.object  
     
-    dsp.list <- HeatMap(target.data = target.Data, 
+    heatmap.output <- heatMap(object = unsupervised.output$object, 
                         ngenes = 200, 
-                        image.width = 3600, 
-                        image.height = 1800, 
-                        image.resolution = 300, 
-                        image.filename = "heatmap.clust.highCVgenes.png",
                         scale.by.row.or.col = "row", 
                         show.rownames = FALSE, 
                         show.colnames = FALSE, 
@@ -194,7 +195,7 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                         norm.method = "quant")
 
 
-    print(dsp.list$plot)
+    print(heatmap.output$plot)
     
   
 ```
@@ -205,20 +206,20 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 
 ```{r Differential Expression Analysis,  echo=FALSE}
 
-    data <- UnSupervisedoutput$dsp.object 
     goi <- c("CD274", "CD8A", "CD68", "EPCAM",
              "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
-    data <- data[goi,]
+    
+    object <- normalization.output$object
+    object <- object[goi,]
     Gene <- Subset <- NULL
     
     #First analysis:
-    reslist.1 <- DiffExpr(object = data, 
-                          analysisType = "Within Groups", 
-                          regionCol = "region", 
+    reslist.1 <- diffExpr(object = object, 
+                          analysis.type = "Within Groups", 
+                          region.col = "region", 
                           regions = c("glomerulus", "tubule"), 
-                          groupCol = "class", 
-                          groups = c("DKD", "normal"), 
-                          slideCol = "slide name")
+                          group.col = "class", 
+                          groups = c("DKD", "normal"))
     grid.draw(reslist.1$sample_table)
     grid.newpage()
     grid.draw(reslist.1$summary_table)
@@ -242,13 +243,13 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
     cat("expected value is 0.0274")
     
     #Second analysis:
-    reslist.2 <- DiffExpr(object = data, 
-                          analysisType = "Between Groups", 
-                          regionCol = "region", 
+    reslist.2 <- diffExpr(object = normalization.output$object, 
+                          analysis.type = "Between Groups", 
+                          region.col = "region", 
                           regions = c("glomerulus", "tubule"), 
-                          groupCol = "class", 
+                          group.gol = "class", 
                           groups = c("DKD", "normal"), 
-                          slideCol = "slide name")
+                          slide.col = "slide name")
     grid.draw(reslist.2$sample_table)
     grid.newpage()
     grid.draw(reslist.2$summary_table)
@@ -280,19 +281,15 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
 ## 9. Violin Plot
 
 ```{r Violin Plot, echo=FALSE}
-
-    test_data <- UnSupervisedoutput$dsp.object
     
-    #test_genes <- head(rownames(test_data@assayData$q_norm),5)
+    genes <- c("PDHA1")
     
-    test_genes <- c("PDHA1")
-    
-    violin_plot_test <- violin_function(data = test_data, 
-                                        genes = test_genes,
-                                        group = "region")
-    grid.arrange(violin_plot_test)
-    
-    #print("Violin Plot Done")
+    violin.plot.test <- violinPlot(object = normalization.output$object, 
+                                        expr.type = "q_norm", 
+                                        genes = genes,
+                                        group = "region",
+                                        facet.by = "segment")
+    grid.arrange(violin.plot.test)
 
 ```
 
