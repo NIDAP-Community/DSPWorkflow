@@ -78,35 +78,29 @@ test_that("Normalization Success", {
   expect_error(do.call(geomxnorm,kidney.dat), "Error: Quant needs to be quant")
 })
 
+test_that("Normalization Success", {
+  kidney.dat <- selectDatasetNormalization("kidney")
+  
+  # Load the test annotation files with faulty field names 
+  # and check for an error message
+  kidney.dat$norm <- c("negative")
+  expect_error(do.call(geomxnorm,kidney.dat), "Error: negative needs to be neg")
+})
 
-#
-#test_that("Normalization Success", {
-#  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
-#  
-#  expect_error(geomxnorm(target_demoDataNorm, "quantile"), "Error: quantile needs to be quant")
-#})
-#
-#test_that("Normalization Success", {
-#  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
-#  
-#  expect_error(geomxnorm(target_demoDataNorm, "Quantile"), "Error: Quantile needs to be quant")
-#})
-#
-#test_that("Normalization Success", {
-#  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
-#  
-#  expect_error(geomxnorm(target_demoDataNorm, "Neg"), "Error: Neg needs to be neg")
-#})
-#
-#test_that("Normalization Success", {
-#  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
-#  
-#  expect_error(geomxnorm(target_demoDataNorm, "negative"), "Error: negative needs to be neg")
-#})
-#
-#test_that("Normalization Success", {
-#  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
-#  
-#  expect_error(geomxnorm(target_demoDataNorm, "Negative"), "Error: Negative needs to be neg")
-#})
-#
+test_that("Normalization Success", {
+  kidney.dat <- selectDatasetNormalization("kidney")
+  
+  # Load the test annotation files with faulty field names 
+  # and check for an error message
+  kidney.dat$norm <- c("Negative")
+  expect_error(do.call(geomxnorm,kidney.dat), "Error: Negative needs to be neg")
+})
+
+test_that("Normalization Success", {
+  kidney.dat <- selectDatasetNormalization("kidney")
+  
+  # Load the test annotation files with faulty field names 
+  # and check for an error message
+  kidney.dat$norm <- c("Neg")
+  expect_error(do.call(geomxnorm,kidney.dat), "Error: Neg needs to be neg")
+})
