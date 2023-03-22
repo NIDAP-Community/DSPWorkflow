@@ -62,6 +62,22 @@ test_that("Test nsclc Data", {
   
 })
 
+test_that("Filtering Success", {
+  kidney.dat <- selectDatasetFiltering("kidney")
+ 
+  kidney.dat$object <- c(1,2,3,5)
+  expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be NanoStringGeoMxSet")
+})
+
+
+
+
+
+
+
+
+
+
 #test_that("Filtering Success", {
 #  target_demoDataFil<- c(1,2,3,5)
 #  kidney.dat <- selectDatasetFiltering("kidney")
