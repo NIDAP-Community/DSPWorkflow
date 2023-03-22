@@ -42,16 +42,29 @@ test_that("Normalization Success for nsclc", {
   
 })
 
-#test_that("Normalization Success", {
-#  target_demoDataNorm <- c(1,2,3,5)
-#  
-#  expect_error(geomxnorm(target_demoDataNorm, "quant"), "Error: You have the wrong data class, must be NanoStringGeoMxSet")
+test_that("Normalization Success", {
+  kidney.dat <- selectDatasetNormalization("kidney")
+
+  # Load the test annotation files with faulty field names 
+  # and check for an error message
+  kidney.dat$object <- c(1,2,3,5)
+  expect_error(do.call(geomxnorm,kidney.dat), "Error: You have the wrong data class, must be NanoStringGeoMxSet")
+})
+  
+  
+  
+  #target_demoDataNorm <- c(1,2,3,5)
+  #normalization.output <- do.call(geomxnorm,kidney.dat)
+  #expected.elements = c("multi.plot", "boxplot", "object")
+  #expect_setequal(names(normalization.output), expected.elements)
+  #expect_error(geomxnorm(target_demoDataNorm, "quant"), "Error: You have the wrong data class, must be NanoStringGeoMxSet")
 #})
+  
 #
 #test_that("Normalization Success", {
 #  #target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
 #  target_demoDataNorm<- select_dataset_normalization("kidney")
-#  
+ 
 #  expect_error(geomxnorm(target_demoDataNorm$object, "Quant"), "Error: Quant needs to be quant")
 #})
 #
