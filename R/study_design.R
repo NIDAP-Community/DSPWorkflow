@@ -103,7 +103,7 @@ studyDesign <- function(dcc.files,
       levels = c("class", "slide name", "region", "segment")
     )
   
-  # plot Sankey
+  # plot Sankey diagram
   sankey.plot <-
     ggplot(sankey.count.data,
            aes(
