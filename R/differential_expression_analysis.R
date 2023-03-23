@@ -30,7 +30,7 @@
 #' @param p.adjust Method to use for pvalue adjustment. Choices are "holm",
 #'  "hochberg","hommel","bonferroni","BH","BY","fdr","none". (default is "BY")
 #' @param pairwise Boolean to calculate least-square means pairwise differences
-#'  (default is NULL)
+#'  (default is TRUE)
 #' @param fc.lim Fold Change limit for summarizing genes of interest (default
 #'  is 1.2)
 #' @param pval.lim.1 P-value limit for summarizing differentially expressed 
@@ -67,8 +67,8 @@ diffExpr <- function(object,
                      element = "q_norm",
                      multi.core = TRUE,
                      n.cores = 1,
-                     p.adjust = "BY", 
-                     pairwise = TRUE, 
+                     p.adjust = "BY",
+                     pairwise = TRUE,
                      fc.lim = 1.2,
                      pval.lim.1 = 0.05,
                      pval.lim.2 = 0.01) {
@@ -341,22 +341,22 @@ diffExpr <- function(object,
       .getGeneLists(select.groups,
                     FClimit = fc.lim,
                     pvallimit = pval.lim.1,
-                    "pval")
+                    pval = "pval")
     FCpval2 <-
       .getGeneLists(select.groups,
                     FClimit = fc.lim,
                     pvallimit = pval.lim.2,
-                    "pval")
+                    pval = "pval")
     FCadjpval1 <-
       .getGeneLists(select.groups,
                     FClimit = fc.lim,
                     pvallimit = pval.lim.1,
-                    "adjpval")
+                    pval = "adjpval")
     FCadjpval2 <-
       .getGeneLists(select.groups,
                     FClimit = fc.lim,
                     pvallimit = pval.lim.2,
-                    "adjpval")
+                    pval = "adjpval")
     
     pvaltab <- rbind(FCpval1, FCpval2, FCadjpval1, FCadjpval2)
     

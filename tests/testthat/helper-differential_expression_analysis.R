@@ -6,7 +6,7 @@ getDeParams <- function(data, test) {
     regions = c("glomerulus", "tubule")
     region.col = "region"
     slide.col = "slide name"
-    n.cores = 4
+    n.cores = 16
     if (test == "Within") {
       analysis.type = "Within Groups"
     } else {
