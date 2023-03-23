@@ -8,9 +8,13 @@ date: '2022-11-30'
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(devtools)
+library(rprojroot)
 load_all()
 
+root <- rprojroot::find_package_root_file()
+
 knitr::opts_chunk$set(fig.width=12, fig.height=8, out.width = '100%') 
+knitr::opts_knit$set(root.dir = root)
 
 ```
 
@@ -21,8 +25,6 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
 ## 1. Study Design:
 
 ```{r Study Design, echo=FALSE}
-  
-  setwd('..')  
 
   downloads.path <- test_path("fixtures/Human_Kidney/downloaded/")
   tar.file.name <- "kidney_dccs.tar.gz"
@@ -91,7 +93,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
                         print.plots = TRUE)
     print(qc.output$segments.qc)
     
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     qc.human.kidney <- qc.output$object
     saveRDS(qc.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/qcHumanKidney.RDS")
@@ -102,8 +104,6 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ## 3. Filtering:
 
 ```{r Filtering, echo=FALSE}
-    
-    setwd('..') 
   
     goi <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
@@ -121,7 +121,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
     
   create.rds <- FALSE
   if(create.rds) {
-    filtering.human.kidney <- sdesign.list$object
+    filtering.human.kidney <- filtering.output$object
     saveRDS(filtering.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/filteringHumanKidney.RDS")
   }
 
@@ -139,7 +139,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
     print(normalization.output$multi.plot)
     print(normalization.output$boxplot)
     
-    create.rds <- FALSE
+    create.rds <- TRUE
     if(create.rds) {
       normalization.human.kidney <- normalization.output$object
       saveRDS(normalization.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/normalizationHumanKidney.RDS")
@@ -163,12 +163,6 @@ qc.output <-  qcProc(object = sdesign.list$object,
     print(unsupervised.output$plot$PCA)
     print(unsupervised.output$plot$tSNE)
     print(unsupervised.output$plot$UMAP)
-    
-    create.rds <- FALSE
-    if(create.rds) {
-      unsupervised.human.kidney <- unsupervised.output$object
-      saveRDS(unsupervised.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/unsupervisedAnalysisHumanKidney.RDS")
-    }
 
 ```
 
@@ -219,7 +213,8 @@ qc.output <-  qcProc(object = sdesign.list$object,
                           region.col = "region", 
                           regions = c("glomerulus", "tubule"), 
                           group.col = "class", 
-                          groups = c("DKD", "normal"))
+                          groups = c("DKD", "normal"), 
+                          n.cores = 1)
     grid.draw(reslist.1$sample_table)
     grid.newpage()
     grid.draw(reslist.1$summary_table)
@@ -243,13 +238,13 @@ qc.output <-  qcProc(object = sdesign.list$object,
     cat("expected value is 0.0274")
     
     #Second analysis:
-    reslist.2 <- diffExpr(object = normalization.output$object, 
+    reslist.2 <- diffExpr(object = object, 
                           analysis.type = "Between Groups", 
                           region.col = "region", 
                           regions = c("glomerulus", "tubule"), 
-                          group.gol = "class", 
+                          group.col = "class", 
                           groups = c("DKD", "normal"), 
-                          slide.col = "slide name")
+                          n.cores = 1)
     grid.draw(reslist.2$sample_table)
     grid.newpage()
     grid.draw(reslist.2$summary_table)
@@ -282,7 +277,8 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
 ```{r Violin Plot, echo=FALSE}
     
-    genes <- c("PDHA1")
+    genes <- c("CD274", "CD8A", "CD68", "EPCAM",
+         "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
     violin.plot.test <- violinPlot(object = normalization.output$object, 
                                         expr.type = "q_norm", 
@@ -296,28 +292,21 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ## 10. Spatial Deconvolution:
 
 ```{r Spatial Deconvolution, echo=FALSE}
-
-    refdir <- "/rstudio-files/ccr-dceg-data/data/CellProfileLibrary/Human/Adult/"
-    load(paste0(refdir,"Kidney_HCA.RData"))
-    ref_mtx_test <- profile_matrix
-    annot_1 <- data.frame(CellID = colnames(ref_mtx_test),LabeledCellType = colnames(ref_mtx_test))
     
-    target_demoData <- UnSupervisedoutput$dsp.object
-    dsp_qnorm_test = target_demoData@assayData$q_norm
-    dsp_negnorm_test = target_demoData@assayData$q_norm
+    ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
+                       row.names=1, check.names=FALSE)
+    rownames(ref.mtx) = sample(rownames(object), size = 1500, replace = FALSE)
+    ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
     
-    #To derive neg probes: 
-    target_demoData@featureData@data$TargetName[target_demoData@featureData@data$Negative == TRUE] 
+    spatial.output <- spatialDeconvolution(object = normalization.output$object, 
+                                           expr.type = "q_norm", 
+                                           ref.mtx = ref.mtx, 
+                                           ref.annot = ref.annot, 
+                                           cell.id.col = "CellID", 
+                                           celltype.col = "LabeledCellType", 
+                                           group.by = "segment")
     
-    dsp_negnorm_test = derive_GeoMx_background(norm = target_demoData@assayData$q_norm,
-                                 probepool = fData(target_demoData)$Module,
-                                 negnames = c("NegProbe-WTX"))
-    
-    spatial_output <- spatial_deconvolution(dsp_qnorm = dsp_qnorm_test, 
-                                  dsp_negnorm = dsp_negnorm_test, 
-                                  ref_mtx = ref_mtx_test, ref_annot = annot_1)
-    
-    print(spatial_output$figures)
+    print(spatial.output$figures)
 
     print("Spatial Deconvolution Done")
 
