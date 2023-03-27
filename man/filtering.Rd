@@ -2,16 +2,21 @@
 % Please edit documentation in R/filtering.R
 \name{filtering}
 \alias{filtering}
-\title{Normalize Nano String Digital Spatial Profile}
+\title{Filtering NanoStringGeoMxSet dataset}
 \usage{
-filtering(Data, PKCS, LOQcutoff, LOQmin, CutSegment, GOI)
+filtering(object, pkc.file, loq.cutoff, loq.min, cut.segment, goi)
 }
 \arguments{
-\item{Data}{A NanoStringGeoMxSet dataset}
+\item{object}{A NanoStringGeoMxSet dataset}
 }
 \value{
 A list containing the ....
 }
 \description{
+Function for filtering NanoStringGeoMxSet dataset
+}
+\details{
 Normalize Nano String Digital Spatial Profile
+
+This function will run various filtering parameters for NanoStringGeoMxSet datasets
 }

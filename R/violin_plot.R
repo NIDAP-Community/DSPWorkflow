@@ -18,7 +18,6 @@
 #' @import GeomxTools
 #' @import ggplot2
 #' @import gridExtra
-#' @import Rmpfr
 #'
 #' @export
 #' @example Do not run: violinPlot(object = NanostringGeomx, 
@@ -29,6 +28,7 @@
 #'
 #' @return an arranged grob of violin plots
 
+# @import Rmpfr
 
 violinPlot <- function(object,
                        expr.type,
