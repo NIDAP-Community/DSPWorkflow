@@ -26,6 +26,7 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
 
 ```{r Study Design, echo=FALSE}
 
+  # Set paths for downloading dcc files
   downloads.path <- test_path("fixtures/Human_Kidney/downloaded/")
   tar.file.name <- "kidney_dccs.tar.gz"
   full.tar.path <- paste0(downloads.path,tar.file.name)
