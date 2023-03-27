@@ -28,8 +28,6 @@
 #'
 #' @return an arranged grob of violin plots
 
-# @import Rmpfr
-
 violinPlot <- function(object,
                        expr.type,
                        genes,
