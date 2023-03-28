@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="What the Package Does (One Line, Title Case)">
-<meta property="og:description" content="What the package does (one paragraph).">
+<meta property="og:description" content="The DSP Workflow addresses a growing need to streamline the analysis of Spatial Transcriptomics data produced from Digital Spatial Profiling Technology (NanoString). It can be run in a docker container, and for biologists, in user-friendly web-based interactive notebooks (NIDAP, Palantir Foundry).">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">DSPWorkflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0.0</span>
       </span>
     </div>
 
@@ -79,6 +79,9 @@
 <div class="section level1">
 <div class="page-header"><h1 id="digital-spatial-profiling-workflow">Digital-Spatial-Profiling-Workflow<a class="anchor" aria-label="anchor" href="#digital-spatial-profiling-workflow"></a>
 </h1></div>
+<p>The DSP Workflow addresses a growing need to streamline the analysis of Spatial Transcriptomics data produced from Digital Spatial Profiling Technology (NanoString). It can be run in a docker container, and for biologists, in user-friendly web-based interactive notebooks (NIDAP, Palantir Foundry). It is based on the Bioconductor vignette <a href="http://bioconductor.org/packages/release/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html" class="external-link">“Analyzing GeoMx-NGS RNA Expression Data with GeomxTools”</a>.</p>
+<p>It has been tested on several Whole Transcriptome Atlas (WTA) <a href="https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-rna-assays/geomx-whole-transcriptome-atlas/" class="external-link">human</a> and <a href="https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-rna-assays/geomx-mouse-whole-transcriptome-atlas/" class="external-link">mouse</a> datasets. The workflow can be summarized in these steps: <img src="articles/workflow_image.png"></p>
+<p>Future development will include support for <a href="https://bioconductor.org/packages/release/bioc/vignettes/GeomxTools/inst/doc/Protein_in_GeomxTools.html" class="external-link">protein data</a> and integration with single cell datasets.</p>
 <p>The development environment is provided in the Dockerfile/ directory, there are two sets of files: 1. Conda_container/ : The container includes a conda environment: DSPWorkflow_NDIAP. 2. Plain_R_container/ : Then container includes a plain R environment.</p>
 </div>
   </div>
