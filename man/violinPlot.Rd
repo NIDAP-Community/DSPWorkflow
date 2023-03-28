@@ -2,28 +2,32 @@
 % Please edit documentation in R/violin_plot.R
 \name{violinPlot}
 \alias{violinPlot}
-\title{View gene expression expressed across groups and optionally across (broader) class}
+\title{Violin plot of spatially profiled genes}
 \usage{
-violinPlot(
-  data = target_demoData,
-  expr.type = "q_norm",
-  genes = c(),
-  group = "CellType",
-  facet.by = NULL
-)
+violinPlot(object, expr.type, genes, group, facet.by = NULL)
 }
 \arguments{
-\item{expr.type}{name of normalized expression data slot}
+\item{object}{Name of NanostringGeoMxSet to perform analysis on}
 
-\item{genes}{which genes should be plotted on the y-axis of the violin plot}
+\item{expr.type}{Name of normalized expression data slot}
 
-\item{group}{which groups should be plotted on the x axis of the violin plot}
+\item{genes}{Transcript(s) to be plotted on the y-axis of the violin plot}
 
-\item{facet.by}{broader category of group, if specified, the violin plots will be split further based on this category}
+\item{group}{Metadata group to be plotted on the x axis of the violin plot}
+
+\item{facet.by}{Further subdivide group by this category (Default: NULL)}
 }
 \value{
-Violin plot(s) of genes to view across groups and (optionally) faceted across classes
+an arranged grob of violin plots
 }
 \description{
-View gene expression expressed across groups and optionally across (broader) class
+Returns violin plot of user-input gene(s) expression across
+groups, can optionally subdivide groups into a more specific
+category
+}
+\details{
+ggplot function that takes in gene expression data from
+NanostringGeoMxSet, outputs the distribution of gene expression
+values across groups. Requires normalized expression data and valid
+group category to be present in object
 }

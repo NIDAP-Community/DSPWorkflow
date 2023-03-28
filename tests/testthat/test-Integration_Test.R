@@ -71,7 +71,7 @@ test_that("DSP object and qc plots are returned", {
     #PKCFiles <- unzip(dir(file.path(datadir, "pkcs"), pattern = ".pkc*",
     #                      full.names = TRUE, recursive = TRUE))
     
-    sdesign.list <- StudyDesign(dccFiles = DCCFiles, pkcFiles = PKCFiles,
+    sdesign.list <- studyDesign(dccFiles = DCCFiles, pkcFiles = PKCFiles,
                             phenoDataFile = SampleAnnotationFile,
                             phenoDataSheet = AnnotationSheetName,
                             phenoDataDccColName = DccColName,
@@ -159,7 +159,7 @@ test_that("DSP object and qc plots are returned", {
     
     target_demoDataNorm <- FiltOutput$`target_demoData Dataset`
     
-    NormOut.list <- GeoMxNorm(target_demoDataNorm, "quant")
+    NormOut.list <- geomxnorm(target_demoDataNorm, "quant")
   
     print(NormOut.list$plot)
     print(NormOut.list$boxplot)
