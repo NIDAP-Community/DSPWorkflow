@@ -45,7 +45,7 @@ Combine Nanostring Digital Spatial Profile read count and
 annotation files into a GeoMX object
 }
 \details{
-\code{StudyDesign} returns a Sankey Plot and a GeoMX object.
+\code{studyDesign} returns a Sankey Plot and a GeoMX object.
 For the function to run properly the annotation excel file must have the
 specific field names: slide name', class, segment, region
 and the corresponding fields that can be renamed: Sample_ID, aoi, roi, panel

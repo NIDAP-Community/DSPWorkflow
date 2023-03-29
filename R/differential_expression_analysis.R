@@ -39,7 +39,6 @@
 #'  (DEG) genes, usually more lenient (default is 0.10)
 #'
 #' @importFrom GeomxTools mixedModelDE
-#' @importFrom stringr str_wrap
 #' @importFrom patchwork wrap_elements
 #' @importFrom stats p.adjust
 #' @importFrom dplyr group_by select filter arrange pull
@@ -142,7 +141,8 @@ diffExpr <- function(object,
   metadata %>% select(testClass, testRegion, sample, slide) -> met.tab
   met.tab %>% group_by(testClass, testRegion, slide) %>% count() -> met.sum
   met.sum %>% pivot_wider(names_from = slide, values_from = n) -> met.pivot
-  colnames(met.pivot) <- str_wrap(colnames(met.pivot), 10)
+  #replace str_wrap(colnames(met.pivot), 10) below
+  colnames(met.pivot) <- sapply(strsplit(colnames(met.pivot)," "),paste,collapse = "\n")
   ind <- !(is.na(met.pivot$testClass) | is.na(met.pivot$testRegion))
   met.pivot <- met.pivot[ind,]
   grid.newpage()
