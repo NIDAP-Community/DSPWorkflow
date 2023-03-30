@@ -16,7 +16,7 @@ diffExpr(
   multi.core = TRUE,
   n.cores = 1,
   p.adjust = "BY",
-  pairwise = TRUE,
+ pairwise = TRUE,
   fc.lim = 1.2,
   pval.lim.1 = 0.05,
   pval.lim.2 = 0.01
@@ -53,7 +53,7 @@ slide)}
 "hochberg","hommel","bonferroni","BH","BY","fdr","none". (default is "BY")}
 
 \item{pairwise}{Boolean to calculate least-square means pairwise differences
-(default is NULL)}
+(default is TRUE)}
 
 \item{fc.lim}{Fold Change limit for summarizing genes of interest (default
 is 1.2)}
