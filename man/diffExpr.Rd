@@ -16,7 +16,7 @@ diffExpr(
   multi.core = TRUE,
   n.cores = 1,
   p.adjust = "BY",
- pairwise = TRUE,
+  pairwise = TRUE,
   fc.lim = 1.2,
   pval.lim.1 = 0.05,
   pval.lim.2 = 0.01

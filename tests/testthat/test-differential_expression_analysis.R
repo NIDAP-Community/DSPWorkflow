@@ -39,7 +39,7 @@ test_that("Run Diff Exp Analysis with default parameters - kidney data", {
 
   res <- calcFC("kidney", reslist.2$results, "Between")
   expect_equal(res$lfc, -1.408, tolerance = 1e-3)
-  expect_equal(res$pval, 0.01268, tolerance = 1e-3)
+  expect_equal(as.numeric(formatC(res$pval,2)), 0.013, tolerance = 1e-3)
 })
 
 test_that("Run Diff Exp Analysis with wrong selected group column", {

@@ -50,7 +50,7 @@
 #' @importFrom BiocGenerics rownames colnames rbind
 #' @importFrom magrittr %>%
 #' @importFrom Biobase pData assayDataElement
-#' @importFrom NanoStringNCTools mixedModelDE
+
 #' @export
 #'
 #' @return a list containing mixed model output data frame, grid tables for
@@ -156,7 +156,7 @@ diffExpr <- function(object,
   grp.length <- length(grp.col[!is.na(grp.col)])
   
   #Run DEG Analysis
-  options(digits = 9)
+  options(digits = 3)
   
   if (analysis.type == "Within Groups") {
     cat("Running Within Group Analysis between Regions")
