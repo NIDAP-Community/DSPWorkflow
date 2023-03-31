@@ -4,7 +4,7 @@ The DSP Workflow addresses a growing need to streamline the analysis of Spatial 
 "](http://bioconductor.org/packages/release/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html).  
 
 It has been tested on several Whole Transcriptome Atlas (WTA) [human](https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-rna-assays/geomx-whole-transcriptome-atlas/) and [mouse](https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-rna-assays/geomx-mouse-whole-transcriptome-atlas/) datasets. The workflow can be summarized in these steps:
-<img src="workflow_image.png">
+<img src="./vignettes/workflow_image.png">
 
 
 Future development will include support for [protein data](https://bioconductor.org/packages/release/bioc/vignettes/GeomxTools/inst/doc/Protein_in_GeomxTools.html) and integration with single cell datasets.

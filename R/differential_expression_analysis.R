@@ -50,7 +50,6 @@
 #' @importFrom BiocGenerics rownames colnames rbind
 #' @importFrom magrittr %>%
 #' @importFrom Biobase pData assayDataElement
-
 #' @export
 #'
 #' @return a list containing mixed model output data frame, grid tables for
