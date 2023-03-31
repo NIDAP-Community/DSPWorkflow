@@ -26,7 +26,7 @@ test_that("Run Diff Exp Analysis with default parameters - kidney data", {
   reslist.2 <- do.call(diffExpr, kidney.data)
   
   #Test saving images and calculated FC and pvals
-  announce_snapshot_file("output/kidney_between.png")
+ 
   expect_snapshot_file(
     ggsave(
       "kidney_between.png",
