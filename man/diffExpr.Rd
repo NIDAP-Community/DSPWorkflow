@@ -53,7 +53,7 @@ slide)}
 "hochberg","hommel","bonferroni","BH","BY","fdr","none". (default is "BY")}
 
 \item{pairwise}{Boolean to calculate least-square means pairwise differences
-(default is NULL)}
+(default is TRUE)}
 
 \item{fc.lim}{Fold Change limit for summarizing genes of interest (default
 is 1.2)}
