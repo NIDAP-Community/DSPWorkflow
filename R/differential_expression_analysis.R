@@ -141,7 +141,7 @@ diffExpr <- function(object,
   met.tab %>% group_by(testClass, testRegion, slide) %>% count() -> met.sum
   met.sum %>% pivot_wider(names_from = slide, values_from = n) -> met.pivot
   #replace str_wrap(colnames(met.pivot), 10) below
-  colnames(met.pivot) <- sapply(strsplit(colnames(met.pivot)," "),paste,collapse = "\n") 
+  colnames(met.pivot) <- sapply(strsplit(colnames(met.pivot)," "),paste,collapse = "\n")
   ind <- !(is.na(met.pivot$testClass) | is.na(met.pivot$testRegion))
   met.pivot <- met.pivot[ind,]
   grid.newpage()
@@ -155,7 +155,7 @@ diffExpr <- function(object,
   grp.length <- length(grp.col[!is.na(grp.col)])
   
   #Run DEG Analysis
-  options(digits = 9)
+  options(digits = 3)
   
   if (analysis.type == "Within Groups") {
     cat("Running Within Group Analysis between Regions")
