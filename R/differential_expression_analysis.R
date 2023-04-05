@@ -141,7 +141,7 @@ diffExpr <- function(object,
   met.sum <- met.tab %>% group_by(testClass, testRegion, slide) %>% count() 
   met.pivot <- met.sum %>% pivot_wider(names_from = slide, values_from = n) 
   #replace str_wrap(colnames(met.pivot), 10) below
-  colnames(met.pivot) <- sapply(strsplit(colnames(met.pivot)," "),paste,collapse = "\n") 
+  colnames(met.pivot) <- sapply(strsplit(colnames(met.pivot)," "),paste,collapse = "\n")
   ind <- !(is.na(met.pivot$testClass) | is.na(met.pivot$testRegion))
   met.pivot <- met.pivot[ind,]
   grid.newpage()

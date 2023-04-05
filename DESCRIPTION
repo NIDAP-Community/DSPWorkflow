@@ -1,14 +1,14 @@
 Package: DSPWorkflow
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.1.0
+Version: 1.0.0.0
 Authors@R: 
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Description: The DSP Workflow addresses a growing need to streamline the analysis of Spatial Transcriptomics data produced from Digital Spatial Profiling Technology (NanoString). It can be run in a docker container, and for biologists, in user-friendly web-based interactive notebooks (NIDAP, Palantir Foundry).
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.2.1
 Suggests: 
     testthat (>= 3.0.0)
 Depends:
@@ -38,5 +38,6 @@ Imports:
     tidyverse (>= 1.3.2),
     umap (>= 0.2.9.0),
     pheatmap (>= 1.0.12),
-    stringr
+    stringr,
+    magrittr
 Config/testthat/edition: 3
