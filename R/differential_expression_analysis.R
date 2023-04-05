@@ -95,7 +95,7 @@ diffExpr <- function(object,
     factor(Biobase::pData(object)[[group.col]], levels = groups)
   
   Biobase::pData(object)$slide <- factor(Biobase::pData(object)[[slide.col]])
-  assayDataElement(object = object, elt = element) <-
+  Biobase::assayDataElement(object = object, elt = element) <-
     assayDataApply(object,
                    2,
                    FUN = log,
