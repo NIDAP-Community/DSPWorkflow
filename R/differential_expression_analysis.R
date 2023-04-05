@@ -95,7 +95,7 @@ diffExpr <- function(object,
     factor(Biobase::pData(object)[[group.col]], levels = groups)
   
   Biobase::pData(object)$slide <- factor(Biobase::pData(object)[[slide.col]])
-  assayDataElement(object = object, elt = element) <-
+  Biobase::assayDataElement(object = object, elt = element) <-
     assayDataApply(object,
                    2,
                    FUN = log,
@@ -137,9 +137,9 @@ diffExpr <- function(object,
   
   #Print Metadata Pivot Table
   metadata <- Biobase::pData(object) %>% rownames_to_column("sample")
-  metadata %>% select(testClass, testRegion, sample, slide) -> met.tab
-  met.tab %>% group_by(testClass, testRegion, slide) %>% count() -> met.sum
-  met.sum %>% pivot_wider(names_from = slide, values_from = n) -> met.pivot
+  met.tab <- metadata %>% select(testClass, testRegion, sample, slide) 
+  met.sum <- met.tab %>% group_by(testClass, testRegion, slide) %>% count() 
+  met.pivot <- met.sum %>% pivot_wider(names_from = slide, values_from = n) 
   #replace str_wrap(colnames(met.pivot), 10) below
   colnames(met.pivot) <- sapply(strsplit(colnames(met.pivot)," "),paste,collapse = "\n")
   ind <- !(is.na(met.pivot$testClass) | is.na(met.pivot$testRegion))
