@@ -74,28 +74,28 @@ diffExpr <- function(object,
   testClass <- testRegion <- Gene <- Subset <- NULL
   
   # convert test variables to factors after checking input
-  reg.check <- regions[!regions %in% pData(object)[[region.col]]]
+  reg.check <- regions[!regions %in% Biobase::pData(object)[[region.col]]]
   if (length(reg.check) > 0) {
     stop(paste0(reg.check, " is not in region column.\n"))
   }
   
-  regions <- regions[regions %in% pData(object)[[region.col]]]
+  regions <- regions[regions %in% Biobase::pData(object)[[region.col]]]
   regions <- factor(regions, levels = c(regions[1], regions[2]))
-  pData(object)$testRegion <-
-    factor(pData(object)[[region.col]], levels = regions)
+  Biobase::pData(object)$testRegion <-
+    factor(Biobase::pData(object)[[region.col]], levels = regions)
   
-  grp.check <- groups[!groups %in% pData(object)[[group.col]]]
+  grp.check <- groups[!groups %in% Biobase::pData(object)[[group.col]]]
   if (length(grp.check) > 0) {
     stop(paste0(grp.check, " is not in group column.\n"))
   }
   
-  groups <- groups[groups %in% pData(object)[[group.col]]]
+  groups <- groups[groups %in% Biobase::pData(object)[[group.col]]]
   groups <- factor(groups, levels = c(groups[1], groups[2]))
-  pData(object)$testClass <-
-    factor(pData(object)[[group.col]], levels = groups)
+  Biobase::pData(object)$testClass <-
+    factor(Biobase::pData(object)[[group.col]], levels = groups)
   
-  pData(object)$slide <- factor(pData(object)[[slide.col]])
-  assayDataElement(object = object, elt = element) <-
+  Biobase::pData(object)$slide <- factor(Biobase::pData(object)[[slide.col]])
+  Biobase::assayDataElement(object = object, elt = element) <-
     assayDataApply(object,
                    2,
                    FUN = log,
@@ -103,14 +103,14 @@ diffExpr <- function(object,
                    elt = element)
   
   #Test for correct selection of parameter column and/or factors
-  ind.na <- colSums(is.na(pData(object)))
+  ind.na <- colSums(is.na(Biobase::pData(object)))
   param.na <- names(ind.na[ind.na > 0])
   
   if (length(param.na) > 0) {
     if (param.na[1] == "testRegion") {
       regdiff <-
-        setdiff(unique(pData(object)[[region.col]]),
-                unique(levels(pData(object)$testRegion)))
+        setdiff(unique(Biobase::pData(object)[[region.col]]),
+                unique(levels(Biobase::pData(object)$testRegion)))
       regdiff <- paste0(regdiff, collapse = ", ")
       message(
         paste0(
@@ -123,8 +123,8 @@ diffExpr <- function(object,
     }
     else if (param.na[1] == "testClass") {
       classdiff <-
-        setdiff(unique(pData(object)[[group.col]]),
-                unique(levels(pData(object)$testClass)))
+        setdiff(unique(Biobase::pData(object)[[group.col]]),
+                unique(levels(Biobase::pData(object)$testClass)))
       classdiff <- paste0(classdiff, collapse = ", ")
       message(
         "At least one of the groups within the Group Column was not selected and
@@ -136,10 +136,10 @@ diffExpr <- function(object,
   }
   
   #Print Metadata Pivot Table
-  metadata <- pData(object) %>% rownames_to_column("sample")
-  metadata %>% select(testClass, testRegion, sample, slide) -> met.tab
-  met.tab %>% group_by(testClass, testRegion, slide) %>% count() -> met.sum
-  met.sum %>% pivot_wider(names_from = slide, values_from = n) -> met.pivot
+  metadata <- Biobase::pData(object) %>% rownames_to_column("sample")
+  met.tab <- metadata %>% select(testClass, testRegion, sample, slide) 
+  met.sum <- met.tab %>% group_by(testClass, testRegion, slide) %>% count() 
+  met.pivot <- met.sum %>% pivot_wider(names_from = slide, values_from = n) 
   #replace str_wrap(colnames(met.pivot), 10) below
   colnames(met.pivot) <- sapply(strsplit(colnames(met.pivot)," "),paste,collapse = "\n")
   ind <- !(is.na(met.pivot$testClass) | is.na(met.pivot$testRegion))
@@ -149,9 +149,9 @@ diffExpr <- function(object,
   
   #Check for numbers of groups and regions listed for comparison
   
-  reg.col <- unique(pData(object)$testRegion)
+  reg.col <- unique(Biobase::pData(object)$testRegion)
   reg.length <- length(reg.col[!is.na(reg.col)])
-  grp.col <- unique(pData(object)$testClass)
+  grp.col <- unique(Biobase::pData(object)$testClass)
   grp.length <- length(grp.col[!is.na(grp.col)])
   
   #Run DEG Analysis
@@ -167,9 +167,9 @@ diffExpr <- function(object,
     title1 <- "DEG lists from within slide contrast:"
     results <- c()
     for (status in groups) {
-      ind <- pData(object)$testClass == status
+      ind <- Biobase::pData(object)$testClass == status
       ind[is.na(ind)] <- FALSE
-      ind2 <- pData(object)$testRegion %in% regions
+      ind2 <- Biobase::pData(object)$testRegion %in% regions
       ind2[is.na(ind2)] <- FALSE
       mixed.out <- mixedModelDE(
         object[, ind & ind2],
@@ -213,9 +213,9 @@ diffExpr <- function(object,
     title1 <- "DEG lists from Between Slides contrast:"
     results <- c()
     for (region in regions) {
-      ind <- pData(object)$testRegion == region
+      ind <- Biobase::pData(object)$testRegion == region
       ind[is.na(ind)] <- FALSE
-      ind2 <- pData(object)$testClass %in% groups
+      ind2 <- Biobase::pData(object)$testClass %in% groups
       ind2[is.na(ind2)] <- FALSE
       mixed.out <-
         mixedModelDE(
@@ -371,9 +371,9 @@ diffExpr <- function(object,
     
     padding <- unit(1, "line")
     table <-
-      gtable_add_rows(table, heights = grobHeight(t1) + padding, pos = 0.5)
+      gtable_add_rows(table, heights = grobHeight(t1) + padding, pos = 0)
     table <-
-      gtable_add_rows(table, heights = grobHeight(t2) + padding, pos = 0.5)
+      gtable_add_rows(table, heights = grobHeight(t2) + padding, pos = 0)
     table <- gtable_add_grob(
       table,
       list(t1, t2),
