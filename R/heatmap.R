@@ -52,7 +52,7 @@
 #'
 #' @importFrom NanoStringNCTools assayDataApply
 #' @importFrom Biobase assayDataElement
-#' @importFrom pheatmap pheatmap
+#' @importFrom ComplexHeatmap pheatmap
 #'
 #' @export
 #'
