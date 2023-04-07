@@ -1,18 +1,13 @@
 Package: DSPWorkflow
 Title: A Workflow for Analyzing Digital Spatial Profiling RNA Data
 Version: 0.9.1.0
-Authors@R: c( 
-    person("Rui", "He", , "rui.he@nih.gov", role = c("cre")), 
-    person("Maggie", "Cam", , "maggie.cam@nih.gov", role = c("aut", "cre"), 
-        comment = c("ORCID = 0000-0001-8190-9766")),
-    person("Ned", "Cauley", , "ned.cauley@nih.gov", role = c("aut", "cre"),
-        comment = c(ORCID = "0000-0002-8968-6621")),
-    person("Jing", "Bian", , "bianjh@nih.gov", role = "aut", comment = 
-        c(ORCID = "0000-0001-7109-716X"),
-    person("Difei", "Wang", , "difei.wang2@nih.gov", role = "aut", comment = 
-        c(ORCID = "0000-0003-4088-3859")),
-    person("Chad", "Highfill", , "chad.highfill@nih.gov", role = "aut", 
-        comment = c(ORCID = "0000-0003-0046-3593")))
+Authors@R: c(
+    person("Rui", "He", "rui.he@nih.gov", role = c("cre")),
+    person("Maggie", "Cam", "maggie.cam@nih.gov", role = c("aut", "cre"), comment = c("ORCID = 0000-0001-8190-9766")),
+    person("Ned", "Cauley", "ned.cauley@nih.gov", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-8968-6621")),
+    person("Jing", "Bian", "bianjh@nih.gov", role = "aut", comment = c(ORCID = "0000-0001-7109-716X"),
+    person("Difei", "Wang", "difei.wang2@nih.gov", role = "aut", comment = c(ORCID = "0000-0003-4088-3859")),
+    person("Chad", "Highfill", "chad.highfill@nih.gov", role = "aut", comment = c(ORCID = "0000-0003-0046-3593")))
 Description: A set of functions for analyzing RNA data from the spatial 
     transcriptomics approach Digital Spatial Profiling (Nanostring). The user 
     provides read count data and annotations, and the package outputs 
