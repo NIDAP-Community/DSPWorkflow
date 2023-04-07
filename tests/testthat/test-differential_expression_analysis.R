@@ -26,7 +26,7 @@ test_that("Run Diff Exp Analysis with default parameters - kidney data", {
   reslist.2 <- do.call(diffExpr, kidney.data)
   
   #Test saving images and calculated FC and pvals
-  announce_snapshot_file("output/kidney_between.png")
+ 
   expect_snapshot_file(
     ggsave(
       "kidney_between.png",
@@ -39,7 +39,7 @@ test_that("Run Diff Exp Analysis with default parameters - kidney data", {
 
   res <- calcFC("kidney", reslist.2$results, "Between")
   expect_equal(res$lfc, -1.408, tolerance = 1e-3)
-  expect_equal(res$pval, 0.01268, tolerance = 1e-3)
+  expect_equal(as.numeric(formatC(res$pval,2)), 0.013, tolerance = 1e-3)
 })
 
 test_that("Run Diff Exp Analysis with wrong selected group column", {

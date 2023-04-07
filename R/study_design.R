@@ -40,6 +40,8 @@
 #' @importFrom ggplot2 expansion
 #' @importFrom ggplot2 scale_x_discrete
 #' @importFrom ggplot2 annotate
+#' @import Biobase
+#' @import NanoStringNCTools
 #' @export
 #' @return A list containing the NanoString Object and the Sankey plot.
 

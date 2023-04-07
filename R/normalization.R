@@ -23,7 +23,6 @@
 #' @importFrom cowplot plot_grid
 #' @importFrom Biobase exprs
 #' @importFrom Biobase pData
-#' @importFrom graphics boxplot
 #' @importFrom stats quantile
 #' @importFrom utils head
 #' @importFrom GeomxTools normalize
