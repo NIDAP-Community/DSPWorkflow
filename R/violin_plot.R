@@ -14,11 +14,9 @@
 #' @param genes Transcript(s) to be plotted on the y-axis of the violin plot
 #' @param group Metadata group to be plotted on the x axis of the violin plot
 #' @param facet.by Further subdivide group by this category (Default: NULL)
-#'
-#' @import GeomxTools
+#' 
 #' @import ggplot2
-#' @import gridExtra
-#' @import Rmpfr
+#' @importFrom gridExtra arrangeGrob
 #'
 #' @export
 #' @example Do not run: violinPlot(object = NanostringGeomx, 
@@ -41,8 +39,7 @@ violinPlot <- function(object,
       stop("expression data type was not found in DSP object")
     } else if (all(!genes %in% rownames(object@assayData[[expr.type]]))) {
       stop("no genes were found in DSP object")
-    }
-    else if (!group %in% colnames(pData(object))) {
+    } else if (!group %in% colnames(pData(object))) {
       stop("grouping parameter was not found in DSP object")
     } else if (!is.null(facet.by)) {
       if (!facet.by %in% colnames(pData(object))) {
