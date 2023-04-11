@@ -293,7 +293,10 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ## 10. Spatial Deconvolution:
 
 ```{r Spatial Deconvolution, echo=FALSE}
+
     
+
+
     ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
                        row.names=1, check.names=FALSE)
     rownames(ref.mtx) = sample(rownames(object), size = 1500, replace = FALSE)

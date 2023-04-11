@@ -8,9 +8,14 @@ date: '2022-11-30'
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(devtools)
+library(rprojroot)
 load_all()
 
+root <- rprojroot::find_package_root_file()
+
 knitr::opts_chunk$set(fig.width=12, fig.height=8, out.width = '100%') 
+knitr::opts_knit$set(root.dir = root)
+
 
 ```
 
@@ -21,8 +26,6 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
 ## 1. Study Design:
 
 ```{r Study Design, echo=FALSE}
-  
-
   
   # Required parameters
   datadir <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset"
