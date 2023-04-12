@@ -2,47 +2,71 @@
 % Please edit documentation in R/spatial_deconvolution.R
 \name{spatialDeconvolution}
 \alias{spatialDeconvolution}
-\title{Estimate cell composition across spatial samples using information from a custom cell signature matrix}
+\title{Spatial Deconvolution
+
+Helper functions comes from
+https://bioconductor.org/packages/release/bioc/vignettes/SpatialDecon/inst/doc/SpatialDecon_vignette_NSCLC.html}
 \usage{
 spatialDeconvolution(
-  dsp.obj,
-  norm.expr.type = "",
+  object,
+  expr.type,
   ref.mtx,
   ref.annot,
-  cell.id = "CellID",
-  celltype.col = "LabeledCellType",
+  cell.id.col,
+  celltype.col,
+  group.by = NULL,
+  out.directory = NULL,
+  matrix.name = "customDSPmtx",
   normalize = FALSE,
   min.cell.num = 0,
-  min.genes = 10
+  min.genes = 10,
+  discard.celltype = FALSE
 )
 }
 \arguments{
-\item{dsp.obj}{Nanostring object containing normalized gene expression data}
+\item{object}{Nanostring object containing normalized gene expression data}
 
-\item{norm.expr.type}{Name of the slot containing normalized gene expression data}
+\item{expr.type}{Name of slot containing normalized gene expression data}
 
-\item{ref.mtx}{expression matrix (Gene x Reference_Samples)}
+\item{ref.mtx}{Reference expression matrix (Gene x Reference_Samples)}
 
-\item{ref.annot}{annotated data.frame with cell.id and LabeledCellType, will be used along with ref.mtx to generate custom signature matrix}
+\item{ref.annot}{Reference data.frame with cell.id and celltype information}
 
-\item{cell.id}{column of annotated data.frame containing cell barcode or name}
+\item{cell.id.col}{Column of data.frame containing cell.id.col info}
 
-\item{celltype.col}{column of annotated data.frame containing cell identity information}
+\item{celltype.col}{Column of data.frame containing celltype info}
 
-\item{normalize}{scale profile matrix gene expression according to gene count}
+\item{out.directory}{Path to desired output directory, set to NULL if matrix
+should not be written}
 
-\item{min.cell.num}{minimum number of cells (within a type) required to generate signature matrix}
+\item{matrix.name}{Name given to deconvolution signature matrix}
 
-\item{min.genes}{filters cells according to minimum number of genes expressed}
+\item{normalize}{Scale profile matrix gene expression according to gene count}
+
+\item{min.cell.num}{Prevent deconvolution of celltype(s) if number of
+corresponding cells is below this threshold}
+
+\item{min.genes}{Filter cells based on minimum number of genes expressed}
+
+\item{discard.celltype}{Remove any celltype(s) that is not of interest}
 }
 \value{
-A list res containing the results of spatial deconvolution,
+A list dsp.data containing the results of spatial deconvolution,
 res$beta: matrix of estimated cell abundances
-res$X: cell signature (gene x celltype) matrix used to generate deconvolution results
-res$yhat, res$resids: fitted values and log2-scale residuals from deconvolution, can be used to measure observations' goodness of fit
-res$prop_of_all: res$beta rescaled to proportion of celltype across each sample
-heatmap / barplot of estimated cell abundances in data
+res$X: cell signature (gene x celltype) matrix used to generate
+deconvolution results
+res$yhat, res$resids: fitted values and log2-scale residuals from
+deconvolution, can be used to measure goodness of fit
+res$prop_of_all: res$beta scaled to proportion of celltype across sample
+figures: heatmap and barplot of cell profile matrix and estimated
+cell abundances in data
 }
 \description{
-Estimate cell composition across spatial samples using information from a custom cell signature matrix
+spatialDeconvolution estimate cell composition across DSP
+samples from reference expression matrix
+}
+\details{
+Uses Nanostring developed functions to compute estimated cell
+fractions in DSP samples. Allows for users to group samples based
+on metadata information
 }

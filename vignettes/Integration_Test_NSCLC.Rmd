@@ -8,9 +8,13 @@ date: '2022-12-21'
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(devtools)
+library(rprojroot)
 load_all()
 
+root <- rprojroot::find_package_root_file()
+
 knitr::opts_chunk$set(fig.width=12, fig.height=8, out.width = '100%') 
+knitr::opts_knit$set(root.dir = root)
 
 ```
 
@@ -22,34 +26,58 @@ This runs the DSPworkflow package to completion using the Non Small Cell Lung Ca
 
 ```{r Study Design, echo=FALSE}
   
-  datadir <- "/rstudio-files/ccr-dceg-data/data/NSCLC_Dataset"
-  DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
-                  full.names = TRUE, recursive = TRUE)
-  PKCFiles <- test_path("fixtures/Human_NSCLC", "Hs_R_NGS_WTA_v1.0.pkc")
-  SampleAnnotationFile <- dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
-                              full.names = TRUE, recursive = TRUE)
+# Ensure the working directory is the root package directory
+  library(rprojroot)
+  root <- rprojroot::find_package_root_file()
+  setwd(root)
   
-  #test
+  # Set paths for downloading dcc files
+  downloads.path <- test_path("fixtures/Human_NSCLC/downloaded/")
+  tar.file.name <- "nsclc_dccs.tar.gz"
+  full.tar.path <- paste0(downloads.path,tar.file.name)
   
-  DccColName <- "Sample_ID"
-  ProtocolColNames <- c("aoi", "roi")
-  ExperimentColNames = c("panel")
-  AnnotationSheetName = "Template"  
+  # Check if dcc files were previously downloaded
+  if (!file.exists(full.tar.path)) {
+    
+    # Download dcc files and place in data folder
+    data.url <- "http://hpc.nih.gov/~CCBR/DSPWorkflow/nsclc_dccs.tar.gz"
+    download.file(data.url, full.tar.path)
+    untar(full.tar.path, exdir = downloads.path)
+  }
   
-  sdesign.list <- StudyDesign(dccFiles = DCCFiles, pkcFiles = PKCFiles,
-                      phenoDataFile = SampleAnnotationFile,
-                      phenoDataSheet = AnnotationSheetName,
-                      phenoDataDccColName = DccColName,
-                      protocolDataColNames = ProtocolColNames,
-                      experimentDataColNames = ExperimentColNames)
+  dcc.files <- dir(
+    file.path(
+      downloads.path,
+      "dccs"
+    ),
+    pattern = ".dcc$",
+    full.names = TRUE,
+    recursive = TRUE
+  )
+    
+  pkc.files <-
+    test_path("fixtures/Human_NSCLC/DevCom_H_WTA_v1.0.pkc")
+  pheno.data.file <-
+    test_path("fixtures/Human_NSCLC/NSCLC_annotation.xlsx")  
   
-  # For creating a fixture RDS
-  #studyDesignHumanNSCLC <- sdesign.list$dsp.obj
-  #saveRDS(studyDesignHumanNSCLC, file = "studyDesignHumanNSCLC.RDS")
+  sdesign.list <- studyDesign(dcc.files = dcc.files, 
+                              pkc.files = pkc.files,
+                              pheno.data.file = pheno.data.file,
+                              pheno.data.sheet = "Template",
+                              pheno.data.dcc.col.name = "Sample_ID",
+                              protocol.data.col.names = c("aoi", "roi"),
+                              experiment.data.col.names = c("panel"))
+  
+  # For creating fixture RDS
+  create.rds <- FALSE
+  if(create.rds) {
+    study.design.human.nsclc <- sdesign.list$object
+    saveRDS(study.design.human.nsclc, file = "tests/testthat/fixtures/Human_NSCLC/studyDesignHumanNSCLC.RDS")
+  }
   
   print(sdesign.list$plot)
   print("Created GeoMx Object\n\n")
-  pData(sdesign.list$dsp.obj)[,c("slide name","class","segment")]  
+  pData(sdesign.list$object)[,c("slide name","class","segment")]  
   
   
 ```
