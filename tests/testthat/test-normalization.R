@@ -1,91 +1,106 @@
 test_that("Normalization Success for Kidney", {
-  #load("/rstudio-files/ccr-dceg-data/users/Chad/DSP/tests/testthat/fixtures/target_demoDataNorm.Rdata") 
-  #target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
  
+  kidney.dat <- selectDatasetNormalization("kidney")
   
-  target_demoDataNorm<- select_dataset_normalization("kidney")
+  normalization.output <- do.call(geomxnorm,kidney.dat)
   
-  dsp.list <- GeoMxNorm(target_demoDataNorm$object, "quant")
-  #dsp.list <- GeoMxNorm(Data = target_demoData, Norm = "quant")
-  expected.elements = c("plot", "Boxplot", "Normalized Dataframe")
-  expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
+  expected.elements = c("multi.plot", "boxplot", "object")
+  expect_setequal(names(normalization.output), expected.elements)
+  
 })
 
 test_that("Normalization Success for thymus", {
-  #load("/rstudio-files/ccr-dceg-data/users/Chad/DSP/tests/testthat/fixtures/target_demoDataNorm.Rdata") 
-  #target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
   
-  target_demoDataNorm<- select_dataset_normalization("thymus")
+  thymus.dat <- selectDatasetNormalization("thymus")
   
-  dsp.list <- GeoMxNorm(target_demoDataNorm$object, "quant")
-  #dsp.list <- GeoMxNorm(Data = target_demoData, Norm = "quant")
-  expected.elements = c("plot", "Boxplot", "Normalized Dataframe")
-  expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
+  normalization.output <- do.call(geomxnorm,thymus.dat)
+  
+  expected.elements = c("multi.plot", "boxplot", "object")
+  expect_setequal(names(normalization.output), expected.elements)
+  
 })
 
 test_that("Normalization Success for colon", {
-  #load("/rstudio-files/ccr-dceg-data/users/Chad/DSP/tests/testthat/fixtures/target_demoDataNorm.Rdata") 
-  #target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
   
-  target_demoDataNorm<- select_dataset_normalization("colon")
+  colon.dat <- selectDatasetNormalization("colon")
   
-  dsp.list <- GeoMxNorm(target_demoDataNorm$object, "quant")
-  #dsp.list <- GeoMxNorm(Data = target_demoData, Norm = "quant")
-  expected.elements = c("plot", "Boxplot", "Normalized Dataframe")
-  expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
+  normalization.output <- do.call(geomxnorm,colon.dat)
+  
+  expected.elements = c("multi.plot", "boxplot", "object")
+  expect_setequal(names(normalization.output), expected.elements)
+  
 })
 
 test_that("Normalization Success for nsclc", {
-  #load("/rstudio-files/ccr-dceg-data/users/Chad/DSP/tests/testthat/fixtures/target_demoDataNorm.Rdata") 
-  #target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
   
-  target_demoDataNorm<- select_dataset_normalization("nsclc")
+  nsclc.dat <- selectDatasetNormalization("nsclc")
   
-  dsp.list <- GeoMxNorm(target_demoDataNorm$object, "quant")
-  #dsp.list <- GeoMxNorm(Data = target_demoData, Norm = "quant")
-  expected.elements = c("plot", "Boxplot", "Normalized Dataframe")
-  expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
+  normalization.output <- do.call(geomxnorm,nsclc.dat)
+  
+  expected.elements = c("multi.plot", "boxplot", "object")
+  expect_setequal(names(normalization.output), expected.elements)
+  
 })
 
 test_that("Normalization Success", {
-  target_demoDataNorm <- c(1,2,3,5)
+  kidney.dat <- selectDatasetNormalization("kidney")
+
+  # Load the test annotation files with faulty field names 
+  # and check for an error message
+  kidney.dat$object <- c(1,2,3,5)
+  expect_error(do.call(geomxnorm,kidney.dat), "Error: You have the wrong data class, must be NanoStringGeoMxSet")
+})
   
-  expect_error(GeoMxNorm(target_demoDataNorm, "quant"), "Error: You have the wrong data class, must be NanoStringGeoMxSet")
+test_that("Normalization Success", {
+  kidney.dat <- selectDatasetNormalization("kidney")
+  
+  # Load the test annotation files with faulty field names 
+  # and check for an error message
+  kidney.dat$norm <- c("quantile")
+  expect_error(do.call(geomxnorm,kidney.dat), "Error: quantile needs to be quant")
 })
 
 test_that("Normalization Success", {
-  #target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
-  target_demoDataNorm<- select_dataset_normalization("kidney")
+  kidney.dat <- selectDatasetNormalization("kidney")
   
-  expect_error(GeoMxNorm(target_demoDataNorm$object, "Quant"), "Error: Quant needs to be quant")
+  # Load the test annotation files with faulty field names 
+  # and check for an error message
+  kidney.dat$norm <- c("Quantile")
+  expect_error(do.call(geomxnorm,kidney.dat), "Error: Quantile needs to be quant")
 })
 
 test_that("Normalization Success", {
-  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
+  kidney.dat <- selectDatasetNormalization("kidney")
   
-  expect_error(GeoMxNorm(target_demoDataNorm, "quantile"), "Error: quantile needs to be quant")
+  # Load the test annotation files with faulty field names 
+  # and check for an error message
+  kidney.dat$norm <- c("Quant")
+  expect_error(do.call(geomxnorm,kidney.dat), "Error: Quant needs to be quant")
 })
 
 test_that("Normalization Success", {
-  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
+  kidney.dat <- selectDatasetNormalization("kidney")
   
-  expect_error(GeoMxNorm(target_demoDataNorm, "Quantile"), "Error: Quantile needs to be quant")
+  # Load the test annotation files with faulty field names 
+  # and check for an error message
+  kidney.dat$norm <- c("negative")
+  expect_error(do.call(geomxnorm,kidney.dat), "Error: negative needs to be neg")
 })
 
 test_that("Normalization Success", {
-  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
+  kidney.dat <- selectDatasetNormalization("kidney")
   
-  expect_error(GeoMxNorm(target_demoDataNorm, "Neg"), "Error: Neg needs to be neg")
+  # Load the test annotation files with faulty field names 
+  # and check for an error message
+  kidney.dat$norm <- c("Negative")
+  expect_error(do.call(geomxnorm,kidney.dat), "Error: Negative needs to be neg")
 })
 
 test_that("Normalization Success", {
-  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
+  kidney.dat <- selectDatasetNormalization("kidney")
   
-  expect_error(GeoMxNorm(target_demoDataNorm, "negative"), "Error: negative needs to be neg")
-})
-
-test_that("Normalization Success", {
-  target_demoDataNorm <- readRDS(test_path("fixtures", "target_demoDataNorm.rds"))
-  
-  expect_error(GeoMxNorm(target_demoDataNorm, "Negative"), "Error: Negative needs to be neg")
+  # Load the test annotation files with faulty field names 
+  # and check for an error message
+  kidney.dat$norm <- c("Neg")
+  expect_error(do.call(geomxnorm,kidney.dat), "Error: Neg needs to be neg")
 })

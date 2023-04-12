@@ -18,8 +18,6 @@
 #' @export
 #' @return A list containing the ....
 
-# Function I dropped
-# importFrom Rmpfr pmax
 # To call function, must have data = raw object, dsp.obj = QC demoData, 
 # loq.cutoff 2 is recommended, loq.min 2 is recommend, 
 # cut.segment = remove segments with less than 10% of the genes detected; .05-.1 recommended,
