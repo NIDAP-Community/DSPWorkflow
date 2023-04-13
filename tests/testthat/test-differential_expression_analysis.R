@@ -3,14 +3,9 @@ test_that("Run Diff Exp Analysis with default parameters - kidney data", {
   reslist.1 <-
     do.call(diffExpr, kidney.data) #Runs with default parameters
   
-  #Test saving images and calculated FC and pvals
+  # #Test saving images and calculated FC and pvals
   expect_snapshot_file(
-    ggsave(
-      "kidney_within.png",
-      reslist.1$tables,
-      width = 10,
-      height = 10
-    ),
+    .drawpng(reslist.1$tables),
     "kidney_within.png"
   )
   
@@ -24,16 +19,11 @@ test_that("Run Diff Exp Analysis with default parameters - kidney data", {
   ###Testing Between groups:
   kidney.data <- getSubset("kidney", "Between")
   reslist.2 <- do.call(diffExpr, kidney.data)
-  
+
   #Test saving images and calculated FC and pvals
   announce_snapshot_file("output/kidney_between.png")
   expect_snapshot_file(
-    ggsave(
-      "kidney_between.png",
-      reslist.1$tables,
-      width = 10,
-      height = 10
-    ),
+    .drawpng(reslist.1$tables),
     "kidney_between.png"
   )
 
@@ -113,12 +103,7 @@ test_that("Run Diff Exp Analysis with default parameters - Mouse Thymus data", {
 
             #Test saving images and calculated FC and pvals
             expect_snapshot_file(
-              ggsave(
-                "thymus_within.png",
-                reslist.1$tables,
-                width = 10,
-                height = 10
-              ),
+              .drawpng(reslist.1$tables),
               "thymus_within.png"
             )
 
@@ -136,12 +121,7 @@ test_that("Run Diff Exp Analysis with default parameters - Mouse Thymus data", {
             reslist.2 <- do.call(diffExpr, thymus.data)
 
             expect_snapshot_file(
-              ggsave(
-                "thymus_between.png",
-                reslist.1$tables,
-                width = 10,
-                height = 10
-              ),
+              .drawpng(reslist.1$tables),
               "thymus_between.png"
             )
 
@@ -160,12 +140,7 @@ test_that("Run Diff Exp Analysis with default parameters - Colon data", {
 
           #Test saving images and calculated FC and pvals
           expect_snapshot_file(
-            ggsave(
-              "colon_within.png",
-              reslist.1$tables,
-              width = 10,
-              height = 10
-            ),
+            .drawpng(reslist.1$tables),
             "colon_within.png"
           )
 
@@ -183,12 +158,7 @@ test_that("Run Diff Exp Analysis with default parameters - Colon data", {
           reslist.2 <- do.call(diffExpr, colon.data)
 
           expect_snapshot_file(
-            ggsave(
-              "colon_between.png",
-              reslist.1$tables,
-              width = 10,
-              height = 10
-            ),
+            .drawpng(reslist.1$tables),
             "colon_between.png"
           )
 
@@ -207,12 +177,7 @@ test_that("Run Diff Exp Analysis with default parameters - NSCLC data", {
 
           #Test saving images and calculated FC and pvals
           expect_snapshot_file(
-            ggsave(
-              "nsclc_within.png",
-              reslist.1$tables,
-              width = 40,
-              height = 10
-            ),
+            .drawpng(reslist.1$tables),
             "nsclc_within.png"
           )
 
@@ -230,12 +195,7 @@ test_that("Run Diff Exp Analysis with default parameters - NSCLC data", {
           reslist.2 <- do.call(diffExpr, nsclc.data)
 
           expect_snapshot_file(
-            ggsave(
-              "nsclc_between.png",
-              reslist.1$tables,
-              width = 40,
-              height = 10
-            ),
+            .drawpng(reslist.1$tables),
             "nsclc_between.png"
           )
 

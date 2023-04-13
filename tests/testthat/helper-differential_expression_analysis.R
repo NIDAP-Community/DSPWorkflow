@@ -248,3 +248,17 @@ calcFC <- function(data, result, test) {
   }
   return(list("lfc" = lfc , "pval" = pval))
 }
+
+.drawpng <- function(x, width = 8, height = 6){
+  path <- tempfile(fileext = ".png")
+  png(path,
+      width=width,
+      height=height,
+      units = "in",
+      res = 400
+  )
+  on.exit(dev.off())
+  print(x)
+  path
+}
+
