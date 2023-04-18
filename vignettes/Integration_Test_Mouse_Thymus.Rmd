@@ -27,34 +27,53 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
 
 ```{r Study Design, echo=FALSE}
   
-  # Required parameters
-  datadir <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset"
-  DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
-                  full.names = TRUE, recursive = TRUE)
-  PKCFiles <- test_path("fixtures/Mouse_Thymus", "Mm_R_NGS_WTA_v1.0.pkc")
-  SampleAnnotationFile <- "/rstudio-files/ccr-dceg-data/data/Thymus_Dataset/annotations/Thymus_Annotation_updated_3.xlsx"
-      
-  # Optional parameters for selecting annotation column names that are used by the GeoMX object
-  DccColName <- "Sample_ID"
-  ProtocolColNames <- c("aoi", "roi")
-  ExperimentColNames = c("panel")
-  AnnotationSheetName = "Annotation"  
+  # Set paths for downloading dcc files
+  downloads.path <- test_path("fixtures/Mouse_Thymus/downloaded/")
+  tar.file.name <- "thymus_dccs.tar.gz"
+  full.tar.path <- paste0(downloads.path,tar.file.name)
   
-  sdesign.list <- StudyDesign(dccFiles = DCCFiles, pkcFiles = PKCFiles,
-                      phenoDataFile = SampleAnnotationFile,
-                      phenoDataSheet = AnnotationSheetName,
-                      phenoDataDccColName = DccColName,
-                      protocolDataColNames = ProtocolColNames,
-                      experimentDataColNames = ExperimentColNames)
+  # Check if dcc files were previously downloaded
+  if (!file.exists(full.tar.path)) {
+    
+    # Download dcc files and place in data folder
+    data.url <- "http://hpc.nih.gov/~CCBR/DSPWorkflow/thymus_dccs.tar.gz"
+    download.file(data.url, full.tar.path)
+    untar(full.tar.path, exdir = downloads.path)
+  }
+  
+  dcc.files <- dir(
+    file.path(
+      downloads.path,
+      "dccs"
+    ),
+    pattern = ".dcc$",
+    full.names = TRUE,
+    recursive = TRUE
+  )
+    
+  pkc.files <-
+    test_path("fixtures/Mouse_Thymus/Mm_R_NGS_WTA_v1.0.pkc")
+  pheno.data.file <-
+    test_path("fixtures/Mouse_Thymus/Thymus_Annotation_updated_3.xlsx")
+  
+  sdesign.list <- studyDesign(dcc.files = dcc.files, 
+                                pkc.files = pkc.files,
+                                pheno.data.file = pheno.data.file,
+                                pheno.data.sheet = "Annotation",
+                                pheno.data.dcc.col.name = "Sample_ID",
+                                protocol.data.col.names = c("aoi", "roi"),
+                                experiment.data.col.names = c("panel"))
   
   # For creating fixture RDS
-  #studyDesignMouseThymus <- sdesign.list$dsp.obj
-  #saveRDS(studyDesignMouseThymus, file = "studyDesignMouseThymus.RDS")
+  create.rds <- FALSE
+  if(create.rds) {
+    study.design.human.kidney <- sdesign.list$object
+    saveRDS(study.design.human.kidney, file = "tests/testthat/fixtures/Mouse_Thymus/studyDesignMouseThymus.RDS")
+  }
   
-  print(sdesign.list$plot)
+  print(sdesign.list$sankey.plot)
   print("Created GeoMx Object\n\n")
-  pData(sdesign.list$dsp.obj)[,c("slide name","class","segment")]  
-  
+  pData(sdesign.list$object)[,c("slide name","class","segment")]  
   
 ```
 
@@ -62,7 +81,7 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
 
 ```{r QC Preprocessing, echo=FALSE}
 
-QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
+qc.output <-  qcProc(object = sdesign.list$dsp.obj,
                         minSegmentReads = 1000, # Default:1000
                         percentTrimmed = 65,  # Default:80  
                         percentStitched = 65, # Default:80 
@@ -74,9 +93,23 @@ QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
                         minArea = 16000) #Default:16000
     print(QCoutput$segments.qc)
     
-    #qcMouseThymus <- QCoutput$dsp.target
+qc.output <-  qcProc(object = sdesign.list$object,
+                        min.segment.reads = 1000, 
+                        percent.trimmed = 80,    
+                        percent.stitched = 80,   
+                        percent.aligned = 75,    
+                        percent.saturation = 50, 
+                        min.negative.count = 1,   
+                        max.ntc.count = 9000,     
+                        min.nuclei = 20,         
+                        min.area = 1000,
+                        print.plots = TRUE)
+    print(qc.output$segments.qc)
     
-    #saveRDS(qcMouseThymus, file = "qcMouseThymus.RDS")
+  create.rds <- FALSE
+  if(create.rds) {
+    qc.human.kidney <- qc.output$object
+    saveRDS(qc.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/qcHumanKidney.RDS")
 
 ```
 
