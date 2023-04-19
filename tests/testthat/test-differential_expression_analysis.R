@@ -6,12 +6,12 @@ test_that("Run Diff Exp Analysis with default parameters - kidney data", {
   #Test saving images and calculated FC and pvals
   expect_snapshot_file(
     ggsave(
-      "kidney_within.png",
+      "_snaps/differential_expression_analysis/kidney_within.png",
       reslist.1$tables,
       width = 10,
       height = 10
     ),
-    "kidney_within.png"
+    "_snaps/differential_expression_analysis/kidney_within.png"
   )
   
   res <- calcFC("kidney", reslist.1$results, "Within")
@@ -29,12 +29,12 @@ test_that("Run Diff Exp Analysis with default parameters - kidney data", {
  
   expect_snapshot_file(
     ggsave(
-      "kidney_between.png",
+      "_snaps/differential_expression_analysis/kidney_between.png",
       reslist.1$tables,
       width = 10,
       height = 10
     ),
-    "kidney_between.png"
+    "_snaps/differential_expression_analysis/kidney_between.png"
   )
 
   res <- calcFC("kidney", reslist.2$results, "Between")
@@ -114,12 +114,12 @@ test_that("Run Diff Exp Analysis with default parameters - Mouse Thymus data", {
             #Test saving images and calculated FC and pvals
             expect_snapshot_file(
               ggsave(
-                "thymus_within.png",
+                "_snaps/differential_expression_analysis/thymus_within.png",
                 reslist.1$tables,
                 width = 10,
                 height = 10
               ),
-              "thymus_within.png"
+              "_snaps/differential_expression_analysis/thymus_within.png"
             )
 
             res <- calcFC("thymus", reslist.1$results, "Within")
@@ -137,12 +137,12 @@ test_that("Run Diff Exp Analysis with default parameters - Mouse Thymus data", {
 
             expect_snapshot_file(
               ggsave(
-                "thymus_between.png",
+                "_snaps/differential_expression_analysis/thymus_between.png",
                 reslist.1$tables,
                 width = 10,
                 height = 10
               ),
-              "thymus_between.png"
+              "_snaps/differential_expression_analysis/thymus_between.png"
             )
 
             expected.elements <- c("results", "tables")
@@ -161,12 +161,12 @@ test_that("Run Diff Exp Analysis with default parameters - Colon data", {
           #Test saving images and calculated FC and pvals
           expect_snapshot_file(
             ggsave(
-              "colon_within.png",
+              "_snaps/differential_expression_analysis/colon_within.png",
               reslist.1$tables,
               width = 10,
               height = 10
             ),
-            "colon_within.png"
+            "_snaps/differential_expression_analysis/colon_within.png"
           )
 
           res <- calcFC("colon", reslist.1$results, "Within")
@@ -184,12 +184,12 @@ test_that("Run Diff Exp Analysis with default parameters - Colon data", {
 
           expect_snapshot_file(
             ggsave(
-              "colon_between.png",
+              "_snaps/differential_expression_analysis/colon_between.png",
               reslist.1$tables,
               width = 10,
               height = 10
             ),
-            "colon_between.png"
+            "_snaps/differential_expression_analysis/colon_between.png"
           )
 
           expected.elements <- c("results", "tables")
@@ -208,12 +208,12 @@ test_that("Run Diff Exp Analysis with default parameters - NSCLC data", {
           #Test saving images and calculated FC and pvals
           expect_snapshot_file(
             ggsave(
-              "nsclc_within.png",
+              "_snaps/differential_expression_analysis/nsclc_within.png",
               reslist.1$tables,
               width = 40,
               height = 10
             ),
-            "nsclc_within.png"
+            "_snaps/differential_expression_analysis/nsclc_within.png"
           )
 
           res <- calcFC("nsclc", reslist.1$results, "Within")
@@ -231,12 +231,12 @@ test_that("Run Diff Exp Analysis with default parameters - NSCLC data", {
 
           expect_snapshot_file(
             ggsave(
-              "nsclc_between.png",
+              "_snaps/differential_expression_analysis/nsclc_between.png",
               reslist.1$tables,
               width = 40,
               height = 10
             ),
-            "nsclc_between.png"
+            "_snaps/differential_expression_analysis/nsclc_between.png"
           )
 
           expected.elements <- c("results", "tables")
