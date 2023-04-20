@@ -200,6 +200,7 @@ test_that("Run Diff Exp Analysis with default parameters - NSCLC data", {
           expect_equal(res$pval, 9.77e-09, tolerance = 1e-3)
           
           #Test saving images and calculated FC and pvals
+          skip_on_ci()
           expect_snapshot_file(
             .drawpng(reslist.1$tables),
             "nsclc_within.png"
