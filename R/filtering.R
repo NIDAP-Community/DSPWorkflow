@@ -22,7 +22,7 @@
 # loq.cutoff 2 is recommended, loq.min 2 is recommend, 
 # cut.segment = remove segments with less than 10% of the genes detected; .05-.1 recommended,
 # goi = goi (genes of interest). Must be a vector of genes (i.e c("PDCD1", "CD274")),
-filtering <- function(object, pkc.file, loq.cutoff, loq.min, cut.segment, goi) {
+filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
   
   if(class(object)[1] != "NanoStringGeoMxSet"){
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
@@ -41,7 +41,8 @@ filtering <- function(object, pkc.file, loq.cutoff, loq.min, cut.segment, goi) {
     stop(paste0("Error: You have the wrong data class, must be numeric" ))
   }
   # Define Modules
-  pkc.file <- pkc.file
+  #pkc.file <- pkc.file
+  pkc.file <- annotation(object)
   if(class(pkc.file)[1] != "character"){
     stop(paste0("Error: You have the wrong data class, must be character" ))
   }

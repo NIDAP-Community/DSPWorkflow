@@ -83,12 +83,12 @@ test_that("Filtering Success", {
   expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be numeric")
 })
 
-test_that("Filtering Success", {
-  kidney.dat <- selectDatasetFiltering("kidney")
+#test_that("Filtering Success", {
+  #kidney.dat <- selectDatasetFiltering("kidney")
   
-  kidney.dat$pkc.file <- 10
-  expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be character")
-})
+  #kidney.dat$pkc.file <- 10
+  #expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be character")
+#})
 
 test_that("Filtering Success", {
   kidney.dat <- selectDatasetFiltering("kidney")

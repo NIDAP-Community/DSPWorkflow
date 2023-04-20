@@ -65,7 +65,7 @@ This runs the DSPworkflow package to completion using the Non Small Cell Lung Ca
                               experiment.data.col.names = c("panel"))
   
   # For creating fixture RDS
-  create.rds <- FALSE
+  create.rds <- TRUE
   if(create.rds) {
     study.design.human.nsclc <- sdesign.list$object
     saveRDS(study.design.human.nsclc, file = "tests/testthat/fixtures/Human_NSCLC/studyDesignHumanNSCLC.RDS")
