@@ -140,7 +140,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
     print(normalization.output$multi.plot)
     print(normalization.output$boxplot)
     
-    create.rds <- TRUE
+    create.rds <- FALSE
     if(create.rds) {
       normalization.human.kidney <- normalization.output$object
       saveRDS(normalization.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/normalizationHumanKidney.RDS")

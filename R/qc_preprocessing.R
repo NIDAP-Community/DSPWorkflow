@@ -42,7 +42,7 @@ geomxToolsDefaults <- getAnywhere("DEFAULTS")$objs[[1]]
 #' @importFrom Biobase protocolData pData fData featureData
 #' @importFrom BiocGenerics annotation
 #' @importFrom GeomxTools shiftCountsOne setSegmentQCFlags setBioProbeQCFlags
-#' aggregateCounts
+#' aggregateCounts ngeoMean
 #' @importFrom ggplot2 ggplot aes_string geom_histogram geom_vline facet_wrap
 #' element_text ggtitle labs theme theme_bw guides scale_x_continuous
 #' @importFrom gridExtra grid.arrange

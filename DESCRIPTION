@@ -47,5 +47,5 @@ Imports:
     umap (>= 0.2.9.0),
     pheatmap (>= 1.0.12),
     magrittr (>= 2.0.3),
-    ComplexHeatmap (>= 2.0.0)
+    ComplexHeatmap (>= 2.10.0)
 Config/testthat/edition: 3
