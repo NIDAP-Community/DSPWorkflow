@@ -27,10 +27,6 @@ This runs the DSPworkflow package to completion using the Non Small Cell Lung Ca
 ```{r Study Design, echo=FALSE}
   
 # Ensure the working directory is the root package directory
-  library(rprojroot)
-  root <- rprojroot::find_package_root_file()
-  setwd(root)
-  
   # Set paths for downloading dcc files
   downloads.path <- test_path("fixtures/Human_NSCLC/downloaded/")
   tar.file.name <- "nsclc_dccs.tar.gz"
@@ -75,7 +71,7 @@ This runs the DSPworkflow package to completion using the Non Small Cell Lung Ca
     saveRDS(study.design.human.nsclc, file = "tests/testthat/fixtures/Human_NSCLC/studyDesignHumanNSCLC.RDS")
   }
   
-  print(sdesign.list$plot)
+  print(sdesign.list$sankey.plot)
   print("Created GeoMx Object\n\n")
   pData(sdesign.list$object)[,c("slide name","class","segment")]  
   
@@ -86,47 +82,53 @@ This runs the DSPworkflow package to completion using the Non Small Cell Lung Ca
 
 ```{r QC Preprocessing, echo=FALSE}
 
-QCoutput <-  QcProc(object = sdesign.list$dsp.obj,
-                        minSegmentReads = 1000, 
-                        percentTrimmed = 80,    
-                        percentStitched = 80,   
-                        percentAligned = 80,    
-                        percentSaturation = 50, 
-                        minNegativeCount = 10,   
-                        maxNTCCount = NULL,     
-                        minNuclei = NULL,         
-                        minArea = NULL)
-    print(QCoutput$segments.qc)
+
+qc.output <-  qcProc(object = sdesign.list$object,
+                        min.segment.reads = 1000, 
+                        percent.trimmed = 80,    
+                        percent.stitched = 80,   
+                        percent.aligned = 80,    
+                        percent.saturation = 50, 
+                        min.negative.count = 10,   
+                        max.ntc.count = NULL,     
+                        min.nuclei = NULL,         
+                        min.area = NULL,
+                        print.plots = TRUE)
+
+    print(qc.output$segments.qc)
     
     # For creating a fixture RDS
-    #qcHumanNSCLC <- QCoutput$dsp.target
-    #saveRDS(qcHumanNSCLC, file = "qcHumanNSCLC.RDS")
+    create.rds <- TRUE
+    if(create.rds) {
+      qc.human.kidney <- qc.output$object
+      saveRDS(qc.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/qcHumanNSCLC.RDS")
+  }
 
 ```
 
 ## 3. Filtering:
 
 ```{r Filtering, echo=FALSE}
+
+    goi <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
-    PKFil <- annotation(QCoutput$dsp.target)
-    target_demoDataFil <- QCoutput$dsp.target
+    filtering.output <- filtering(object = qc.output$object, 
+                            pkc.file = annotation(qc.output$object), 
+                            loq.cutoff = 2, 
+                            loq.min = 2, 
+                            cut.segment = .05, 
+                            goi = goi)
     
-    genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+    print(filtering.output$`stacked.bar.plot`)
+    print(filtering.output$`tab`)
+    print(filtering.output$`sankey.plot`)
+    print(filtering.output$`genes.detected.plot`)
     
-    FiltOutput <- filtering(Data = target_demoDataFil, 
-                            PKCS = PKFil, 
-                            LOQcutoff = 2, 
-                            LOQmin = 2, 
-                            CutSegment = .05, 
-                            GOI = genes)
-    print(FiltOutput$`Stacked Bar Plot`)
-    print(FiltOutput$`Table of Cuts`)
-    print(FiltOutput$`Sankey Plot`)
-    print(FiltOutput$`Genes Deccted Plot`)
-    
-    #filteringHumanNSCLC <- FiltOutput$`target_demoData Dataset`
-    
-    #saveRDS(filteringHumanNSCLC, file = "filteringHumanNSCLC.RDS")
+  create.rds <- TRUE
+  if(create.rds) {
+    filtering.human.kidney <- filtering.output$object
+    saveRDS(filtering.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/filteringHumanNSCLC.RDS")
+  } 
 
 ```
 
