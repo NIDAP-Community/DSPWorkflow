@@ -4,7 +4,7 @@ selectDatasetFiltering <- function(dataset) {
     
     print("selected kidney dataset") 
     object <- readRDS(test_path("fixtures/Human_Kidney", "qcHumanKidney.RDS"))
-    pkc.file <- "TAP_H_WTA_v1.0.pkc"
+    #pkc.file <- "TAP_H_WTA_v1.0.pkc"
     goi <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     loq.cutoff <- 2
     loq.min <- 2
@@ -14,7 +14,7 @@ selectDatasetFiltering <- function(dataset) {
     
     print("selected thymus dataset")
     object <- readRDS(test_path("fixtures/Mouse_Thymus", "qcMouseThymus.RDS"))
-    pkc.file <- "Mm_R_NGS_WTA_v1.0.pkc"
+    #pkc.file <- "Mm_R_NGS_WTA_v1.0.pkc"
     goi <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
     loq.cutoff <- 2
     loq.min <- 2
@@ -24,7 +24,7 @@ selectDatasetFiltering <- function(dataset) {
     
     print("selected colon dataset")
     object <- readRDS(test_path("fixtures/Human_Colon", "qcHumanColon.RDS"))
-    pkc.file <- "Hs_R_NGS_WTA_v1.0.pkc"
+    #pkc.file <- "Hs_R_NGS_WTA_v1.0.pkc"
     goi <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     loq.cutoff <- 2
     loq.min <- 2
@@ -34,7 +34,7 @@ selectDatasetFiltering <- function(dataset) {
     
     print("selected nsclc dataset")
     object <- readRDS(test_path("fixtures/Human_NSCLC", "qcHumanNSCLC.RDS"))
-    pkc.file <- "Hs_R_NGS_WTA_v1.0.pkc"
+    pkc.file <- "DevCom_H_WTA_v1.0.pkc"
     goi <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     loq.cutoff <- 2
     loq.min <- 2
@@ -42,6 +42,6 @@ selectDatasetFiltering <- function(dataset) {
     
   }
   
-  return(list("object" = object, "pkc.file" = pkc.file, "goi" = goi, "loq.cutoff" = loq.cutoff, "loq.min" = loq.min, "cut.segment" = cut.segment))
+  return(list("object" = object, "goi" = goi, "loq.cutoff" = loq.cutoff, "loq.min" = loq.min, "cut.segment" = cut.segment)) #"pkc.file" = pkc.file
   
 }
