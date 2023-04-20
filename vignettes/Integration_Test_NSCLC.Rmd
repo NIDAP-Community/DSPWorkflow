@@ -101,7 +101,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
     create.rds <- TRUE
     if(create.rds) {
       qc.human.kidney <- qc.output$object
-      saveRDS(qc.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/qcHumanNSCLC.RDS")
+      saveRDS(qc.human.kidney, file = "tests/testthat/fixtures/Human_NSCLC/qcHumanNSCLC.RDS")
   }
 
 ```
@@ -127,7 +127,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
   create.rds <- TRUE
   if(create.rds) {
     filtering.human.kidney <- filtering.output$object
-    saveRDS(filtering.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/filteringHumanNSCLC.RDS")
+    saveRDS(filtering.human.kidney, file = "tests/testthat/fixtures/Human_NSCLC/filteringHumanNSCLC.RDS")
   } 
 
 ```
@@ -137,16 +137,19 @@ qc.output <-  qcProc(object = sdesign.list$object,
   
 ```{r Normalization, echo=FALSE}
   
-    target_demoDataNorm <- FiltOutput$`target_demoData Dataset`
+    normalization.output <- geomxnorm(
+                                  object = filtering.output$object, 
+                                  norm = "quant")
     
-    NormOut.list <- GeoMxNorm(target_demoDataNorm, "quant")
+    print(normalization.output$multi.plot)
+    print(normalization.output$boxplot)
     
-    #normalizationHumanNSCLC <- NormOut.list$`Normalized Dataframe`
-    
-    #saveRDS(normalizationHumanNSCLC, file = "normalizationHumanNSCLC.RDS")
-    
-    print(NormOut.list$plot)
-    print(NormOut.list$Boxplot)
+    create.rds <- TRUE
+    if(create.rds) {
+      normalization.human.kidney <- normalization.output$object
+      saveRDS(normalization.human.kidney, file = "tests/testthat/fixtures/Human_NSCLC/normalizationHumanNSCLC.RDS")
+    }
+
 ```
 
 
