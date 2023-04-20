@@ -27,7 +27,6 @@
 #'
 #' @return an arranged grob of violin plots
 
-
 violinPlot <- function(object,
                        expr.type,
                        genes,

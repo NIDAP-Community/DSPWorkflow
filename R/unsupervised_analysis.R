@@ -32,14 +32,13 @@
 #' @importFrom stats prcomp
 #' @importFrom Rtsne Rtsne
 #' @importFrom umap umap
-#' @seealso [prcomp][stats::prcomp()] [Rtsne][Rtsne::Rtsne] [umap][umap::umap] 
-#' @seealso \code{\link[stats]{prcomp}} \link[Rtsne]{Rtsne}
 #' @seealso \code{\link{stats::prcomp}} \code{\link{Rtsne::Rtsne}}
 #' \code{\link{umap::umap}}
 #' @examples
 #' \dontrun{
 #' # Default plots
-#' output <- dimReduct(object = object, color.variable1="region")
+#' output <- dimReduct(object = object, color.variable1="region", 
+#' print.plots=TRUE)
 #' # Plot tSNE
 #' output <- dimReduct(object = object, color.variable1="region",
 #' print.plots = FALSE)
@@ -66,7 +65,6 @@ dimReduct <-
            symbol.size = 2,
            text.size = 16,
            print.plots = FALSE) {
-    
     # Pre-run ####
     ## checks ####
     ## stop if assayDataElement not present
@@ -117,14 +115,16 @@ dimReduct <-
     ## calculate PCA on user-defined assayData
     pca.stats <- prcomp(t(dat), scale. = TRUE)
     ##  add PCA coordinates to the object
-    Biobase::pData(object)[, c("PC1", "PC2")] <- pca.stats$"x"[,c(1, 2)]
+    Biobase::pData(object)[, c("PC1", "PC2")] <-
+      pca.stats$"x"[, c(1, 2)]
     ## tSNE ####
     ## set random seed
     set.seed(42)
     ### calculate tSNE on user-defined assayData
     tsne.stats <- Rtsne(t(dat), perplexity = ncol(object) * .15)
     ## add tSNE coordinates to the object
-    Biobase::pData(object)[, c("tSNE1", "tSNE2")] <- tsne.stats$Y[,c(1, 2)]
+    Biobase::pData(object)[, c("tSNE1", "tSNE2")] <-
+      tsne.stats$Y[, c(1, 2)]
     ## UMAP ####
     ## retrieve UMAP defaults
     custom.umap <- umap::umap.defaults
@@ -133,7 +133,8 @@ dimReduct <-
     ## calculate UMAP on user-defined assayData
     umap.stats <- umap(t(dat), config = custom.umap)
     ## add UMAP coordinates to the object
-    Biobase::pData(object)[,c("UMAP1", "UMAP2")] <- umap.stats$layout[, c(1, 2)]
+    Biobase::pData(object)[, c("UMAP1", "UMAP2")] <-
+      umap.stats$layout[, c(1, 2)]
     # Generate Plots ####
     ## plot input data ####
     ## extract phenoData from the object
@@ -158,72 +159,63 @@ dimReduct <-
     }
     ## initiate geom_point and legend titles by shape.variable status
     if (is.null(shape.variable)) {
-      add.points <- geom_point()
+      add.points <-
+        geom_point(aes(color = color.variable),
+                   size = point.size,
+                   alpha = point.alpha)
       legend.title <- labs(colour = color.label)
     } else {
-      add.points <- geom_point(aes(shape = shape.variable))
+      add.points <-
+        geom_point(
+          aes(color = color.variable, shape = shape.variable),
+          size = point.size,
+          alpha = point.alpha
+        )
       legend.title <-
         labs(shape = shape.label, colour = color.label)
     }
     ## PCA ggplot ####
     ## use guide_legend() to set symbol size in the legend
-    pca.ggplot <- ggplot(
-      df,
-      aes(x = PC1,
-          y = PC2,
-          color = color.variable),
-      size = point.size,
-      alpha = point.alpha
-      ) +
+    pca.ggplot <- ggplot(df, aes(x = PC1, y = PC2)) +
       add.points +
       legend.title +
       ggtitle("PCA") +
       labs(x = "PC 1",
            y = "PC 2") +
       theme_bw(base_size = text.size) +
-      theme(axis.title = element_text(size=text.size-2)) +
+      theme(axis.title = element_text(size = text.size - 2)) +
       guides(colour =
                guide_legend(override.aes = list(size = symbol.size))) +
       guides(shape =
                guide_legend(override.aes = list(size = symbol.size)))
     ## tSNE ggplot ####
     ## use guide_legend() to set symbol size in the legend
-    tsne.ggplot <- ggplot(
-      df,
-      aes(x = tSNE1,
-          y = tSNE2,
-          color = color.variable),
-      size = point.size,
-      alpha = point.alpha
-    ) +
+    tsne.ggplot <- ggplot(df,
+                          aes(x = tSNE1,
+                              y = tSNE2)) +
       add.points +
       legend.title +
       theme_bw(base_size = text.size) +
       ggtitle("tSNE") +
       labs(x = "tSNE 1",
            y = "tSNE 2") +
-      theme(axis.title = element_text(size=text.size-2)) +
+      theme(axis.title = element_text(size = text.size - 2)) +
       guides(colour =
                guide_legend(override.aes = list(size = symbol.size))) +
       guides(shape =
                guide_legend(override.aes = list(size = symbol.size)))
     ## UMAP ggplot ####
     ## use guide_legend() to set symbol size in the legend
-    umap.ggplot <- ggplot(
-      df,
-      aes(x = UMAP1,
-          y = UMAP2,
-          color = color.variable),
-      size = point.size,
-      alpha = point.alpha
-    ) +
+    umap.ggplot <- ggplot(df,
+                          aes(x = UMAP1,
+                              y = UMAP2)) +
       add.points +
       legend.title +
       theme_bw(base_size = text.size) +
       ggtitle("UMAP") +
       labs(x = "UMAP 1",
            y = "UMAP 2") +
-      theme(axis.title = element_text(size=text.size-2)) +
+      theme(axis.title = element_text(size = text.size - 2)) +
       guides(colour =
                guide_legend(override.aes = list(size = symbol.size))) +
       guides(shape =

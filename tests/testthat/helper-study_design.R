@@ -1,18 +1,58 @@
+# Error checking for DCC file download
+downloadDccs <- function(input.url, output.folder, tar.file) {
+  
+  output.path <- paste0(output.folder, tar.file)
+  
+  # The number of times to try the download until success
+  num.tries <- 5
+  
+  for (i in 1:num.tries) {
+    
+    # Wait 30 seconds for the next download attempt
+    if (i > 1) {
+      print("Waiting 30 seconds until next download attempt...")
+      Sys.sleep(30)
+    }
+    
+    # Check if output directory exists
+    if (dir.exists(output.folder) == FALSE){
+      print(paste0("Could not find directory ", output.folder, ", download will not proceed..."))
+      break
+    }
+    
+    print(paste("Starting download attempt ", i))
+    
+    if (i == 5) {
+      print("Final download attempt...")
+    }
+    result <- try({
+      download.file(input.url, output.path)
+      untar(output.path, exdir = output.folder)
+    })
+    if (class(result) != "try-error") {
+      print(paste("Files downloaded to", output.folder))
+      break
+    }
+  }
+}
+
 selectDatasetSD <- function(dataset) {
   # Human kidney diabetes dataset from the vignette
   if (dataset == "kidney") {
     print("selected kidney dataset")
     
-    tar.file.path <- "fixtures/Human_Kidney/downloaded/kidney_dccs.tar.gz"
+    downloaded.folder <- "fixtures/Human_Kidney/downloaded/"
+    tar.file.name <- "kidney_dccs.tar.gz"
+    tar.file.path <- paste0(downloaded.folder, tar.file.name)
     
     # Check if dcc files were previously downloaded
     if (!file.exists(tar.file.path)) {
       
-      # Download dcc files and place in data folder
       data.url <- "http://hpc.nih.gov/~CCBR/DSPWorkflow/kidney_dccs.tar.gz"
-      download.file(data.url, tar.file.path)
-      untar(tar.file.path, exdir = "fixtures/Human_Kidney/downloaded/")
-
+      # Download dcc files and place in data folder
+      downloadDccs(input.url = data.url, 
+                   output.folder = downloaded.folder, 
+                   tar.file = tar.file.name)
     }
     
     dcc.files <- dir(
@@ -31,21 +71,22 @@ selectDatasetSD <- function(dataset) {
       "fixtures/Human_Kidney/kidney_annotations.xlsx"
     pheno.data.sheet = "Template"
     
-    
     # Mouse thymus cancer dataset from PMID 36049655
   } else if (dataset == "thymus") {
     print("selected thymus dataset")
     
-    tar.file.path <- "fixtures/Mouse_Thymus/downloaded/thymus_dccs.tar.gz"
+    downloaded.folder <- "fixtures/Mouse_Thymus/downloaded/"
+    tar.file.name <- "thymus_dccs.tar.gz"
+    tar.file.path <- paste0(downloaded.folder, tar.file.name)
     
     # Check if dcc files were previously downloaded
     if (!file.exists(tar.file.path)) {
       
-      # Download dcc files and place in data folder
       data.url <- "http://hpc.nih.gov/~CCBR/DSPWorkflow/thymus_dccs.tar.gz"
-      download.file(data.url, tar.file.path)
-      untar(tar.file.path, exdir = "fixtures/Mouse_Thymus/downloaded/")
-      
+      # Download dcc files and place in data folder
+      downloadDccs(input.url = data.url, 
+                   output.folder = downloaded.folder, 
+                   tar.file = tar.file.name)
     }
     
     dcc.files <- dir(
@@ -68,16 +109,18 @@ selectDatasetSD <- function(dataset) {
   } else if (dataset == "colon") {
     print("selected colon dataset")
     
-    tar.file.path <- "fixtures/Human_Colon/downloaded/colon_dccs.tar.gz"
+    downloaded.folder <- "fixtures/Human_Colon/downloaded/"
+    tar.file.name <- "colon_dccs.tar.gz"
+    tar.file.path <- paste0(downloaded.folder, tar.file.name)
     
     # Check if dcc files were previously downloaded
     if (!file.exists(tar.file.path)) {
       
-      # Download dcc files and place in data folder
       data.url <- "http://hpc.nih.gov/~CCBR/DSPWorkflow/colon_dccs.tar.gz"
-      download.file(data.url, tar.file.path)
-      untar(tar.file.path, exdir = "fixtures/Human_Colon/downloaded/")
-      
+      # Download dcc files and place in data folder
+      downloadDccs(input.url = data.url, 
+                   output.folder = downloaded.folder, 
+                   tar.file = tar.file.name)
     }
     
     dcc.files <- dir(
@@ -99,16 +142,18 @@ selectDatasetSD <- function(dataset) {
   } else if (dataset == "nsclc") {
     print("selected nsclc dataset")
     
-    tar.file.path <- "fixtures/Human_NSCLC/downloaded/nsclc_dccs.tar.gz"
+    downloaded.folder <- "fixtures/Human_NSCLC/downloaded/"
+    tar.file.name <- "nsclc_dccs.tar.gz"
+    tar.file.path <- paste0(downloaded.folder, tar.file.name)
     
     # Check if dcc files were previously downloaded
     if (!file.exists(tar.file.path)) {
       
-      # Download dcc files and place in data folder
       data.url <- "http://hpc.nih.gov/~CCBR/DSPWorkflow/nsclc_dccs.tar.gz"
-      download.file(data.url, tar.file.path)
-      untar(tar.file.path, exdir = "fixtures/Human_NSCLC/downloaded/")
-      
+      # Download dcc files and place in data folder
+      downloadDccs(input.url = data.url, 
+                   output.folder = downloaded.folder, 
+                   tar.file = tar.file.name)
     }
     
     dcc.files <- dir(
@@ -122,7 +167,7 @@ selectDatasetSD <- function(dataset) {
     )
     
     pkc.files <-
-      test_path("fixtures/Human_NSCLC", "Hs_R_NGS_WTA_v1.0.pkc")
+      test_path("fixtures/Human_NSCLC", "DevCom_H_WTA_v1.0.pkc")
     pheno.data.file <- "fixtures/Human_NSCLC/NSCLC_annotation.xlsx"
     pheno.data.sheet = "Template"
     

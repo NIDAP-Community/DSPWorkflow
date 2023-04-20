@@ -5,7 +5,7 @@
 #' studyDesign: Study Design
 #' @description Combine Nanostring Digital Spatial Profile read count and
 #' annotation files into a GeoMX object
-#' @details `StudyDesign` returns a Sankey Plot and a GeoMX object.
+#' @details `studyDesign` returns a Sankey Plot and a GeoMX object.
 #' For the function to run properly the annotation excel file must have the
 #' specific field names: slide name', class, segment, region
 #' and the corresponding fields that can be renamed: Sample_ID, aoi, roi, panel
@@ -40,6 +40,8 @@
 #' @importFrom ggplot2 expansion
 #' @importFrom ggplot2 scale_x_discrete
 #' @importFrom ggplot2 annotate
+#' @import Biobase
+#' @import NanoStringNCTools
 #' @export
 #' @return A list containing the NanoString Object and the Sankey plot.
 
@@ -103,7 +105,7 @@ studyDesign <- function(dcc.files,
       levels = c("class", "slide name", "region", "segment")
     )
   
-  # plot Sankey
+  # plot Sankey diagram
   sankey.plot <-
     ggplot(sankey.count.data,
            aes(

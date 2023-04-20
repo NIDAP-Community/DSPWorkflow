@@ -30,7 +30,7 @@
 #' @param p.adjust Method to use for pvalue adjustment. Choices are "holm",
 #'  "hochberg","hommel","bonferroni","BH","BY","fdr","none". (default is "BY")
 #' @param pairwise Boolean to calculate least-square means pairwise differences
-#'  (default is NULL)
+#'  (default is TRUE)
 #' @param fc.lim Fold Change limit for summarizing genes of interest (default
 #'  is 1.2)
 #' @param pval.lim.1 P-value limit for summarizing differentially expressed 
@@ -39,7 +39,6 @@
 #'  (DEG) genes, usually more lenient (default is 0.10)
 #'
 #' @importFrom GeomxTools mixedModelDE
-#' @importFrom stringr str_wrap
 #' @importFrom patchwork wrap_elements
 #' @importFrom stats p.adjust
 #' @importFrom dplyr group_by select filter arrange pull
@@ -51,7 +50,7 @@
 #' @importFrom BiocGenerics rownames colnames rbind
 #' @importFrom magrittr %>%
 #' @importFrom Biobase pData assayDataElement
-#' @importFrom NanoStringNCTools mixedModelDE
+#' @importFrom parallel detectCores
 #' @export
 #'
 #' @return a list containing mixed model output data frame, grid tables for
@@ -68,36 +67,49 @@ diffExpr <- function(object,
                      multi.core = TRUE,
                      n.cores = 1,
                      p.adjust = "BY",
-                     pairwise = NULL,
+                     pairwise = TRUE,
                      fc.lim = 1.2,
                      pval.lim.1 = 0.05,
                      pval.lim.2 = 0.01) {
   
+  # Check the number of cores available for the current machine
+  available.cores <- detectCores()
+  
+  if (n.cores > available.cores) {
+    print(paste0("The number of cores selected is greater than the number of available cores, reducing number of cores to maximum of ", available.cores))
+    n.cores <- available.cores
+  }
+  
+  # Adjust the number of cores selected within the machine's range
+  
+
+  
+  
   testClass <- testRegion <- Gene <- Subset <- NULL
   
   # convert test variables to factors after checking input
-  reg.check <- regions[!regions %in% pData(object)[[region.col]]]
+  reg.check <- regions[!regions %in% Biobase::pData(object)[[region.col]]]
   if (length(reg.check) > 0) {
     stop(paste0(reg.check, " is not in region column.\n"))
   }
   
-  regions <- regions[regions %in% pData(object)[[region.col]]]
+  regions <- regions[regions %in% Biobase::pData(object)[[region.col]]]
   regions <- factor(regions, levels = c(regions[1], regions[2]))
-  pData(object)$testRegion <-
-    factor(pData(object)[[region.col]], levels = regions)
+  Biobase::pData(object)$testRegion <-
+    factor(Biobase::pData(object)[[region.col]], levels = regions)
   
-  grp.check <- groups[!groups %in% pData(object)[[group.col]]]
+  grp.check <- groups[!groups %in% Biobase::pData(object)[[group.col]]]
   if (length(grp.check) > 0) {
     stop(paste0(grp.check, " is not in group column.\n"))
   }
   
-  groups <- groups[groups %in% pData(object)[[group.col]]]
+  groups <- groups[groups %in% Biobase::pData(object)[[group.col]]]
   groups <- factor(groups, levels = c(groups[1], groups[2]))
-  pData(object)$testClass <-
-    factor(pData(object)[[group.col]], levels = groups)
+  Biobase::pData(object)$testClass <-
+    factor(Biobase::pData(object)[[group.col]], levels = groups)
   
-  pData(object)$slide <- factor(pData(object)[[slide.col]])
-  assayDataElement(object = object, elt = element) <-
+  Biobase::pData(object)$slide <- factor(Biobase::pData(object)[[slide.col]])
+  Biobase::assayDataElement(object = object, elt = element) <-
     assayDataApply(object,
                    2,
                    FUN = log,
@@ -105,14 +117,14 @@ diffExpr <- function(object,
                    elt = element)
   
   #Test for correct selection of parameter column and/or factors
-  ind.na <- colSums(is.na(pData(object)))
+  ind.na <- colSums(is.na(Biobase::pData(object)))
   param.na <- names(ind.na[ind.na > 0])
   
   if (length(param.na) > 0) {
     if (param.na[1] == "testRegion") {
       regdiff <-
-        setdiff(unique(pData(object)[[region.col]]),
-                unique(levels(pData(object)$testRegion)))
+        setdiff(unique(Biobase::pData(object)[[region.col]]),
+                unique(levels(Biobase::pData(object)$testRegion)))
       regdiff <- paste0(regdiff, collapse = ", ")
       message(
         paste0(
@@ -125,8 +137,8 @@ diffExpr <- function(object,
     }
     else if (param.na[1] == "testClass") {
       classdiff <-
-        setdiff(unique(pData(object)[[group.col]]),
-                unique(levels(pData(object)$testClass)))
+        setdiff(unique(Biobase::pData(object)[[group.col]]),
+                unique(levels(Biobase::pData(object)$testClass)))
       classdiff <- paste0(classdiff, collapse = ", ")
       message(
         "At least one of the groups within the Group Column was not selected and
@@ -138,11 +150,12 @@ diffExpr <- function(object,
   }
   
   #Print Metadata Pivot Table
-  metadata <- pData(object) %>% rownames_to_column("sample")
-  metadata %>% select(testClass, testRegion, sample, slide) -> met.tab
-  met.tab %>% group_by(testClass, testRegion, slide) %>% count() -> met.sum
-  met.sum %>% pivot_wider(names_from = slide, values_from = n) -> met.pivot
-  colnames(met.pivot) <- str_wrap(colnames(met.pivot), 10)
+  metadata <- Biobase::pData(object) %>% rownames_to_column("sample")
+  met.tab <- metadata %>% select(testClass, testRegion, sample, slide) 
+  met.sum <- met.tab %>% group_by(testClass, testRegion, slide) %>% count() 
+  met.pivot <- met.sum %>% pivot_wider(names_from = slide, values_from = n) 
+  #replace str_wrap(colnames(met.pivot), 10) below
+  colnames(met.pivot) <- sapply(strsplit(colnames(met.pivot)," "),paste,collapse = "\n")
   ind <- !(is.na(met.pivot$testClass) | is.na(met.pivot$testRegion))
   met.pivot <- met.pivot[ind,]
   grid.newpage()
@@ -150,13 +163,13 @@ diffExpr <- function(object,
   
   #Check for numbers of groups and regions listed for comparison
   
-  reg.col <- unique(pData(object)$testRegion)
+  reg.col <- unique(Biobase::pData(object)$testRegion)
   reg.length <- length(reg.col[!is.na(reg.col)])
-  grp.col <- unique(pData(object)$testClass)
+  grp.col <- unique(Biobase::pData(object)$testClass)
   grp.length <- length(grp.col[!is.na(grp.col)])
   
   #Run DEG Analysis
-  options(digits = 9)
+  options(digits = 3)
   
   if (analysis.type == "Within Groups") {
     cat("Running Within Group Analysis between Regions")
@@ -168,9 +181,9 @@ diffExpr <- function(object,
     title1 <- "DEG lists from within slide contrast:"
     results <- c()
     for (status in groups) {
-      ind <- pData(object)$testClass == status
+      ind <- Biobase::pData(object)$testClass == status
       ind[is.na(ind)] <- FALSE
-      ind2 <- pData(object)$testRegion %in% regions
+      ind2 <- Biobase::pData(object)$testRegion %in% regions
       ind2[is.na(ind2)] <- FALSE
       mixed.out <- mixedModelDE(
         object[, ind & ind2],
@@ -214,9 +227,9 @@ diffExpr <- function(object,
     title1 <- "DEG lists from Between Slides contrast:"
     results <- c()
     for (region in regions) {
-      ind <- pData(object)$testRegion == region
+      ind <- Biobase::pData(object)$testRegion == region
       ind[is.na(ind)] <- FALSE
-      ind2 <- pData(object)$testClass %in% groups
+      ind2 <- Biobase::pData(object)$testClass %in% groups
       ind2[is.na(ind2)] <- FALSE
       mixed.out <-
         mixedModelDE(
@@ -341,22 +354,22 @@ diffExpr <- function(object,
       .getGeneLists(select.groups,
                     FClimit = fc.lim,
                     pvallimit = pval.lim.1,
-                    "pval")
+                    pval = "pval")
     FCpval2 <-
       .getGeneLists(select.groups,
                     FClimit = fc.lim,
                     pvallimit = pval.lim.2,
-                    "pval")
+                    pval = "pval")
     FCadjpval1 <-
       .getGeneLists(select.groups,
                     FClimit = fc.lim,
                     pvallimit = pval.lim.1,
-                    "adjpval")
+                    pval = "adjpval")
     FCadjpval2 <-
       .getGeneLists(select.groups,
                     FClimit = fc.lim,
                     pvallimit = pval.lim.2,
-                    "adjpval")
+                    pval = "adjpval")
     
     pvaltab <- rbind(FCpval1, FCpval2, FCadjpval1, FCadjpval2)
     
@@ -372,9 +385,9 @@ diffExpr <- function(object,
     
     padding <- unit(1, "line")
     table <-
-      gtable_add_rows(table, heights = grobHeight(t1) + padding, pos = 0.5)
+      gtable_add_rows(table, heights = grobHeight(t1) + padding, pos = 0)
     table <-
-      gtable_add_rows(table, heights = grobHeight(t2) + padding, pos = 0.5)
+      gtable_add_rows(table, heights = grobHeight(t2) + padding, pos = 0)
     table <- gtable_add_grob(
       table,
       list(t1, t2),
