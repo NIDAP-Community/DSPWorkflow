@@ -3,12 +3,6 @@ test_that("Run Diff Exp Analysis with default parameters - kidney data", {
   reslist.1 <-
     do.call(diffExpr, kidney.data) #Runs with default parameters
   
-  # #Test saving images and calculated FC and pvals
-  expect_snapshot_file(
-    .drawpng(reslist.1$tables),
-    "kidney_within.png"
-  )
-  
   res <- calcFC("kidney", reslist.1$results, "Within")
   expect_equal(res$lfc, -2.014, tolerance = 1e-3)
   expect_equal(res$pval, 0.0274, tolerance = 1e-3)
@@ -19,17 +13,23 @@ test_that("Run Diff Exp Analysis with default parameters - kidney data", {
   ###Testing Between groups:
   kidney.data <- getSubset("kidney", "Between")
   reslist.2 <- do.call(diffExpr, kidney.data)
+  
+  res <- calcFC("kidney", reslist.2$results, "Between")
+  expect_equal(res$lfc, -1.408, tolerance = 1e-3)
+  expect_equal(as.numeric(formatC(res$pval,2)), 0.013, tolerance = 1e-3)
 
   #Test saving images and calculated FC and pvals
- 
+  skip_on_ci()
+  
+  expect_snapshot_file(
+    .drawpng(reslist.1$tables),
+    "kidney_within.png"
+  )
+  
   expect_snapshot_file(
     .drawpng(reslist.1$tables),
     "kidney_between.png"
   )
-
-  res <- calcFC("kidney", reslist.2$results, "Between")
-  expect_equal(res$lfc, -1.408, tolerance = 1e-3)
-  expect_equal(as.numeric(formatC(res$pval,2)), 0.013, tolerance = 1e-3)
 })
 
 test_that("Run Diff Exp Analysis with wrong selected group column", {
