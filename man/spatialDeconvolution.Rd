@@ -36,6 +36,8 @@ spatialDeconvolution(
 
 \item{celltype.col}{Column of data.frame containing celltype info}
 
+\item{group.by}{Organize heatmap / barplot columns by metadata group}
+
 \item{out.directory}{Path to desired output directory, set to NULL if matrix
 should not be written}
 
