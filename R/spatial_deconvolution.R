@@ -26,7 +26,7 @@
 #' @param min.genes Filter cells based on minimum number of genes expressed
 #' @param discard.celltype Remove any celltype(s) that is not of interest
 #'
-#' @importFrom GeomxTools negativeControlSubset
+#' @importFrom NanoStringNCTools negativeControlSubset
 #' @importFrom SpatialDecon derive_GeoMx_background
 #' @importFrom SpatialDecon spatialdecon
 #' @importFrom SpatialDecon create_profile_matrix

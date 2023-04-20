@@ -46,5 +46,6 @@ Imports:
     tidyr (>= 1.2.1),
     umap (>= 0.2.9.0),
     pheatmap (>= 1.0.12),
-    magrittr (>= 2.0.3)
+    magrittr (>= 2.0.3),
+    ComplexHeatmap (>= 2.0.0)
 Config/testthat/edition: 3
