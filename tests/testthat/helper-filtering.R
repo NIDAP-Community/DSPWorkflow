@@ -33,8 +33,8 @@ selectDatasetFiltering <- function(dataset) {
   } else if (dataset == "nsclc"){
     
     print("selected nsclc dataset")
-    object <- readRDS(test_path("fixtures/Human_NSCLC", "qcHumanNSCLC.RDS"))
-    #pkc.file <- "Hs_R_NGS_WTA_v1.0.pkc"
+
+    pkc.file <- "DevCom_H_WTA_v1.0.pkc.pkc"
     goi <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     loq.cutoff <- 2
     loq.min <- 2
