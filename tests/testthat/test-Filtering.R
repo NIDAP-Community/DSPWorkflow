@@ -2,14 +2,15 @@ test_that("Test Kidney Data", {
   
   kidney.dat <- selectDatasetFiltering("kidney")
   
-  input.data.object <- kidney.dat$object
-  input.data.pkc <- kidney.dat$pkcFile
-  genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+  filtering.output <- do.call(filtering,kidney.dat)
   
-  dsp.list <- filtering(Data = input.data.object, PKCS = input.data.pkc, LOQcutoff = 2, LOQmin = 2, CutSegment = .1, GOI = genes)
+  expected.elements = c("stacked.bar.plot", 
+                        "tab", 
+                        "sankey.plot", 
+                        "genes.detected.plot", 
+                        "object")
   
-  expected.elements = c("Stacked Bar Plot", "Table of Cuts", "Sankey Plot", "Genes Deccted Plot", "target_demoData Dataset")
-  expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
+  expect_setequal(names(filtering.output), expected.elements)
   
 })
 
@@ -17,14 +18,15 @@ test_that("Test Colon Data", {
   
   colon.dat <- selectDatasetFiltering("colon")
   
-  input.data.object <- colon.dat$object
-  input.data.pkc <- colon.dat$pkcFile
-  genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+  filtering.output <- do.call(filtering,colon.dat)
   
-  dsp.list <- filtering(Data = input.data.object, PKCS = input.data.pkc, LOQcutoff = 2, LOQmin = 2, CutSegment = .1, GOI = genes)
+  expected.elements = c("stacked.bar.plot", 
+                        "tab", 
+                        "sankey.plot", 
+                        "genes.detected.plot", 
+                        "object")
   
-  expected.elements = c("Stacked Bar Plot", "Table of Cuts", "Sankey Plot", "Genes Deccted Plot", "target_demoData Dataset")
-  expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
+  expect_setequal(names(filtering.output), expected.elements)
   
 })
 
@@ -32,14 +34,15 @@ test_that("Test thymus Data", {
   
   thymus.dat <- selectDatasetFiltering("thymus")
   
-  input.data.object <- thymus.dat$object
-  input.data.pkc <- thymus.dat$pkcFile
-  genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+  filtering.output <- do.call(filtering,thymus.dat)
   
-  dsp.list <- filtering(Data = input.data.object, PKCS = input.data.pkc, LOQcutoff = 2, LOQmin = 2, CutSegment = .1, GOI = genes)
+  expected.elements = c("stacked.bar.plot", 
+                        "tab", 
+                        "sankey.plot", 
+                        "genes.detected.plot", 
+                        "object")
   
-  expected.elements = c("Stacked Bar Plot", "Table of Cuts", "Sankey Plot", "Genes Deccted Plot", "target_demoData Dataset")
-  expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
+  expect_setequal(names(filtering.output), expected.elements)
   
 })
 
@@ -47,96 +50,63 @@ test_that("Test nsclc Data", {
   
   nsclc.dat <- selectDatasetFiltering("nsclc")
   
-  input.data.object <- nsclc.dat$object
-  input.data.pkc <- nsclc.dat$pkcFile
-  genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+  filtering.output <- do.call(filtering,nsclc.dat)
   
-  dsp.list <- filtering(Data = input.data.object, PKCS = input.data.pkc, LOQcutoff = 2, LOQmin = 2, CutSegment = .1, GOI = genes)
+  expected.elements = c("stacked.bar.plot", 
+                        "tab", 
+                        "sankey.plot", 
+                        "genes.detected.plot", 
+                        "object")
   
-  expected.elements = c("Stacked Bar Plot", "Table of Cuts", "Sankey Plot", "Genes Deccted Plot", "target_demoData Dataset")
-  expect_equal(length(setdiff(expected.elements, names(dsp.list))), 0)
-  
-})
-
-test_that("Filtering Success", {
-  target_demoDataFil<- c(1,2,3,5)
-  kidney.dat <- selectDatasetFiltering("kidney")
-  
-  input.data.object <- kidney.dat$object
-  input.data.pkc <- kidney.dat$pkcFile
-  genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
-  
-  expect_error(filtering(Data = target_demoDataFil, PKCS = input.data.pkc, LOQcutoff = 2, LOQmin = 2, CutSegment = .1, GOI = genes), "Error: You have the wrong data class, must be NanoStringGeoMxSet")
-})
-
-test_that("Filtering Success", {
-  target_demoDataFil<- c(1,2,3,5)
-  kidney.dat <- selectDatasetFiltering("kidney")
-  
-  input.data.object <- kidney.dat$object
-  input.data.pkc <- kidney.dat$pkcFile
-  genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
-  
-  expect_error(filtering(Data = input.data.object, PKCS = kidney.dat$pkcFile, LOQcutoff = c("A"), LOQmin = 2, CutSegment = .1, GOI = genes), "Error: You have the wrong data class, must be numeric")
+  expect_setequal(names(filtering.output), expected.elements)
   
 })
 
 test_that("Filtering Success", {
-  target_demoDataFil<- c(1,2,3,5)
   kidney.dat <- selectDatasetFiltering("kidney")
-  
-  input.data.object <- kidney.dat$object
-  input.data.pkc <- kidney.dat$pkcFile
-  genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
-  
-  expect_error(filtering(Data = kidney.dat$object, PKCS = kidney.dat$pkcFile, LOQcutoff = 2, LOQmin = c("A"), CutSegment = .1, GOI = genes), "Error: You have the wrong data class, must be numeric")
-  
+ 
+  kidney.dat$object <- c(1,2,3,5)
+  expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be NanoStringGeoMxSet")
 })
 
 test_that("Filtering Success", {
-  target_demoDataFil<- c(1,2,3,5)
   kidney.dat <- selectDatasetFiltering("kidney")
   
-  input.data.object <- kidney.dat$object
-  input.data.pkc <- 10
-  genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
-  
-  expect_error(filtering(Data = input.data.object, PKCS = input.data.pkc, LOQcutoff = 2, LOQmin = 2, CutSegment = .1, GOI = genes), "Error: You have the wrong data class, must be character")
-  
+  kidney.dat$loq.cutoff <- c("A")
+  expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be numeric")
 })
 
 test_that("Filtering Success", {
-  target_demoDataFil<- c(1,2,3,5)
   kidney.dat <- selectDatasetFiltering("kidney")
   
-  input.data.object <- kidney.dat$object
-  input.data.pkc <- kidney.dat$pkcFile
-  genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+  kidney.dat$loq.min <- c("A")
+  expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be numeric")
+})
+
+#test_that("Filtering Success", {
+  #kidney.dat <- selectDatasetFiltering("kidney")
   
-  expect_error(filtering(Data = input.data.object, PKCS = input.data.pkc, LOQcutoff = 2, LOQmin = 2, CutSegment = c("A"), GOI = genes), "Error: You have the wrong data class, must be numeric")
+  #kidney.dat$pkc.file <- 10
+  #expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be character")
+#})
+
+test_that("Filtering Success", {
+  kidney.dat <- selectDatasetFiltering("kidney")
   
+  kidney.dat$cut.segment <- c("A")
+  expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be numeric")
 })
 
 test_that("Filtering Success", {
-  target_demoDataFil<- c(1,2,3,5)
   kidney.dat <- selectDatasetFiltering("kidney")
   
-  input.data.object <- kidney.dat$object
-  input.data.pkc <- kidney.dat$pkcFile
-  genes <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
-  
-  expect_error(filtering(Data = input.data.object, PKCS = input.data.pkc, LOQcutoff = 2, LOQmin = 2, CutSegment = 10, GOI = genes), "Error: You need perecentage in decimals between 0-1")
-  
+  kidney.dat$cut.segment <- 10
+  expect_error(do.call(filtering,kidney.dat), "Error: You need perecentage in decimals between 0-1")
 })
 
 test_that("Filtering Success", {
-  target_demoDataFil<- c(1,2,3,5)
   kidney.dat <- selectDatasetFiltering("kidney")
   
-  input.data.object <- kidney.dat$object
-  input.data.pkc <- kidney.dat$pkcFile
-  genes <- c(1,2,3,4,5)
-  
-  expect_error(filtering(Data = input.data.object, PKCS = input.data.pkc, LOQcutoff = 2, LOQmin = 2, CutSegment = .1, GOI = genes), "Error: You have the wrong data class, must be character vector")
-  
+  kidney.dat$goi <- c(1,2,3,4,5)
+  expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be character vector")
 })

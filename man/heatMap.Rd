@@ -2,10 +2,10 @@
 % Please edit documentation in R/heatmap.R
 \name{heatMap}
 \alias{heatMap}
-\title{NanoString Digital Spatial Profile study}
+\title{Clustering high CV Genes and making a heatmap}
 \usage{
 heatMap(
-  target.data,
+  object,
   norm.method = "quant",
   annotation.col = c("class", "segment", "region"),
   ngenes = 200,
@@ -18,61 +18,74 @@ heatMap(
   clustering.distance.rows = "correlation",
   clustering.distance.cols = "correlation",
   annotation.row = NA,
-  image.width = 3600,
-  image.height = 1800,
-  image.resolution = 300,
-  image.filename = "heatmap.clust.highCVgenes.png",
   breaks.by.values = seq(-3, 3, 0.05),
   heatmap.color = colorRampPalette(c("blue", "white", "red"))(120)
 )
 }
 \arguments{
-\item{target.data}{Normalized targetData S4 object input file.}
+\item{object}{object Normalized NanoStringGeoMxSet object to use for heatmap.
+It is a S4 object.}
 
-\item{norm.method}{normalization method quant: Upper quartile (Q3) normalization and neg: background normalization}
+\item{norm.method}{normalization method quant: Upper quartile (Q3)
+normalization and neg: background normalization (Default: quant)}
 
-\item{annotation.col}{the annotations shown on right side of the heatmap}
+\item{annotation.col}{the annotations shown on right side of the heatmap
+(Default: c("class", "segment", "region"))}
 
-\item{ngenes}{Number of high CV genes to cluster and plot}
+\item{ngenes}{Number of high CV genes to cluster and plot (Default: 200)}
 
-\item{scale.by.row.or.col}{scale by row or by col ("row", "column" and "none")}
+\item{scale.by.row.or.col}{Scale.by perform z-scaling. Choices are "row",
+"column" and "none" (Default: "row")}
 
-\item{show.rownames}{boolean specifying if row names are be shown.}
+\item{show.rownames}{Boolean specifying if row names are be shown.
+(Default: FALSE)}
 
-\item{show.colnames}{boolean specifying if column names are be shown.}
+\item{show.colnames}{Boolean specifying if column names are be shown.
+(Default: FALSE)}
 
-\item{clustering.method}{clustering method used. Accepts the same values as hclust. e.g "ward.D", "ward.D2", "single", "complete", "average"}
+\item{clustering.method}{Clustering method used. Accepts the same values as
+.       hclust. e.g "ward.D", "ward.D2", "single", "complete", "average"
+.       (Default: "average")}
 
-\item{cluster.rows}{boolean values determining if rows should be clustered or hclust object,}
+\item{cluster.rows}{Boolean values determining if rows should be clustered
+or hclust object (Default: TRUE)}
 
-\item{cluster.cols}{boolean values determining if cols should be clustered or hclust object,}
+\item{cluster.cols}{Boolean values determining if cols should be clustered
+or hclust object (Default: TRUE)}
 
-\item{clustering.distance.rows}{distance for clustering by rows (correlation, or euclidean)}
+\item{clustering.distance.rows}{Distance for clustering by rows
+(correlation, or euclidean) (Default: "correlation")}
 
-\item{clustering.distance.cols}{distance for clustering by cols (correlation, or euclidean)}
+\item{clustering.distance.cols}{Distance for clustering by cols
+(correlation, or euclidean) (Default: "correlation")}
 
-\item{annotation.row}{the annotations shown on left side of the heatmap}
+\item{annotation.row}{A data frame that specifies the annotations shown
+on left side of the heatmap (Default: NA)}
 
-\item{image.width}{image width}
+\item{breaks.by.values}{A sequence of numbers that covers the range of
+values in mat (Deafult: seq(-3, 3, 0.05), provides 120 colors)}
 
-\item{image.height}{image height}
-
-\item{image.resolution}{image resolution}
-
-\item{image.filename}{image filename}
-
-\item{breaks.by.values}{a sequence of numbers that covers the range of values in mat e.g seq(-3, 3, 0.05), 6/0.05=120 colors.}
-
-\item{heatmap.color}{colors of heatmap colorRampPalette(c("blue", "white", "red"))(120), here 120 is consistent with 120 above.}
+\item{heatmap.color}{Colors of heatmap to match breaks above
+(Default: colorRampPalette(
+c("blue", "white", "red"))(120))}
 }
 \value{
 A list containing the plot genes data matrix, and the heatmap plot.
 }
 \description{
-\enumerate{
-\item Exploring the normalized data by calculating the coefficient of variation (CV) for each gene (g) using the formula CVg=SDg/meang.
-\item We then identify genes with high CVs that should have large differences across the various profiled segments.
-\item This unbiased approach can reveal highly variable genes across the study.
-\item We plot the results using unsupervised hierarchical clustering, displayed as a heatmap.
+heatmap returns a heatmap plot and a list of genes in the plot
 }
+\details{
+Clustering high CV Genes and making a heatmap
+\enumerate{
+\item Exploring the normalized data by calculating the coefficient of variation
+(CV) for each gene (g) using the formula CVg=SDg/meang.
+\item We then identify genes with high CVs that should have large differences
+across the various profiled segments.
+\item This unbiased approach can reveal highly variable genes across the study.
+\item We plot the results using unsupervised hierarchical clustering, displayed
+as a heatmap.
+}
+
+This function will run pheatmap from the GeoMxTools package.
 }

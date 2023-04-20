@@ -1,77 +1,102 @@
+# Data Testing
 test_that("Spatial Deconvolution works for Human Kidney data", {
   
-  kidney_dat <- select_dataset_spat_decon("kidney")
+  kidney.data <- getSpatDeconData("kidney")
   
-  invisible(capture.output(res <- spatialDeconvolution(dsp.obj = kidney_dat$object, 
-                                                        ref.mtx = kidney_dat$ref.mtx,
-                                                        norm.expr.type = kidney_dat$norm.expr.type,
-                                                        ref.annot = kidney_dat$ref.annot)))
+  invisible(capture.output(res <- do.call(spatialDeconvolution, kidney.data)))
   
-  # Make sure that the final output matches expected.elements (names of the compartments of the spatial_deconv list results)
-  expected.elements <- c("dsp_data","figures")
+  expected.elements <- c("dsp.data","figures")
   expect_setequal(names(res), expected.elements)
+  
 })
 
 test_that("Spatial Deconvolution works for Mouse Thymus data", {
   
-  thymus_dat <- select_dataset_spat_decon("thymus")
+  thymus.data <- getSpatDeconData("thymus")
   
-  invisible(capture.output(res <- spatialDeconvolution(dsp.obj = thymus_dat$object, 
-                                                        ref.mtx = thymus_dat$ref.mtx,
-                                                        norm.expr.type = thymus_dat$norm.expr.type,
-                                                        ref.annot = thymus_dat$ref.annot)))
+  invisible(capture.output(res <- do.call(spatialDeconvolution, thymus.data)))
   
-  # Make sure that the final output matches expected.elements (names of the compartments of the spatial_deconv list results)
-  expected.elements <- c("dsp_data","figures")
+  expected.elements <- c("dsp.data","figures")
   expect_setequal(names(res), expected.elements)
 })
 
 test_that("Spatial Deconvolution works for Human Colon data", {
   
-  colon_dat <- select_dataset_spat_decon("colon")
+  colon.data <- getSpatDeconData("colon")
   
-  invisible(capture.output(res <- spatialDeconvolution(dsp.obj = colon_dat$object, 
-                                                        ref.mtx = colon_dat$ref.mtx,
-                                                        norm.expr.type = colon_dat$norm.expr.type,
-                                                        ref.annot = colon_dat$ref.annot)))
+  invisible(capture.output(res <- do.call(spatialDeconvolution, colon.data)))
   
-  # Make sure that the final output matches expected.elements (names of the compartments of the spatial_deconv list results)
-  expected.elements <- c("dsp_data","figures")
+  expected.elements <- c("dsp.data","figures")
   expect_setequal(names(res), expected.elements)
 })
 
 test_that("Spatial Deconvolution works for Human NSCLC", {
   
-  nsclc_dat <- select_dataset_spat_decon("nsclc")
+  nsclc.data <- getSpatDeconData("nsclc")
   
-  invisible(capture.output(res <- spatialDeconvolution(dsp.obj = nsclc_dat$object, 
-                                                        ref.mtx = nsclc_dat$ref.mtx,
-                                                        norm.expr.type = nsclc_dat$norm.expr.type,
-                                                        ref.annot = nsclc_dat$ref.annot)))
+  invisible(capture.output(res <- do.call(spatialDeconvolution, nsclc.data)))
   
-  # Make sure that the final output matches expected.elements (names of the compartments of the spatial_deconv list results)
-  expected.elements <- c("dsp_data","figures")
+  expected.elements <- c("dsp.data","figures")
   expect_setequal(names(res), expected.elements)
 })
 
-test_that("Spatial Deconvolution stops when normalized data slot is not present", {
+test_that("Spatial Deconvolution allows for grouping of samples", {
+            
+            kidney.data <- getSpatDeconData("kidney")
+            
+            res <- spatialDeconvolution(
+              object = kidney.data$object, 
+              ref.mtx = kidney.data$ref.mtx,
+              expr.type = kidney.data$expr.type,
+              ref.annot = kidney.data$ref.annot,
+              cell.id.col = kidney.data$cell.id.col,
+              celltype.col = kidney.data$celltype.col,
+              group.by = "class")
+            
+            expected.elements <- c("dsp.data","figures")
+            expect_setequal(names(res), expected.elements)
+          })
+
+# Error Testing
+test_that("Spatial Deconvolution stops when normalized data slot is 
+          not present", {
   
-  kidney_dat <- select_dataset_spat_decon("kidney")
+  kidney.data <- getSpatDeconData("kidney")
   
-  expect_error(spatialDeconvolution(dsp.obj = kidney_dat$object, 
-                                     ref.mtx = kidney_dat$ref.mtx,
-                                     norm.expr.type = "jibberish",
-                                     ref.annot = kidney_dat$ref.annot), "Normalized data slot not found in the data")
+  expect_error(spatialDeconvolution(object = kidney.data$object, 
+                                     ref.mtx = kidney.data$ref.mtx,
+                                     expr.type = "wrong.expr.slot",
+                                     ref.annot = kidney.data$ref.annot), 
+               "Normalized data slot not found in the data")
 })
 
-test_that("Spatial Deconvolution stops when incorrect reference annotation colnames are selected", {
+test_that("Spatial Deconvolution stops when incorrect reference annotation 
+          colnames are selected", {
   
-  kidney_dat <- select_dataset_spat_decon("kidney")
+  kidney.data <- getSpatDeconData("kidney")
   
-  expect_error(spatialDeconvolution(dsp.obj = kidney_dat$object, 
-                                     ref.mtx = kidney_dat$ref.mtx,
-                                     norm.expr.type = kidney_dat$norm.expr.type,
-                                     ref.annot = kidney_dat$ref.annot,
-                                     cell.id = "jibberish",
-                                     celltype.col = "jibberish1"), "Check that cell.id and celltype.col are properly labeled and present in reference annotation table")
+  expect_error(spatialDeconvolution(
+    object = kidney.data$object, 
+    ref.mtx = kidney.data$ref.mtx,
+    expr.type = kidney.data$expr.type,
+    ref.annot = kidney.data$ref.annot,
+    cell.id.col = "wrong.cell.id",
+    celltype.col = "wrong.celltype"),
+    "Check cell.id.col and celltype.col labels are correct")
 })
+
+test_that("Spatial Deconvolution stops when incorrect grouping parameter 
+          is selected", {
+            
+            kidney.data <- getSpatDeconData("kidney")
+            
+            expect_error(spatialDeconvolution(
+              object = kidney.data$object, 
+              ref.mtx = kidney.data$ref.mtx,
+              expr.type = kidney.data$expr.type,
+              ref.annot = kidney.data$ref.annot,
+              cell.id.col = kidney.data$cell.id.col,
+              celltype.col = kidney.data$celltype.col,
+              group.by = "wrong.group"),
+              "Check that group.by category is present in metadata")
+          })
