@@ -12,7 +12,6 @@ selectDatasetQC <- function(dataset) {
     max.ntc.count = 9000
     min.nuclei = 20
     min.area = 1000
-    min.probe.count = 10
     min.probe.ratio = 0.1
     outlier.test.alpha = 0.01
     percent.fail.grubbs = 20
@@ -31,7 +30,6 @@ selectDatasetQC <- function(dataset) {
     max.ntc.count = 9000
     min.nuclei = 200
     min.area = 16000
-    min.probe.count = 10
     min.probe.ratio = 0.1
     outlier.test.alpha = 0.01
     percent.fail.grubbs = 20
@@ -50,7 +48,6 @@ selectDatasetQC <- function(dataset) {
     max.ntc.count = 1000
     min.nuclei = 1000
     min.area = 16000
-    min.probe.count = 10
     min.probe.ratio = 0.1
     outlier.test.alpha = 0.01
     percent.fail.grubbs = 20
@@ -69,7 +66,6 @@ selectDatasetQC <- function(dataset) {
     max.ntc.count = NULL
     min.nuclei = NULL
     min.area = NULL
-    min.probe.count = 10
     min.probe.ratio = 0.1
     outlier.test.alpha = 0.01
     percent.fail.grubbs = 20
@@ -88,7 +84,6 @@ selectDatasetQC <- function(dataset) {
       "max.ntc.count" = max.ntc.count,
       "min.nuclei" = min.nuclei,
       "min.area" = min.area,
-      "min.probe.count" = min.probe.count,
       "min.probe.ratio" = min.probe.ratio,
       "outlier.test.alpha" = outlier.test.alpha,
       "percent.fail.grubbs" = percent.fail.grubbs,
