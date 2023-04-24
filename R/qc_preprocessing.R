@@ -55,6 +55,7 @@ geomxToolsDefaults <- getAnywhere("DEFAULTS")$objs[[1]]
 #' - QC-filtered *NanoStringGeoMxSet* object with gene-level targets as features
 #'  and the *QCFlags* data.frame appended to *protocolData* ("object")
 #' - QC plots in a list of ggplot objects ("plot")
+#' - Summary tables for segment, probe, and gene filtering ("table")
 
 qcProc <-  function(object,
                    min.segment.reads = 1000,
