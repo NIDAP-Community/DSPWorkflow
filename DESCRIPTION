@@ -1,6 +1,6 @@
 Package: DSPWorkflow
 Title: A Workflow for Analyzing Digital Spatial Profiling RNA Data
-Version: 0.9.2.0
+Version: 0.9.4.0
 Authors@R: c(person("Rui", "He", email = "rui.he@nih.gov", role = "aut"), 
     person("Maggie", "Cam", email = "maggie.cam@nih.gov", role = "aut", comment = c(ORCID = "0000-0001-8190-9766")), 
     person("Ned", "Cauley", email = "ned.cauley@nih.gov", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-8968-6621")), 
@@ -45,7 +45,6 @@ Imports:
     tibble (>= 3.1.8),
     tidyr (>= 1.2.1),
     umap (>= 0.2.9.0),
-    pheatmap (>= 1.0.12),
     magrittr (>= 2.0.3),
     ComplexHeatmap (>= 2.10.0)
 Config/testthat/edition: 3

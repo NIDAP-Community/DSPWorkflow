@@ -31,6 +31,7 @@
 #' @importFrom SpatialDecon spatialdecon
 #' @importFrom SpatialDecon create_profile_matrix
 #' @importFrom reshape2 melt
+#' @importFrom ComplexHeatmap pheatmap
 #'
 #' @export
 #' @example Do not run: spatialDeconvolution(object = NanostringGeomx,
