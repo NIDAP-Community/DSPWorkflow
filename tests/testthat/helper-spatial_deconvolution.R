@@ -10,6 +10,7 @@ getSpatDeconData <- function(dataset) {
                        row.names=1, check.names=FALSE)
     rownames(ref.mtx) = sample(rownames(object), size = 1500, replace = FALSE)
     ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
+    ref.annot = ref.annot[match(colnames(ref.mtx), ref.annot$CellID),]
     cell.id.col = "CellID"
     celltype.col = "LabeledCellType"
     
@@ -23,6 +24,7 @@ getSpatDeconData <- function(dataset) {
                        row.names=1, check.names=FALSE)
     rownames(ref.mtx) = sample(rownames(object), size = 1500, replace = FALSE)
     ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
+    ref.annot = ref.annot[match(colnames(ref.mtx), ref.annot$CellID),]
     cell.id.col = "CellID"
     celltype.col = "LabeledCellType"
     
@@ -36,6 +38,7 @@ getSpatDeconData <- function(dataset) {
                        row.names=1, check.names=FALSE)
     rownames(ref.mtx) = sample(rownames(object), size = 1500, replace = FALSE)
     ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
+    ref.annot = ref.annot[match(colnames(ref.mtx), ref.annot$CellID),]
     cell.id.col = "CellID"
     celltype.col = "LabeledCellType"
     
@@ -49,6 +52,7 @@ getSpatDeconData <- function(dataset) {
                        row.names=1, check.names=FALSE)
     rownames(ref.mtx) = sample(rownames(object), size = 1500, replace = FALSE)
     ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
+    ref.annot = ref.annot[match(colnames(ref.mtx), ref.annot$CellID),]
     cell.id.col = "CellID"
     celltype.col = "LabeledCellType"
 
