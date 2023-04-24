@@ -52,11 +52,11 @@
 #'
 #' @importFrom NanoStringNCTools assayDataApply
 #' @importFrom Biobase assayDataElement
-#' @importFrom pheatmap pheatmap
+#' @importFrom ComplexHeatmap pheatmap
 #'
 #' @export
 #'
-#' @return A list containing the plot genes data matrix, and the heatmap plot.
+#' @return A list containing the plot genes data matrix, and the heatmap plot
 ##
 heatMap <- function(
   object,

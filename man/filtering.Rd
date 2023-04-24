@@ -4,7 +4,7 @@
 \alias{filtering}
 \title{Filtering NanoStringGeoMxSet dataset}
 \usage{
-filtering(object, pkc.file, loq.cutoff, loq.min, cut.segment, goi)
+filtering(object, loq.cutoff, loq.min, cut.segment, goi)
 }
 \arguments{
 \item{object}{A NanoStringGeoMxSet dataset}

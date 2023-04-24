@@ -11,11 +11,10 @@ qcProc(
   percent.stitched = 80,
   percent.aligned = 80,
   percent.saturation = 50,
-  min.negative.count = 10,
-  max.ntc.count = 60,
   min.nuclei = 200,
   min.area = 16000,
-  min.probe.count = 10,
+  min.negative.count = 10,
+  max.ntc.count = 60,
   min.probe.ratio = 0.1,
   outlier.test.alpha = 0.01,
   percent.fail.grubbs = 20,
@@ -38,13 +37,13 @@ supplied}
 
 \item{percent.saturation}{minimum sequencing saturation}
 
-\item{min.negative.count}{minimum negative control counts}
-
-\item{max.ntc.count}{maximum counts observed in NTC well}
-
 \item{min.nuclei}{minimum # of nuclei estimated}
 
 \item{min.area}{minimum segment area}
+
+\item{min.negative.count}{minimum negative control counts}
+
+\item{max.ntc.count}{maximum counts observed in NTC well}
 
 \item{min.probe.ratio}{numeric between 0 and 1 to flag probes that have
 (geomean probe in all segments) / (geomean probes within target) less than or
@@ -59,11 +58,11 @@ greater than or equal this percent of segments}
 \item{remove.local.outliers}{boolean to determine if local outliers should be
 excluded from exprs matrix}
 
+\item{shift.counts.zero}{boolean to shift 0 counts (if TRUE shift 0s by 1,
+otherwise shift all counts by 1)}
+
 \item{print.plots}{boolean to display plots or set to FALSE otherwise; ggplot
 objects are returned in either case}
-
-\item{shift.count.zero}{boolean to shift 0 counts (if TRUE shift 0s by 1,
-otherwise shift all counts by 1)}
 }
 \value{
 A list of two objects:

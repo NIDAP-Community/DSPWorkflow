@@ -18,6 +18,7 @@
 #' @param celltype.col Column of data.frame containing celltype info
 #' @param matrix.name Name given to deconvolution signature matrix
 #' @param normalize Scale profile matrix gene expression according to gene count
+#' @param group.by Organize heatmap / barplot columns by metadata group
 #' @param out.directory Path to desired output directory, set to NULL if matrix
 #'                      should not be written
 #' @param min.cell.num Prevent deconvolution of celltype(s) if number of
@@ -25,10 +26,10 @@
 #' @param min.genes Filter cells based on minimum number of genes expressed
 #' @param discard.celltype Remove any celltype(s) that is not of interest
 #'
-#' @import SpatialDecon
-#' @import GeomxTools
-#' @import stats
-#' @import pheatmap
+#' @importFrom NanoStringNCTools negativeControlSubset
+#' @importFrom SpatialDecon derive_GeoMx_background
+#' @importFrom SpatialDecon spatialdecon
+#' @importFrom SpatialDecon create_profile_matrix
 #' @importFrom reshape2 melt
 #'
 #' @export
