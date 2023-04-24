@@ -50,6 +50,7 @@
 #' @importFrom BiocGenerics rownames colnames rbind
 #' @importFrom magrittr %>%
 #' @importFrom Biobase pData assayDataElement
+#' @importFrom parallel detectCores
 #' @export
 #'
 #' @return a list containing mixed model output data frame, grid tables for
@@ -70,6 +71,19 @@ diffExpr <- function(object,
                      fc.lim = 1.2,
                      pval.lim.1 = 0.05,
                      pval.lim.2 = 0.01) {
+  
+  # Check the number of cores available for the current machine
+  available.cores <- detectCores()
+  
+  if (n.cores > available.cores) {
+    print(paste0("The number of cores selected is greater than the number of available cores, reducing number of cores to maximum of ", available.cores))
+    n.cores <- available.cores
+  }
+  
+  # Adjust the number of cores selected within the machine's range
+  
+
+  
   
   testClass <- testRegion <- Gene <- Subset <- NULL
   

@@ -30,7 +30,7 @@
 #' @importFrom SpatialDecon derive_GeoMx_background
 #' @importFrom SpatialDecon spatialdecon
 #' @importFrom SpatialDecon create_profile_matrix
-#' @importFrom pheatmap pheatmap
+#' @importFrom ComplexHeatmap pheatmap
 #' @importFrom reshape2 melt
 #'
 #' @export

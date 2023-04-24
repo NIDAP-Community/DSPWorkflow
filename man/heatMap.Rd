@@ -70,7 +70,7 @@ values in mat (Deafult: seq(-3, 3, 0.05), provides 120 colors)}
 c("blue", "white", "red"))(120))}
 }
 \value{
-A list containing the plot genes data matrix, and the heatmap plot.
+A list containing the plot genes data matrix, and the heatmap plot
 }
 \description{
 heatmap returns a heatmap plot and a list of genes in the plot

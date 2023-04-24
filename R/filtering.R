@@ -22,7 +22,7 @@
 # loq.cutoff 2 is recommended, loq.min 2 is recommend, 
 # cut.segment = remove segments with less than 10% of the genes detected; .05-.1 recommended,
 # goi = goi (genes of interest). Must be a vector of genes (i.e c("PDCD1", "CD274")),
-filtering <- function(object, pkc.file, loq.cutoff, loq.min, cut.segment, goi) {
+filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
   
   if(class(object)[1] != "NanoStringGeoMxSet"){
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
@@ -41,7 +41,8 @@ filtering <- function(object, pkc.file, loq.cutoff, loq.min, cut.segment, goi) {
     stop(paste0("Error: You have the wrong data class, must be numeric" ))
   }
   # Define Modules
-  pkc.file <- pkc.file
+  #pkc.file <- pkc.file
+  pkc.file <- annotation(object)
   if(class(pkc.file)[1] != "character"){
     stop(paste0("Error: You have the wrong data class, must be character" ))
   }
@@ -65,22 +66,22 @@ filtering <- function(object, pkc.file, loq.cutoff, loq.min, cut.segment, goi) {
   pData(object)$loq <- loq
   
   ## 4.5.0 Filtering
-  loq_mat <- c()
+  loq.mat <- c()
   for(module in modules) {
     ind <- fData(object)$Module == module
-    mat_i <- t(esApply(object[ind, ], MARGIN = 1,
+    mat.i <- t(esApply(object[ind, ], MARGIN = 1,
                        FUN = function(x) {
                          x > loq[, module]
                        }))
-    loq_mat <- rbind(loq_mat, mat_i)
+    loq.mat <- rbind(loq.mat, mat.i)
   }
   # ensure ordering since this is stored outside of the geomxSet
-  loq_mat <- loq_mat[fData(object)$TargetName, ]
+  loq.mat <- loq.mat[fData(object)$TargetName, ]
   
   ##4.5.1S egment Gene Detection
   # Save detection rate information to pheno data
   pData(object)$GenesDetected <- 
-    colSums(loq_mat, na.rm = TRUE)
+    colSums(loq.mat, na.rm = TRUE)
   pData(object)$GeneDetectionRate <-
     pData(object)$GenesDetected / nrow(object)
   
@@ -114,17 +115,17 @@ filtering <- function(object, pkc.file, loq.cutoff, loq.min, cut.segment, goi) {
   
   # select the annotations we want to show, use `` to surround column names with
   # spaces or special symbols
-  count_mat <- count(pData(object), `slide name`, class, region, segment)
+  count.mat <- count(pData(object), `slide name`, class, region, segment)
   if(class(object)[1] != "NanoStringGeoMxSet"){
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
   }
   # simplify the slide names
-  count_mat$`slide name` <- gsub("disease", "d", gsub("normal", "n", count_mat$`slide name`))
+  count.mat$`slide name` <- gsub("disease", "d", gsub("normal", "n", count.mat$`slide name`))
   # gather the data and plot in order: class, slide name, region, segment
-  test_gr <- gather_set_data(count_mat, 1:4)
-  test_gr$x <-factor(test_gr$x, levels = c("class", "slide name", "region", "segment"))
+  test.gr <- gather_set_data(count.mat, 1:4)
+  test.gr$x <-factor(test.gr$x, levels = c("class", "slide name", "region", "segment"))
   # plot Sankey
-  sankey.plot<- ggplot(test_gr, aes(x, id = id, split = y, value = n)) +
+  sankey.plot<- ggplot(test.gr, aes(x, id = id, split = y, value = n)) +
     geom_parallel_sets(aes(fill = region), alpha = 0.5, axis.width = 0.1) +
     geom_parallel_sets_axes(axis.width = 0.2) +
     geom_parallel_sets_labels(color = "white", size = 5) +
@@ -143,8 +144,8 @@ filtering <- function(object, pkc.file, loq.cutoff, loq.min, cut.segment, goi) {
   
   ##4.5.2 Gene Detection Rate
   # Calculate detection rate:
-  loq_mat <- loq_mat[, colnames(object)]
-  fData(object)$DetectedSegments <- rowSums(loq_mat, na.rm = TRUE)
+  loq.mat <- loq.mat[, colnames(object)]
+  fData(object)$DetectedSegments <- rowSums(loq.mat, na.rm = TRUE)
   fData(object)$DetectionRate <-
     fData(object)$DetectedSegments / nrow(pData(object))
   
@@ -153,20 +154,20 @@ filtering <- function(object, pkc.file, loq.cutoff, loq.min, cut.segment, goi) {
   if(class(goi)[1] != "character"){
     stop(paste0("Error: You have the wrong data class, must be character vector" ))
   }
-  goi_df <- data.frame(Gene = goi,
+  goi.df <- data.frame(Gene = goi,
                        Number = fData(object)[goi, "DetectedSegments"],
                        DetectionRate = percent(fData(object)[goi, "DetectionRate"]))
   
   ## 4.5.3 Gene Filtering
   # Plot detection rate:
-  plot_detect <- data.frame(Freq = c(1, 5, 10, 20, 30, 50))
-  plot_detect$Number <-
+  plot.detect <- data.frame(Freq = c(1, 5, 10, 20, 30, 50))
+  plot.detect$Number <-
     unlist(lapply(c(0.01, 0.05, 0.1, 0.2, 0.3, 0.5),
                   function(x) {sum(fData(object)$DetectionRate >= x)}))
-  plot_detect$Rate <- plot_detect$Number / nrow(fData(object))
-  rownames(plot_detect) <- plot_detect$Freq
+  plot.detect$Rate <- plot.detect$Number / nrow(fData(object))
+  rownames(plot.detect) <- plot.detect$Freq
   
-  genes.detected.plot <- ggplot(plot_detect, aes(x = as.factor(Freq), y = Rate, fill = Rate)) +
+  genes.detected.plot <- ggplot(plot.detect, aes(x = as.factor(Freq), y = Rate, fill = Rate)) +
     geom_bar(stat = "identity") +
     geom_text(aes(label = formatC(Number, format = "d", big.mark = ",")),
               vjust = 1.6, color = "black", size = 4) +
@@ -182,10 +183,10 @@ filtering <- function(object, pkc.file, loq.cutoff, loq.min, cut.segment, goi) {
   
   # Subset to target genes detected in at least 10% of the samples.
   #   Also manually include the negative control probe, for downstream use
-  negativeProbefData <- subset(fData(object), CodeClass == "Negative")
-  neg_probes <- unique(negativeProbefData$TargetName)
+  negative.probe.fData <- subset(fData(object), CodeClass == "Negative")
+  neg.probes <- unique(negative.probe.fData$TargetName)
   object <- object[fData(object)$DetectionRate >= 0.1 |
-                     fData(object)$TargetName %in% neg_probes, ]
+                     fData(object)$TargetName %in% neg.probes, ]
   
   # retain only detected genes of interest
   goi <- goi[goi %in% rownames(object)]
