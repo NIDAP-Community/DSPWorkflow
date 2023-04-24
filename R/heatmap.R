@@ -95,14 +95,12 @@ heatMap <- function(
                    base = 2,
                    elt = elt.value)
   
-  ## MC: for cv function, use .calcCV - "." means it is a private function and use lowerCamelCase ====
-  
   # create CV function
-  calc.cv <- function(x) {
+  .calcCv <- function(x) {
     sd(x) / mean(x)
   }
   cv.dat <- assayDataApply(object,
-                           elt = "log_q", MARGIN = 1, calc.cv)
+                           elt = "log_q", MARGIN = 1, .calcCv)
   # show the highest CD genes and their CV values
   sort(cv.dat, decreasing = TRUE)[1:5]
   
