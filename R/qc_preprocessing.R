@@ -22,10 +22,10 @@ geomxToolsDefaults <- getAnywhere("DEFAULTS")$objs[[1]]
 #' @param percent.stitched minimum % of reads stitched
 #' @param percent.aligned minimum % of reads aligned
 #' @param percent.saturation minimum sequencing saturation
-#' @param min.negative.count minimum negative control counts
-#' @param max.ntc.count maximum counts observed in NTC well
 #' @param min.nuclei minimum # of nuclei estimated
 #' @param min.area minimum segment area
+#' @param min.negative.count minimum negative control counts
+#' @param max.ntc.count maximum counts observed in NTC well
 #' @param min.probe.ratio numeric between 0 and 1 to flag probes that have
 #' (geomean probe in all segments) / (geomean probes within target) less than or
 #'  equal to this ratio
@@ -35,7 +35,7 @@ geomxToolsDefaults <- getAnywhere("DEFAULTS")$objs[[1]]
 #' greater than or equal this percent of segments
 #' @param remove.local.outliers boolean to determine if local outliers should be
 #' excluded from exprs matrix
-#' @param shift.count.zero boolean to shift 0 counts (if TRUE shift 0s by 1,
+#' @param shift.counts.zero boolean to shift 0 counts (if TRUE shift 0s by 1,
 #' otherwise shift all counts by 1)
 #' @param print.plots boolean to display plots or set to FALSE otherwise; ggplot
 #' objects are returned in either case
@@ -49,11 +49,13 @@ geomxToolsDefaults <- getAnywhere("DEFAULTS")$objs[[1]]
 #' @importFrom knitr kable
 #' @importFrom NanoStringNCTools esBy negativeControlSubset assayDataApply sData
 #' @importFrom patchwork plot_layout plot_annotation patchworkGrob wrap_plots
+#' @importFrom stats as.formula
 #' @export
 #' @return A list of two objects:
 #' - QC-filtered *NanoStringGeoMxSet* object with gene-level targets as features
 #'  and the *QCFlags* data.frame appended to *protocolData* ("object")
 #' - QC plots in a list of ggplot objects ("plot")
+#' - Summary tables for segment, probe, and gene filtering ("table")
 
 qcProc <-  function(object,
                    min.segment.reads = 1000,
@@ -61,11 +63,10 @@ qcProc <-  function(object,
                    percent.stitched = 80,
                    percent.aligned = 80,
                    percent.saturation = 50,
-                   min.negative.count = 10,
-                   max.ntc.count = 60,
                    min.nuclei = 200,
                    min.area = 16000,
-                   min.probe.count = 10,
+                   min.negative.count = 10,
+                   max.ntc.count = 60,
                    min.probe.ratio = 0.1,
                    outlier.test.alpha = 0.01,
                    percent.fail.grubbs = 20,
@@ -91,7 +92,7 @@ qcProc <-  function(object,
                  color = "black") +
       theme_bw() + guides(fill = "none") +
       facet_wrap(as.formula(paste("~", fill.by)), nrow = 4) +
-      labs(x = sub(" |_", "\n", tolower(annotation)), y = NULL) +
+      labs(x = sub(" |_", "\n", tolower(annotation)), y = "Segments, #") +
       theme(axis.text.x = element_text(
         angle = 60,
         vjust = 1,
@@ -288,19 +289,23 @@ qcProc <-  function(object,
     )
   }
   ## detach neg_geomean columns ahead of aggregateCounts call
+  tables <- list()
   pData(object) <-
     pData(object)[, !colnames(pData(object)) %in% neg.cols]
   # Summarize & Remove Segments ####
   ## summarize NTC values (Frequency of Segments with a given NTC count)
   if (!is.null(qc.params$maxNTCCount)) {
-    print(kable(
-      table(NTC_Count = sData(object)$NTC),
-      col.names = c("NTC Count", "# of Segments"),
-      caption = "Summary for the NTC values"
-    ))
+    tab = table(NTC_Count = sData(object)$NTC)
+    print(kable(tab, col.names = c("NTC Count", "# of Segments"),
+          caption = "Summary for the NTC values"))
+    tab = as.data.frame(tab)
+    colnames(tab) = c("NTC_Count", "# Segments")
+    tables$NTC_Count = tab 
   }
   ## summarize Segment QC call (Pass/Warning per QC parameter)
   print(kable(seg.qc.summary, caption = "QC Summary for each Segment"))
+  tables$QC_Segment = seg.qc.summary %>%
+    rownames_to_column("Parameter")
   ## object size before segment removal
   size.before <- dim(object)
   ## remove flagged segments
@@ -308,11 +313,13 @@ qcProc <-  function(object,
   ## object size after segment removal
   size.after <- dim(object)
   ## print object size before and after segment removal
-  print(kable(
-    data.frame(size.before, size.after),
+  tab <- data.frame(size.before, size.after)
+  print(kable(tab,
     col.names = c("# Before Removal", "# After Removal"),
     caption = "Summary for Segment QC Removal"
   ))
+  tables$Segment_QC_Removal <- tab %>% rownames_to_column("element")
+  
   # Probe QC ####
   ## Generally keep the qcCutoffs parameters unchanged
   object <-
@@ -345,25 +352,38 @@ qcProc <-  function(object,
   ## summarize Probe QC removal
   print(kable(probe.qc.df,
               caption = "Summary for Probe QC Calls (Grubb's Outlier Test)"))
+  tables$Probe_QC_Calls <- probe.qc.df
   size.before <- size.after
   size.after <- dim(object)
+  tab <- data.frame(size.before, size.after)
+  colnames(tab) <- 
+    c("# Probes Before Collapsing", "# Probes After Collapsing")
   print(kable(
-    data.frame(size.before, size.after),
-    col.names = c("# Before Removal", "# After Removal"),
+    tab,
+    col.names = c("# Before Collapsing", "# After Collapsing"),
     caption = "Summary for Probe QC Removal"
   ))
+  tables$Probe_QC_Removals <- tab
   # Gene-level Counts ####
   ## collapse targets
   object <- aggregateCounts(object)
   ## summarize target collapsing
   size.before <- size.after
   size.after <- dim(object)
+  tab <- data.frame(size.before, size.after)
+  colnames(tab) <- 
+    c("# Genes Before Collapsing", "# Genes After Collapsing")
   print(kable(
-    data.frame(size.before, size.after),
+    tab,
     col.names = c("# Before Collapsing", "# After Collapsing"),
     caption = "Summary for Gene-level Counts"
   ))
+  tables$Gene_level_Counts <- tab
   # Return ####
-  output <- list("object" = object, "plot" = plot.list)
+  output <- list(
+    "object" = object,
+    "plot" = plot.list,
+    "table" = tables
+    )
   invisible(output)
 }

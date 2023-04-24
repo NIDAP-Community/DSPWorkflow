@@ -33,32 +33,31 @@
 
 
 # To call function, must have object = object; norm = c(quant or neg)
-geomxnorm <- function(object, norm) {
+geomxNorm <- function(object, norm) {
   
   if(class(object)[1] != "NanoStringGeoMxSet"){
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
   }
   
   # run reductions ====
-  color.variable <-
-    Value <- Statistic <- NegProbe <- Q3 <- Annotation <- NULL
+  color.variable <- Value <- Statistic <- NegProbe <- Q3 <- Annotation <- NULL
   
   # Start Function
   neg.probes<- "NegProbe-WTX"
   ann.of.interest <- "region"
   
-  Stat.data <- base::data.frame(row.names = colnames(exprs(object)),
+  stat.data <- base::data.frame(row.names = colnames(exprs(object)),
                                 Segment = colnames(exprs(object)),
                                 Annotation = Biobase::pData(object)[, ann.of.interest],
                                 Q3 = unlist(apply(exprs(object), 2,
                                                   quantile, 0.75, na.rm = TRUE)),
                                 NegProbe = exprs(object)[neg.probes, ])
   
-  Stat.data.m <- melt(Stat.data, measures.vars = c("Q3", "NegProbe"),
+  stat.data.m <- melt(stat.data, measures.vars = c("Q3", "NegProbe"),
                       variable.name = "Statistic", value.name = "Value")
   
   
-  plt1 <- ggplot(Stat.data.m,
+  plt1 <- ggplot(stat.data.m,
                  aes(x = Value, fill = Statistic)) +
     geom_histogram(bins = 40) + theme_bw() +
     scale_x_continuous(trans = "log2") +
@@ -66,7 +65,7 @@ geomxnorm <- function(object, norm) {
     scale_fill_brewer(palette = 3, type = "qual") +
     labs(x = "Counts", y = "Segments, #")
   
-  plt2 <- ggplot(Stat.data,
+  plt2 <- ggplot(stat.data,
                  aes(x = NegProbe, y = Q3, color = Annotation)) +
     geom_abline(intercept = 0, slope = 1, lty = "dashed", color = "darkgray") +
     geom_point() + guides(color = "none") + theme_bw() +
@@ -75,7 +74,7 @@ geomxnorm <- function(object, norm) {
     theme(aspect.ratio = 1) +
     labs(x = "Negative Probe GeoMean, Counts", y = "Q3 Value, Counts")
   
-  plt3 <- ggplot(Stat.data,
+  plt3 <- ggplot(stat.data,
                  aes(x = NegProbe, y = Q3 / NegProbe, color = Annotation)) +
     geom_hline(yintercept = 1, lty = "dashed", color = "darkgray") +
     geom_point() + theme_bw() +

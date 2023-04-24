@@ -46,7 +46,7 @@
 #' @importFrom grid grid.newpage textGrob gpar grobHeight grid.draw
 #' @importFrom gtable gtable_add_rows gtable_add_grob
 #' @importFrom tibble rownames_to_column
-#' @importFrom gridExtra tableGrob
+#' @importFrom gridExtra tableGrob ttheme_default
 #' @importFrom BiocGenerics rownames colnames rbind
 #' @importFrom magrittr %>%
 #' @importFrom Biobase pData assayDataElement
