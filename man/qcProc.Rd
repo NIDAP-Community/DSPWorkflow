@@ -70,6 +70,7 @@ A list of two objects:
 \item QC-filtered \emph{NanoStringGeoMxSet} object with gene-level targets as features
 and the \emph{QCFlags} data.frame appended to \emph{protocolData} ("object")
 \item QC plots in a list of ggplot objects ("plot")
+\item Summary tables for segment, probe, and gene filtering ("table")
 }
 }
 \description{

@@ -108,8 +108,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
   
     goi <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
-    filtering.output <- filtering(object = qc.output$object, 
-                            pkc.file = annotation(qc.output$object), 
+    filtering.output <- filtering(object = qc.output$object,
                             loq.cutoff = 2, 
                             loq.min = 2, 
                             cut.segment = .1, 
