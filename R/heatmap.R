@@ -53,6 +53,7 @@
 #' @importFrom NanoStringNCTools assayDataApply
 #' @importFrom Biobase assayDataElement
 #' @importFrom ComplexHeatmap pheatmap
+#' @importFrom tibble rownames_to_column
 #'
 #' @export
 #'
@@ -140,7 +141,8 @@ heatMap <- function(
   gene.df <- as.data.frame(plot.genes)
   
   ## add genename column to the output matrix
-  plot.genes <- gene.df %>% rownames_to_column("gene")
+  #plot.genes <- gene.df %>% rownames_to_column("gene")
+  plot.genes <- tibble::rownames_to_column(gene.df, "row_names")
   
   ## stores ggplot figure and plot.genes in a list
   dsp.results <- list("plot.genes" = plot.genes, "plot" = p)
