@@ -132,7 +132,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
   
 ```{r Normalization, echo=FALSE}
   
-    normalization.output <- geomxnorm(
+    normalization.output <- geomxNorm(
                                   object = filtering.output$object, 
                                   norm = "quant")
     
