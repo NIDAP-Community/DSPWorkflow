@@ -298,7 +298,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
     ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
                        row.names=1, check.names=FALSE)
-    rownames(ref.mtx) = sample(rownames(object), size = 1500, replace = FALSE)
+    rownames(ref.mtx) = sample(rownames(normalization.output$object), size = 1500, replace = FALSE)
     ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
     
     spatial.output <- spatialDeconvolution(object = normalization.output$object, 
