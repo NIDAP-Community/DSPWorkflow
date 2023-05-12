@@ -58,28 +58,50 @@ violinPlot <- function(object,
   
   # Segment violin plot by group membership and incorporate jitter
   .drawViolin <- function(gene) {
-    violin <-
-      ggplot(pData(object),
-             aes(
-               x = eval(parse(text = group)),
-               fill = eval(parse(text = group)),
-               y = assayDataElement(object[gene,],
-                                    elt = expr.type)
-             )) +
-      geom_violin() +
-      geom_jitter(width = .2) +
-      labs(y = paste(gene, "Expression", sep = " ")) +
-      scale_y_continuous(trans = "log2") +
-      theme_bw() +
-      theme(
-        axis.text.x = element_text(angle = 90, hjust = 1),
-        legend.title = element_blank(),
-        axis.title.x = element_blank()
-      )
+    
+    if(!is.null(facet.by)){
+      violin <-
+        ggplot(pData(object),
+               aes(
+                 x = eval(parse(text = group)),
+                 fill = eval(parse(text = group)),
+                 y = assayDataElement(object[gene,],
+                                      elt = expr.type)
+               )) +
+        geom_violin() +
+        geom_point(position = position_jitter(seed = 42)) +
+        facet_wrap(~eval(parse(text=facet.by))) +
+        labs(y = paste(gene, "Expression", sep = " ")) +
+        scale_y_continuous(trans = "log2") +
+        theme_bw() +
+        theme(
+          axis.text.x = element_text(angle = 90, hjust = 1),
+          legend.title = element_blank(),
+          axis.title.x = element_blank()
+      )} else {
+        violin <-
+          ggplot(pData(object),
+                 aes(
+                   x = eval(parse(text = group)),
+                   fill = eval(parse(text = group)),
+                   y = assayDataElement(object[gene,],
+                                        elt = expr.type)
+                 )) +
+          geom_violin() +
+          geom_point(position = position_jitter(seed = 42)) +
+          labs(y = paste(gene, "Expression", sep = " ")) +
+          scale_y_continuous(trans = "log2") +
+          theme_bw() +
+          theme(
+            axis.text.x = element_text(angle = 90, hjust = 1),
+            legend.title = element_blank(),
+            axis.title.x = element_blank())
+      }
     
     return(violin)
   }
   
+  # Compile all individual violin plots into one main figure
   violin <- lapply(genes.present, function (x)
     .drawViolin(x))
   
