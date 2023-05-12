@@ -285,8 +285,6 @@ diffExpr <- function(object,
   results[[fdr.colname]] <-
     as.numeric(format(results[[fdr.colname]], digits = 3, scientific=TRUE))
   
-  print(head(results))
-  
   #Run Summary Lists:
   .getGeneLists <- function(groups, FClimit, pvallimit, pval) {
     upreggenes <- list()
