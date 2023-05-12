@@ -108,8 +108,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
   
     goi <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
-    filtering.output <- filtering(object = qc.output$object, 
-                            pkc.file = annotation(qc.output$object), 
+    filtering.output <- filtering(object = qc.output$object,
                             loq.cutoff = 2, 
                             loq.min = 2, 
                             cut.segment = .1, 
@@ -133,14 +132,14 @@ qc.output <-  qcProc(object = sdesign.list$object,
   
 ```{r Normalization, echo=FALSE}
   
-    normalization.output <- geomxnorm(
+    normalization.output <- geomxNorm(
                                   object = filtering.output$object, 
                                   norm = "quant")
     
     print(normalization.output$multi.plot)
     print(normalization.output$boxplot)
     
-    create.rds <- TRUE
+    create.rds <- FALSE
     if(create.rds) {
       normalization.human.kidney <- normalization.output$object
       saveRDS(normalization.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/normalizationHumanKidney.RDS")
@@ -293,10 +292,13 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ## 10. Spatial Deconvolution:
 
 ```{r Spatial Deconvolution, echo=FALSE}
+
     
+
+
     ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
                        row.names=1, check.names=FALSE)
-    rownames(ref.mtx) = sample(rownames(object), size = 1500, replace = FALSE)
+    rownames(ref.mtx) = sample(rownames(normalization.output$object), size = 1500, replace = FALSE)
     ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
     
     spatial.output <- spatialDeconvolution(object = normalization.output$object, 

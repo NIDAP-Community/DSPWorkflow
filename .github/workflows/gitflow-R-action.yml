@@ -13,5 +13,5 @@ jobs:
   Activating_Parser:
     uses: fnlcr-bids-sdsi/gitflow-R/.github/workflows/parser.yml@DSPWorkflow
     with:
-      image_to_use: ghcr.io/nidap-community/dsp_github_workflow_env:r_env_v1.0
+      image_to_use: ghcr.io/nidap-community/dsp_github_workflow_env:DSPv0.9.5
 

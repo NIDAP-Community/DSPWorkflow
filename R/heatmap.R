@@ -52,11 +52,12 @@
 #'
 #' @importFrom NanoStringNCTools assayDataApply
 #' @importFrom Biobase assayDataElement
-#' @importFrom pheatmap pheatmap
+#' @importFrom ComplexHeatmap pheatmap
+#' @importFrom tibble rownames_to_column
 #'
 #' @export
 #'
-#' @return A list containing the plot genes data matrix, and the heatmap plot.
+#' @return A list containing the plot genes data matrix, and the heatmap plot
 ##
 heatMap <- function(
   object,
@@ -95,14 +96,12 @@ heatMap <- function(
                    base = 2,
                    elt = elt.value)
   
-  ## MC: for cv function, use .calcCV - "." means it is a private function and use lowerCamelCase ====
-  
   # create CV function
-  calc.cv <- function(x) {
+  .calcCv <- function(x) {
     sd(x) / mean(x)
   }
   cv.dat <- assayDataApply(object,
-                           elt = "log_q", MARGIN = 1, calc.cv)
+                           elt = "log_q", MARGIN = 1, .calcCv)
   # show the highest CD genes and their CV values
   sort(cv.dat, decreasing = TRUE)[1:5]
   
@@ -142,7 +141,8 @@ heatMap <- function(
   gene.df <- as.data.frame(plot.genes)
   
   ## add genename column to the output matrix
-  plot.genes <- gene.df %>% rownames_to_column("gene")
+  #plot.genes <- gene.df %>% rownames_to_column("gene")
+  plot.genes <- tibble::rownames_to_column(gene.df, "row_names")
   
   ## stores ggplot figure and plot.genes in a list
   dsp.results <- list("plot.genes" = plot.genes, "plot" = p)

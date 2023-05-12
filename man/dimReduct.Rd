@@ -64,7 +64,8 @@ these two variables.
 \examples{
 \dontrun{
 # Default plots
-output <- dimReduct(object = object, color.variable1="region")
+output <- dimReduct(object = object, color.variable1="region", 
+print.plots=TRUE)
 # Plot tSNE
 output <- dimReduct(object = object, color.variable1="region",
 print.plots = FALSE)
@@ -76,10 +77,6 @@ color.variable2="class")
 }
 }
 \seealso{
-\link[stats:prcomp]{prcomp} \link[Rtsne:Rtsne]{Rtsne} \link[umap:umap]{umap}
-
-\code{\link[stats]{prcomp}} \link[Rtsne]{Rtsne}
-
 \code{\link{stats::prcomp}} \code{\link{Rtsne::Rtsne}}
 \code{\link{umap::umap}}
 }
