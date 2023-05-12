@@ -81,7 +81,7 @@ diffExpr <- function(object,
   }
   
   # Adjust the number of cores selected within the machine's range
-
+  
   testClass <- testRegion <- Gene <- Subset <- NULL
   
   # convert test variables to factors after checking input
