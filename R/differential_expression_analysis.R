@@ -46,10 +46,11 @@
 #' @importFrom grid grid.newpage textGrob gpar grobHeight grid.draw
 #' @importFrom gtable gtable_add_rows gtable_add_grob
 #' @importFrom tibble rownames_to_column
-#' @importFrom gridExtra tableGrob
+#' @importFrom gridExtra tableGrob ttheme_default
 #' @importFrom BiocGenerics rownames colnames rbind
 #' @importFrom magrittr %>%
 #' @importFrom Biobase pData assayDataElement
+#' @importFrom parallel detectCores
 #' @export
 #'
 #' @return a list containing mixed model output data frame, grid tables for
@@ -70,6 +71,16 @@ diffExpr <- function(object,
                      fc.lim = 1.2,
                      pval.lim.1 = 0.05,
                      pval.lim.2 = 0.01) {
+  
+  # Check the number of cores available for the current machine
+  available.cores <- detectCores()
+  
+  if (n.cores > available.cores) {
+    print(paste0("The number of cores selected is greater than the number of available cores, reducing number of cores to maximum of ", available.cores))
+    n.cores <- available.cores
+  }
+  
+  # Adjust the number of cores selected within the machine's range
   
   testClass <- testRegion <- Gene <- Subset <- NULL
   
@@ -112,13 +123,9 @@ diffExpr <- function(object,
         setdiff(unique(Biobase::pData(object)[[region.col]]),
                 unique(levels(Biobase::pData(object)$testRegion)))
       regdiff <- paste0(regdiff, collapse = ", ")
-      message(
-        paste0(
-          "At least one of the regions within the Region Column was not selected
-            and is excluded:\n",
-          regdiff,
-          "\n"
-        )
+      cat(sprintf(
+        "At least one of the regions within the Region Column was not selected
+            and is excluded: %s \n", regdiff)
       )
     }
     else if (param.na[1] == "testClass") {
@@ -126,12 +133,9 @@ diffExpr <- function(object,
         setdiff(unique(Biobase::pData(object)[[group.col]]),
                 unique(levels(Biobase::pData(object)$testClass)))
       classdiff <- paste0(classdiff, collapse = ", ")
-      message(
+      cat(sprintf(
         "At least one of the groups within the Group Column was not selected and
-          is excluded:\n",
-        classdiff,
-        "\n"
-      )
+          is excluded: %s \n", classdiff))
     }
   }
   
@@ -278,9 +282,11 @@ diffExpr <- function(object,
   results[[logFC.colname]] <-
     as.numeric(format(results[[logFC.colname]], digits = 3))
   results[[pval.colname]] <-
-    as.numeric(format(results[[pval.colname]], digits = 3))
+    as.numeric(format(results[[pval.colname]], digits = 3, scientific=TRUE))
   results[[fdr.colname]] <-
-    as.numeric(format(results[[fdr.colname]], digits = 3))
+    as.numeric(format(results[[fdr.colname]], digits = 3, scientific=TRUE))
+  
+  print(head(results))
   
   #Run Summary Lists:
   .getGeneLists <- function(groups, FClimit, pvallimit, pval) {
