@@ -81,10 +81,6 @@ diffExpr <- function(object,
   }
   
   # Adjust the number of cores selected within the machine's range
-  
-
-  
-  
   testClass <- testRegion <- Gene <- Subset <- NULL
   
   # convert test variables to factors after checking input
@@ -126,13 +122,9 @@ diffExpr <- function(object,
         setdiff(unique(Biobase::pData(object)[[region.col]]),
                 unique(levels(Biobase::pData(object)$testRegion)))
       regdiff <- paste0(regdiff, collapse = ", ")
-      message(
-        paste0(
-          "At least one of the regions within the Region Column was not selected
-            and is excluded:\n",
-          regdiff,
-          "\n"
-        )
+      cat(sprintf(
+        "At least one of the regions within the Region Column was not selected
+            and is excluded: %s \n", regdiff)
       )
     }
     else if (param.na[1] == "testClass") {
@@ -140,12 +132,9 @@ diffExpr <- function(object,
         setdiff(unique(Biobase::pData(object)[[group.col]]),
                 unique(levels(Biobase::pData(object)$testClass)))
       classdiff <- paste0(classdiff, collapse = ", ")
-      message(
+      cat(sprintf(
         "At least one of the groups within the Group Column was not selected and
-          is excluded:\n",
-        classdiff,
-        "\n"
-      )
+          is excluded: %s \n", classdiff))
     }
   }
   
@@ -292,9 +281,9 @@ diffExpr <- function(object,
   results[[logFC.colname]] <-
     as.numeric(format(results[[logFC.colname]], digits = 3))
   results[[pval.colname]] <-
-    as.numeric(format(results[[pval.colname]], digits = 3))
+    as.numeric(format(results[[pval.colname]], digits = 3, scientific=TRUE))
   results[[fdr.colname]] <-
-    as.numeric(format(results[[fdr.colname]], digits = 3))
+    as.numeric(format(results[[fdr.colname]], digits = 3, scientific=TRUE))
   
   #Run Summary Lists:
   .getGeneLists <- function(groups, FClimit, pvallimit, pval) {
