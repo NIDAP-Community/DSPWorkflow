@@ -176,6 +176,7 @@ diffExpr <- function(object,
       ind[is.na(ind)] <- FALSE
       ind2 <- Biobase::pData(object)$testRegion %in% regions
       ind2[is.na(ind2)] <- FALSE
+      #Check to see if there are 2 regions for comparison:
       object.sub <- object[, ind & ind2]
       r <- length(unique(pData(object.sub)$testRegion))
       cat(sprintf("Number of regions in group %s: %s \n", status,r))
@@ -230,6 +231,7 @@ diffExpr <- function(object,
       ind2 <- Biobase::pData(object)$testClass %in% groups
       ind2[is.na(ind2)] <- FALSE
       object.sub <- object[, ind & ind2]
+      #Check to see if there are 2 groups for comparison:
       r <- length(unique(pData(object.sub)$testClass))
       cat(sprintf("Number of groups in region %s: %s \n", region, r))
       if(r < 2){
