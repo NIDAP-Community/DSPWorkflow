@@ -4,7 +4,7 @@ test_that("Normalization Success for Kidney", {
   
   normalization.output <- do.call(geomxNorm,kidney.dat)
   
-  expected.elements = c("multi.plot", "boxplot", "object")
+  expected.elements = c("multi.plot", "boxplot.raw", "boxplot.norm", "object")
   expect_setequal(names(normalization.output), expected.elements)
   
 })
@@ -15,7 +15,7 @@ test_that("Normalization Success for thymus", {
   
   normalization.output <- do.call(geomxNorm,thymus.dat)
   
-  expected.elements = c("multi.plot", "boxplot", "object")
+  expected.elements = c("multi.plot", "boxplot.raw", "boxplot.norm", "object")
   expect_setequal(names(normalization.output), expected.elements)
   
 })
@@ -26,7 +26,7 @@ test_that("Normalization Success for colon", {
   
   normalization.output <- do.call(geomxNorm,colon.dat)
   
-  expected.elements = c("multi.plot", "boxplot", "object")
+  expected.elements = c("multi.plot", "boxplot.raw", "boxplot.norm",  "object")
   expect_setequal(names(normalization.output), expected.elements)
   
 })
@@ -37,7 +37,7 @@ test_that("Normalization Success for nsclc", {
   
   normalization.output <- do.call(geomxNorm,nsclc.dat)
   
-  expected.elements = c("multi.plot", "boxplot", "object")
+  expected.elements = c("multi.plot", "boxplot.raw", "boxplot.norm",  "object")
   expect_setequal(names(normalization.output), expected.elements)
   
 })
