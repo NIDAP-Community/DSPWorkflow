@@ -58,7 +58,9 @@ studyDesign <- function(dcc.files,
                         slide.name.col = "slide name", 
                         class.col = "class", 
                         region.col = "region", 
-                        segment.col = "segment") {
+                        segment.col = "segment",
+                        area.col = "area",
+                        nuclei.col = "nuclei") {
   
   # load all input data into a GeoMX object
   object <-
@@ -89,6 +91,18 @@ studyDesign <- function(dcc.files,
     }
   }
   
+  # Check each of the required fields for correct naming
+  optional.field.names = c("area", "nuclei")
+  for (field in optional.field.names) {
+    if (!(field %in% given.field.names)) {
+      warning(
+        paste0(
+          field,
+          " is not found in the annotation and will not be considered \n"
+        )
+      )
+    }
+  }
   
   # Rename all of the required columns based on user parameters in data
   colnames(object@phenoData@data)[colnames(object@phenoData@data) == slide.name.col] = "slide_name"
@@ -102,6 +116,12 @@ studyDesign <- function(dcc.files,
   rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == region.col] = "region"
   rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == segment.col] = "segment"
   
+  # Rename optional columns if they are present
+  colnames(object@phenoData@data)[colnames(object@phenoData@data) == area.col] = "area"
+  colnames(object@phenoData@data)[colnames(object@phenoData@data) == nuclei.col] = "nuclei"
+  rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == area.col] = "area"
+  rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == nuclei.col] = "nuclei" 
+  
   # Establish variables for the Sankey plot
   slide_name <- region <- segment <- x <- id <- y <- n <- NULL
   
@@ -109,22 +129,6 @@ studyDesign <- function(dcc.files,
   pkcs <- annotation(object)
   modules <- gsub(".pkc", "", pkcs)
   kable(data.frame(PKCs = pkcs, modules = modules))
-  
-  # Check each of the required fields for correct naming
-  required.field.names = c("slide_name", "class", "segment", "region")
-  given.field.names = colnames(sData(object))
-  for (field in required.field.names) {
-    if (!(field %in% given.field.names)) {
-      stop(
-        paste0(
-          field,
-          " is required, please designate a column from annotation sheet.\n"
-        )
-      )
-    }
-  }
-  
-  
   
   # select the annotations we want to show, use `` to surround column
   # names with spaces or special symbols

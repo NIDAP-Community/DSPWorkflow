@@ -54,19 +54,19 @@ test_that("Check for an error message when running study design
   # and check for an error message
   kidney.dat$pheno.data.file <- test_path("fixtures/Human_Kidney", 
                                         "test_annotation_kidney.xlsx")
-  expect_error(do.call(studyDesign,kidney.dat), "slide name is required")
+  expect_error(do.call(studyDesign,kidney.dat), "is not found in the annotation sheet field names")
   
   thymus.dat$pheno.data.file <- test_path("fixtures/Mouse_Thymus", 
                                         "test_annotation_thymus.xlsx")
-  expect_error(do.call(studyDesign,thymus.dat), "class is required")
+  expect_error(do.call(studyDesign,thymus.dat), "is not found in the annotation sheet field names")
   
   nsclc.dat$pheno.data.file <- test_path("fixtures/Human_NSCLC", 
                                        "test_annotation_nsclc.xlsx")
-  expect_error(do.call(studyDesign,nsclc.dat), "segment is required")
+  expect_error(do.call(studyDesign,nsclc.dat), "is not found in the annotation sheet field names")
   
   colon.dat$pheno.data.file <- test_path("fixtures/Human_Colon", 
                                        "test_annotation_colon.xlsx")
-  expect_error(do.call(studyDesign,colon.dat), "region is required")
+  expect_error(do.call(studyDesign,colon.dat), "is not found in the annotation sheet field names")
   
 })
 

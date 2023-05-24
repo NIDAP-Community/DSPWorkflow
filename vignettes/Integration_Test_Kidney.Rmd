@@ -61,7 +61,13 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
                                 pheno.data.sheet = "Template",
                                 pheno.data.dcc.col.name = "Sample_ID",
                                 protocol.data.col.names = c("aoi", "roi"),
-                                experiment.data.col.names = c("panel"))
+                                experiment.data.col.names = c("panel"),
+                                slide.name.col = "slide name", 
+                                class.col = "class", 
+                                region.col = "region", 
+                                segment.col = "segment",
+                                area.col = "area",
+                                nuclei.col = "nuclei")
   
   # For creating fixture RDS
   create.rds <- FALSE
@@ -72,7 +78,7 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
   
   print(sdesign.list$sankey.plot)
   print("Created GeoMx Object\n\n")
-  pData(sdesign.list$object)[,c("slide name","class","segment")]  
+  pData(sdesign.list$object)[,c("slide_name","class","segment")]  
   
   
 ```
@@ -132,12 +138,21 @@ qc.output <-  qcProc(object = sdesign.list$object,
   
 ```{r Normalization, echo=FALSE}
   
-    normalization.output <- geomxNorm(
+    q3.normalization.output <- geomxNorm(
                                   object = filtering.output$object, 
                                   norm = "quant")
     
-    print(normalization.output$multi.plot)
-    print(normalization.output$boxplot)
+    print(q3.normalization.output$multi.plot)
+    print(q3.normalization.output$boxplot.raw)
+    print(q3.normalization.output$boxplot.norm)
+    
+    neg.normalization.output <- geomxNorm(
+                                  object = filtering.output$object, 
+                                  norm = "neg")
+    
+    print(neg.normalization.output$multi.plot)
+    print(neg.normalization.output$boxplot.raw)
+    print(neg.normalization.output$boxplot.norm)
     
     create.rds <- FALSE
     if(create.rds) {
@@ -153,7 +168,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ```{r Unsupervised Analysis, echo=FALSE}
 
     #Test Unsupervised Analysis:
-    unsupervised.output <- dimReduct(object = normalization.output$object,
+    unsupervised.output <- dimReduct(object = q3.normalization.output$object,
                         point.size = 3,
                         point.alpha = 1,
                         color.variable1 = "region",
@@ -203,7 +218,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
     goi <- c("CD274", "CD8A", "CD68", "EPCAM",
              "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
-    object <- normalization.output$object
+    object <- q3.normalization.output$object
     object <- object[goi,]
     Gene <- Subset <- NULL
     
@@ -280,7 +295,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
     genes <- c("CD274", "CD8A", "CD68", "EPCAM",
          "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
-    violin.plot.test <- violinPlot(object = normalization.output$object, 
+    violin.plot.test <- violinPlot(object = q3.normalization.output$object, 
                                         expr.type = "q_norm", 
                                         genes = genes,
                                         group = "region",
@@ -301,7 +316,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
     rownames(ref.mtx) = sample(rownames(normalization.output$object), size = 1500, replace = FALSE)
     ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
     
-    spatial.output <- spatialDeconvolution(object = normalization.output$object, 
+    spatial.output <- spatialDeconvolution(object = q3.normalization.output$object, 
                                            expr.type = "q_norm", 
                                            ref.mtx = ref.mtx, 
                                            ref.annot = ref.annot, 
