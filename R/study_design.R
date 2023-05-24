@@ -29,6 +29,7 @@
 #' @importFrom GeomxTools readNanoStringGeoMxSet
 #' @importFrom knitr kable
 #' @importFrom dplyr count
+#' @importFrom dplyr rename
 #' @importFrom ggforce gather_set_data
 #' @importFrom BiocGenerics annotation
 #' @importFrom ggforce geom_parallel_sets
@@ -53,9 +54,14 @@ studyDesign <- function(dcc.files,
                         pheno.data.sheet = "Template",
                         pheno.data.dcc.col.name = "Sample_ID",
                         protocol.data.col.names = c("aoi", "roi"),
-                        experiment.data.col.names = c("panel")) {
-  region <- segment <- x <- id <- y <- n <- NULL
-  `slide name` <- NULL
+                        experiment.data.col.names = c("panel"),
+                        slide.name.col = "slide name", 
+                        class.col = "class", 
+                        region.col = "region", 
+                        segment.col = "segment",
+                        area.col = "area",
+                        nuclei.col = "nuclei") {
+  
   # load all input data into a GeoMX object
   object <-
     readNanoStringGeoMxSet(
@@ -67,34 +73,77 @@ studyDesign <- function(dcc.files,
       protocolDataColNames = protocol.data.col.names,
       experimentDataColNames = experiment.data.col.names
     )
+  #
   
-  
-  # Review the PKC mapping files linked in the GeoMX object
-  pkcs <- annotation(object)
-  modules <- gsub(".pkc", "", pkcs)
-  kable(data.frame(PKCs = pkcs, modules = modules))
-  
-  # Check each of the required fields for correct naming
-  required.field.names = c("slide name", "class", "segment", "region")
+  # Check the column names for required fields exist in the annotation
+
+  required.field.names = c("slide_name", "class", "segment", "region")
+  required.field.names = c(slide.name.col, class.col, region.col, segment.col)
   given.field.names = colnames(sData(object))
   for (field in required.field.names) {
     if (!(field %in% given.field.names)) {
       stop(
         paste0(
           field,
-          " is required and NOT found in the annotation.
-                  Please correct annotation sheet fields.\n"
+          " is not found in the annotation sheet field names.\n"
         )
       )
     }
   }
   
+  # Check each of the required fields for correct naming
+  optional.field.names = c("area", "nuclei")
+  for (field in optional.field.names) {
+    if (!(field %in% given.field.names)) {
+      warning(
+        paste0(
+          field,
+          " is not found in the annotation and will not be considered \n"
+        )
+      )
+    }
+  }
   
+  # Rename all of the required columns based on user parameters in data
+  colnames(object@phenoData@data)[colnames(object@phenoData@data) == slide.name.col] = "slide_name"
+  colnames(object@phenoData@data)[colnames(object@phenoData@data) == class.col] = "class"
+  colnames(object@phenoData@data)[colnames(object@phenoData@data) == region.col] = "region"
+  colnames(object@phenoData@data)[colnames(object@phenoData@data) == segment.col] = "segment"
+  
+  # Rename all of the required columns based on user parameters in metadata
+  rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == slide.name.col] = "slide_name"
+  rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == class.col] = "class"
+  rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == region.col] = "region"
+  rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == segment.col] = "segment"
+  
+  # Rename optional columns if they are present
+  colnames(object@phenoData@data)[colnames(object@phenoData@data) == area.col] = "area"
+  colnames(object@phenoData@data)[colnames(object@phenoData@data) == nuclei.col] = "nuclei"
+  rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == area.col] = "area"
+  rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == nuclei.col] = "nuclei" 
+  
+  # Establish variables for the Sankey plot
+  slide_name <- region <- segment <- x <- id <- y <- n <- NULL
+  
+  # Review the PKC mapping files linked in the GeoMX object
+  pkcs <- annotation(object)
+  modules <- gsub(".pkc", "", pkcs)
+  kable(data.frame(PKCs = pkcs, modules = modules))
   
   # select the annotations we want to show, use `` to surround column
   # names with spaces or special symbols
   count.mat <-
-    count(pData(object), `slide name`, class, region, segment)
+    count(pData(object), `slide_name`, class, region, segment)
+  
+  # Remove any rows with NA values
+  na.per.column <- colSums(is.na(count.mat))
+  na.total.count <- sum(na.per.column)
+                                               
+  if(na.total.count > 0){
+    count.mat <- count.mat[!rowSums(is.na(count.mat)),]
+    rownames(count.mat) <- 1:nrow(count.mat)
+  }
+   
   
   # gather the data and plot in order: class, slide name, region, segment
   # gather_set_data creates x, id, y, and n fields within sankey.count.data
@@ -102,7 +151,7 @@ studyDesign <- function(dcc.files,
   sankey.count.data$x <-
     factor(
       sankey.count.data$x,
-      levels = c("class", "slide name", "region", "segment")
+      levels = c("class", "slide_name", "region", "segment")
     )
   
   # plot Sankey diagram

@@ -115,15 +115,15 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
   
   # select the annotations we want to show, use `` to surround column names with
   # spaces or special symbols
-  count.mat <- count(pData(object), `slide name`, class, region, segment)
+  count.mat <- count(pData(object), `slide_name`, class, region, segment)
   if(class(object)[1] != "NanoStringGeoMxSet"){
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
   }
-  # simplify the slide names
-  count.mat$`slide name` <- gsub("disease", "d", gsub("normal", "n", count.mat$`slide name`))
-  # gather the data and plot in order: class, slide name, region, segment
+  # simplify the slide_names
+  count.mat$`slide_name` <- gsub("disease", "d", gsub("normal", "n", count.mat$`slide_name`))
+  # gather the data and plot in order: class, slide_name, region, segment
   test.gr <- gather_set_data(count.mat, 1:4)
-  test.gr$x <-factor(test.gr$x, levels = c("class", "slide name", "region", "segment"))
+  test.gr$x <-factor(test.gr$x, levels = c("class", "slide_name", "region", "segment"))
   # plot Sankey
   sankey.plot<- ggplot(test.gr, aes(x, id = id, split = y, value = n)) +
     geom_parallel_sets(aes(fill = region), alpha = 0.5, axis.width = 0.1) +
