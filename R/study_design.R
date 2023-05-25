@@ -77,7 +77,6 @@ studyDesign <- function(dcc.files,
   
   # Check the column names for required fields exist in the annotation
 
-  required.field.names = c("slide_name", "class", "segment", "region")
   required.field.names = c(slide.name.col, class.col, region.col, segment.col)
   given.field.names = colnames(sData(object))
   for (field in required.field.names) {

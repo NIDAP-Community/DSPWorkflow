@@ -1,7 +1,7 @@
 ---
-title: "Integration_Test_Kidney"
+title: "Integration Test Mouse Thymus"
 output: html_document
-date: '2022-11-30'
+last update: 'May 24, 2023'
 
 ---
 
@@ -21,7 +21,7 @@ knitr::opts_knit$set(root.dir = root)
 
 ## R Markdown
 
-This runs the DSPworkflow package to completion using the Human Kidney Dataset:
+This runs the DSPworkflow package to completion using the Mouse Thymus Dataset:
 
 ## 1. Study Design:
 
@@ -62,18 +62,24 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
                                 pheno.data.sheet = "Annotation",
                                 pheno.data.dcc.col.name = "Sample_ID",
                                 protocol.data.col.names = c("aoi", "roi"),
-                                experiment.data.col.names = c("panel"))
+                                experiment.data.col.names = c("panel"),
+                                slide.name.col = "slide name", 
+                                class.col = "class", 
+                                region.col = "region", 
+                                segment.col = "segment",
+                                area.col = "area",
+                                nuclei.col = "nuclei")
   
   # For creating fixture RDS
-  create.rds <- FALSE
+  create.rds <- TRUE
   if(create.rds) {
-    study.design.human.kidney <- sdesign.list$object
-    saveRDS(study.design.human.kidney, file = "tests/testthat/fixtures/Mouse_Thymus/studyDesignMouseThymus.RDS")
+    study.design.mouse.thymus <- sdesign.list$object
+    saveRDS(study.design.mouse.thymus, file = "tests/testthat/fixtures/Mouse_Thymus/studyDesignMouseThymus.RDS")
   }
   
   print(sdesign.list$sankey.plot)
   print("Created GeoMx Object\n\n")
-  pData(sdesign.list$object)[,c("slide name","class","segment")]  
+  pData(sdesign.list$object)[,c("slide_name","class","segment")]  
   
 ```
 
@@ -81,35 +87,24 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
 
 ```{r QC Preprocessing, echo=FALSE}
 
-qc.output <-  qcProc(object = sdesign.list$dsp.obj,
-                        minSegmentReads = 1000, # Default:1000
-                        percentTrimmed = 65,  # Default:80  
-                        percentStitched = 65, # Default:80 
-                        percentAligned = 65, #Default:80
-                        percentSaturation = 50, #Default:50
-                        minNegativeCount = 10, #Default:10   
-                        maxNTCCount = 1000, #Default:1000     
-                        minNuclei = 200, #Default:200         
-                        minArea = 16000) #Default:16000
-    print(QCoutput$segments.qc)
-    
 qc.output <-  qcProc(object = sdesign.list$object,
-                        min.segment.reads = 1000, 
-                        percent.trimmed = 80,    
-                        percent.stitched = 80,   
-                        percent.aligned = 75,    
-                        percent.saturation = 50, 
-                        min.negative.count = 1,   
-                        max.ntc.count = 9000,     
-                        min.nuclei = 20,         
-                        min.area = 1000,
+                        min.segment.reads = 1000,
+                        percent.trimmed = 80,
+                        percent.stitched = 80,
+                        percent.aligned = 80,
+                        percent.saturation = 50,
+                        min.negative.count = 1,  
+                        max.ntc.count = 1000,     
+                        min.nuclei = 200,         
+                        min.area = 16000,
                         print.plots = TRUE)
     print(qc.output$segments.qc)
     
-  create.rds <- FALSE
+  create.rds <- TRUE
   if(create.rds) {
-    qc.human.kidney <- qc.output$object
-    saveRDS(qc.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/qcHumanKidney.RDS")
+    qc.mouse.thymus <- qc.output$object
+    saveRDS(qc.mouse.thymus, file = "tests/testthat/fixtures/Mouse_Thymus/qcMouseThymus.RDS")
+  }
 
 ```
 
@@ -117,44 +112,54 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
 ```{r Filtering, echo=FALSE}
     
-    PKFil <- annotation(QCoutput$dsp.target)
-    target_demoDataFil <- QCoutput$dsp.target
+    goi <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
     
-    genes <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
+    filtering.output <- filtering(object = qc.output$object,
+                            loq.cutoff = 2, 
+                            loq.min = 2, 
+                            cut.segment = .05, 
+                            goi = goi)
     
-    FiltOutput <- filtering(Data = target_demoDataFil, 
-                            PKCS = PKFil, 
-                            LOQcutoff = 2, 
-                            LOQmin = 2, 
-                            CutSegment = .05, 
-                            GOI = genes)
+    print(filtering.output$`stacked.bar.plot`)
+    print(filtering.output$`tab`)
+    print(filtering.output$`sankey.plot`)
+    print(filtering.output$`genes.detected.plot`)
     
-    print(FiltOutput$`Stacked Bar Plot`)
-    print(FiltOutput$`Table of Cuts`)
-    print(FiltOutput$`Sankey Plot`)
-    print(FiltOutput$`Genes Deccted Plot`)
-    
-    #filteringMouseThymus <- FiltOutput$`target_demoData Dataset`
-    
-    #saveRDS(filteringMouseThymus, file = "filteringMouseThymus.RDS")
-
+  create.rds <- TRUE
+  if(create.rds) {
+    filtering.mouse.thymus <- filtering.output$object
+    saveRDS(filtering.mouse.thymus, file = "tests/testthat/fixtures/Mouse_Thymus/filteringMouseThymus.RDS")
+  }
 ```
 
 
 ## 4. Normalization:
   
 ```{r Normalization, echo=FALSE}
-  
-    target_demoDataNorm <- FiltOutput$`target_demoData Dataset`
     
-    NormOut.list <- GeoMxNorm(target_demoDataNorm, "quant")
+    q3.normalization.output <- geomxNorm(
+                                  object = filtering.output$object, 
+                                  norm = "q3")
     
-    print(NormOut.list$plot)
-    print(NormOut.list$Boxplot)
+    print(q3.normalization.output$multi.plot)
+    print(q3.normalization.output$boxplot.raw)
+    print(q3.normalization.output$boxplot.norm)
     
-    #normalizationMouseThymus <- NormOut.list$`Normalized Dataframe`
+    neg.normalization.output <- geomxNorm(
+                                  object = filtering.output$object, 
+                                  norm = "neg")
     
-    #saveRDS(normalizationMouseThymus, file = "normalizationMouseThymus.RDS")
+    print(neg.normalization.output$multi.plot)
+    print(neg.normalization.output$boxplot.raw)
+    print(neg.normalization.output$boxplot.norm)
+    
+    create.rds <- TRUE
+    if(create.rds) {
+      q3.normalization.mouse.thymus <- q3.normalization.output$object
+      saveRDS(q3.normalization.mouse.thymus, file = "tests/testthat/fixtures/Mouse_Thymus/q3normalizationMouseThymus.RDS")
+      neg.normalization.mouse.thymus <- neg.normalization.output$object
+      saveRDS(neg.normalization.mouse.thymus, file = "tests/testthat/fixtures/Mouse_Thymus/negnormalizationMouseThymus.RDS")
+    }
     
 ```
 
@@ -164,21 +169,16 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ```{r Unsupervised Analysis, echo=FALSE}
 
     #Test Unsupervised Analysis:
-    target.Data <- NormOut.list$`Normalized Dataframe`
-    UnSupervisedoutput <- DimReduct(object = target.Data,
-                        point.size = 2,
+    unsupervised.output <- dimReduct(object = q3.normalization.output$object,
+                        point.size = 3,
                         point.alpha = 1,
                         color.variable1 = "region",
                         shape.variable = "class"
     )
     
-    print(UnSupervisedoutput$plot.list$PCA)
-    print(UnSupervisedoutput$plot.list$tSNE)
-    print(UnSupervisedoutput$plot.list$UMAP)
-    
-    #unsupervisedAnalysisMouseThymus <- UnSupervisedoutput$dsp.object
-    
-    #saveRDS(unsupervisedAnalysisMouseThymus, file = "unsupervisedAnalysisMouseThymus.RDS")
+    print(unsupervised.output$plot$PCA)
+    print(unsupervised.output$plot$tSNE)
+    print(unsupervised.output$plot$UMAP)
 
 ```
 
@@ -188,14 +188,8 @@ qc.output <-  qcProc(object = sdesign.list$object,
  
 ```{r Clustering high CV Genes, echo=FALSE}
 
-    target.Data <- UnSupervisedoutput$dsp.object  
-    
-    dsp.list <- HeatMap(target.data = target.Data, 
+    heatmap.output <- heatMap(object = unsupervised.output$object, 
                         ngenes = 200, 
-                        image.width = 3600, 
-                        image.height = 1800, 
-                        image.resolution = 300, 
-                        image.filename = "heatmap.clust.highCVgenes.png",
                         scale.by.row.or.col = "row", 
                         show.rownames = FALSE, 
                         show.colnames = FALSE, 
@@ -205,13 +199,13 @@ qc.output <-  qcProc(object = sdesign.list$object,
                         clustering.distance.rows = "correlation", 
                         clustering.distance.cols = "correlation", 
                         annotation.row = NA, 
-                        annotation.col = c("class", "segment", "region"),
+                        annotation.col = c("class", "segment", "region"), 
                         breaks.by.values = seq(-3, 3, 0.05), 
                         heatmap.color = colorRampPalette(c("blue", "white", "red"))(120), 
                         norm.method = "quant")
 
 
-    print(dsp.list$plot)
+    print(heatmap.output$plot)
     
   
 ```
@@ -222,20 +216,21 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
 ```{r Differential Expression Analysis,  echo=FALSE}
 
-    data <- UnSupervisedoutput$dsp.object 
-    goi <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
+    goi <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", 
+             "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
     
-    data <- data[goi,]
+    object <- q3.normalization.output$object
+    object <- object[goi,]
     Gene <- Subset <- NULL
     
     #First analysis:
-    reslist.1 <- DiffExpr(object = data, 
-                          analysisType = "Within Groups", 
-                          regionCol = "region", 
+    reslist.1 <- diffExpr(object = object, 
+                          analysis.type = "Within Groups", 
+                          region.col = "region", 
                           regions = c("Cortical", "Medullar"), 
-                          groupCol = "class", 
+                          group.col = "class", 
                           groups = c("Thymus"), 
-                          slideCol = "slide name")
+                          n.cores = 4)
     grid.draw(reslist.1$sample_table)
     grid.newpage()
     grid.draw(reslist.1$summary_table)
@@ -259,13 +254,13 @@ qc.output <-  qcProc(object = sdesign.list$object,
     cat("expected value is 0.0274")
     
     #Second analysis:
-    reslist.2 <- DiffExpr(object = data,
-                          analysisType = "Between Groups", 
-                          regionCol = "segment", 
+    reslist.2 <- diffExpr(object = object, 
+                          analysis.type = "Between Groups", 
+                          region.col = "segment", 
                           regions = c("PanCK"), 
-                          groupCol = "region", 
+                          group.col = "region", 
                           groups = c("Tumor", "Medullar"), 
-                          slideCol = "slide name")
+                          n.cores = 1)
     grid.draw(reslist.2$sample_table)
     grid.newpage()
     grid.draw(reslist.2$summary_table)
@@ -287,9 +282,6 @@ qc.output <-  qcProc(object = sdesign.list$object,
     
     cat(paste0("\nvalue of Ccr7 pval is: ",pval.2))
     cat("expected value is 4.97e-12")
-    
-    print(reslist.2$results)
-
 ```
 ## 8. Volcano Plot
 
@@ -298,23 +290,16 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ## 9. Violin Plot
 
 ```{r Violin Plot, echo=FALSE}
-
-    test_data <- UnSupervisedoutput$dsp.object
     
-    test_genes <- head(rownames(test_data@assayData$q_norm),5)
+    genes <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", 
+               "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
     
-    #test_genes <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
-    
-    #test_genes <- c("Desi1", "Tfdp1", "Foxn1")
-
-    #test_genes <- c("Plb1", "Desi1")
-    
-    violin_plot_test <- violin_function(data = test_data, 
-                                        genes = test_genes,
-                                        group = "region")
-    grid.arrange(violin_plot_test)
-    
-    print("Violin Plot Done")
+    violin.plot.test <- violinPlot(object = q3.normalization.output$object, 
+                                        expr.type = "q_norm", 
+                                        genes = genes,
+                                        group = "region",
+                                        facet.by = "segment")
+    grid.arrange(violin.plot.test)
 
 ```
 
@@ -322,28 +307,22 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
 ```{r Spatial Deconvolution, echo=FALSE}
 
-refdir <- "/rstudio-files/ccr-dceg-data/data/CellProfileLibrary/Mouse/Adult/"
-    load(paste0(refdir,"Thymus_MCA.RData"))
-    ref_mtx_test <- profile_matrix
-    annot_1 <- data.frame(CellID = colnames(ref_mtx_test),LabeledCellType = colnames(ref_mtx_test))
+    ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
+                       row.names=1, check.names=FALSE)
+    rownames(ref.mtx) = sample(rownames(normalization.output$object), size = 1500, replace = FALSE)
+    ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
     
-    target_demoData <- UnSupervisedoutput$dsp.object
-    dsp_qnorm_test = target_demoData@assayData$q_norm
-    dsp_negnorm_test = target_demoData@assayData$q_norm
+    spatial.output <- spatialDeconvolution(object = q3.normalization.output$object, 
+                                           expr.type = "q_norm", 
+                                           ref.mtx = ref.mtx, 
+                                           ref.annot = ref.annot, 
+                                           cell.id.col = "CellID", 
+                                           celltype.col = "LabeledCellType", 
+                                           group.by = "segment")
     
-    #To derive neg probes: 
-    target_demoData@featureData@data$TargetName[target_demoData@featureData@data$Negative == TRUE] 
-    
-    dsp_negnorm_test = derive_GeoMx_background(norm = target_demoData@assayData$q_norm,
-                                 probepool = fData(target_demoData)$Module,
-                                 negnames = c("NegProbe-WTX"))
-    
-    spatial_output <- spatial_deconvolution(dsp_qnorm = dsp_qnorm_test, 
-                                  dsp_negnorm = dsp_negnorm_test, 
-                                  ref_mtx = ref_mtx_test, ref_annot = annot_1)
-    
-    print(spatial_output$figures)
+    print(spatial.output$figures)
 
     print("Spatial Deconvolution Done")
+
 
 ```

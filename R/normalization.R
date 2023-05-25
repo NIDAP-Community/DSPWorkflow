@@ -10,7 +10,7 @@
 #'          NanostringGeoMxSet, outputs a normalized NanostringGeoMxSet
 #'          
 #' @param object A NanoStringGeoMxSet dataset
-#' @param norm A vector with options of c(quant or neg)
+#' @param norm A vector with options of c(q3 or neg)
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 geom_histogram
 #' @importFrom ggplot2 scale_x_continuous
@@ -32,7 +32,7 @@
 #' @return A list containing the ggplot grid, a boxplot, an normalized dataframe.
 
 
-# To call function, must have object = object; norm = c(quant or neg)
+# To call function, must have object = object; norm = c(q3 or neg)
 geomxNorm <- function(object, norm) {
   
   if(class(object)[1] != "NanoStringGeoMxSet"){
@@ -87,7 +87,7 @@ geomxNorm <- function(object, norm) {
                        rel_widths = c(0.43,0.57))
   multi.plot <- plot_grid(plt1, btm.row, ncol = 1, labels = c("A", ""))
   
-  if(norm == "quant"){
+  if(norm == "q3"){
     # Q3 norm (75th percentile) for WTA/CTA  with or without custom spike-ins
     object <- normalize(object,
                         norm_method = "quant", 
@@ -104,7 +104,7 @@ geomxNorm <- function(object, norm) {
       scale_y_log10() +
       xlab("Segment") + 
       ylab("Counts, Raw") +
-      ggtitle("Quant Norm Counts") +
+      ggtitle("Q3 Norm Counts") +
       scale_x_discrete(labels=c(1:10))
     
     # The normalized counts boxplot
@@ -116,18 +116,21 @@ geomxNorm <- function(object, norm) {
       geom_boxplot(fill="#2CA02C") +
       scale_y_log10() +
       xlab("Segment") + 
-      ylab("Counts, Quant. Normalized") +
+      ylab("Counts, Q3 Normalized") +
       ggtitle("Quant Norm Counts") +
       scale_x_discrete(labels=c(1:10))
   }
-  if(norm == "Quant"){
-    stop(paste0("Error: Quant needs to be quant" ))
+  if(norm == "Q3"){
+    stop(paste0("Error: Q3 needs to be q3" ))
   }
   if(norm == "quantile"){
-    stop(paste0("Error: quantile needs to be quant" ))
+    stop(paste0("Error: quantile needs to be q3" ))
   }
   if(norm == "Quantile"){
-    stop(paste0("Error: Quantile needs to be quant" ))
+    stop(paste0("Error: Quantile needs to be q3" ))
+  }
+  if(norm == "quant"){
+    stop(paste0("Error: quant needs to be q3" ))
   }
   
   if(norm == "neg"){
