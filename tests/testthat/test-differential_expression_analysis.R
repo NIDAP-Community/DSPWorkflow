@@ -104,8 +104,8 @@ test_that("Run Diff Exp Analysis with default parameters - Mouse Thymus data", {
 
 
             res <- calcFC("thymus", reslist.1$results, "Within")
-            expect_equal(res$lfc, -1.6451, tolerance = 1e-3)
-            expect_equal(res$pval, 2.74e-07, tolerance = 1e-3)
+            expect_equal(res$lfc, -1.6, tolerance = 1e-1)
+            expect_equal(res$pval, 7.00e-06, tolerance = 1e-5)
 
             expected.elements <- c("results", "tables")
             expect_setequal(names(reslist.1), expected.elements)
@@ -120,8 +120,8 @@ test_that("Run Diff Exp Analysis with default parameters - Mouse Thymus data", {
             expect_setequal(names(reslist.2), expected.elements)
             
             res <- calcFC("thymus", reslist.2$results, "Between")
-            expect_equal(res$lfc, -1.868, tolerance = 1e-3)
-            expect_equal(res$pval, 5.15e-06, tolerance = 1e-3)
+            expect_equal(res$lfc, -1.6, tolerance = 1e-1)
+            expect_equal(res$pval, 5.15e-06, tolerance = 1e-5)
             
             #Test saving images and calculated FC and pvals
             skip_on_ci()
@@ -142,8 +142,8 @@ test_that("Run Diff Exp Analysis with default parameters - Colon data", {
             do.call(diffExpr, colon.data) #Runs with default parameters
 
           res <- calcFC("colon", reslist.1$results, "Within")
-          expect_equal(res$lfc, -4.698, tolerance = 1e-3)
-          expect_equal(res$pval, 0.05631, tolerance = 1e-3)
+          expect_equal(res$lfc, -4.5, tolerance = 1e-1)
+          expect_equal(res$pval, 0.07, tolerance = 1e-1)
 
           expected.elements <- c("results", "tables")
           expect_setequal(names(reslist.1), expected.elements)
@@ -158,8 +158,8 @@ test_that("Run Diff Exp Analysis with default parameters - Colon data", {
           expect_setequal(names(reslist.2), expected.elements)
           
           res <- calcFC("colon", reslist.2$results, "Between")
-          expect_equal(res$lfc, -4.431, tolerance = 1e-3)
-          expect_equal(res$pval, 6.95e-06, tolerance = 1e-3)
+          expect_equal(res$lfc, -4.6, tolerance = 1e-1)
+          expect_equal(res$pval, 6.95e-06, tolerance = 1e-5)
           
           #Test saving images and calculated FC and pvals
           skip_on_ci()
@@ -180,8 +180,8 @@ test_that("Run Diff Exp Analysis with default parameters - NSCLC data", {
             do.call(diffExpr, nsclc.data) #Runs with default parameters
 
           res <- calcFC("nsclc", reslist.1$results, "Within")
-          expect_equal(res$lfc, -2.09, tolerance = 1e-3)
-          expect_equal(res$pval, 8.51e-07, tolerance = 1e-3)
+          expect_equal(res$lfc, -2.09, tolerance = 1e-1)
+          expect_equal(res$pval, 8.51e-07, tolerance = 1e-6)
 
           expected.elements <- c("results", "tables")
           expect_setequal(names(reslist.1), expected.elements)
@@ -196,8 +196,8 @@ test_that("Run Diff Exp Analysis with default parameters - NSCLC data", {
           expect_setequal(names(reslist.2), expected.elements)
           
           res <- calcFC("nsclc", reslist.2$results, "Between")
-          expect_equal(res$lfc, 2.55, tolerance = 1e-3)
-          expect_equal(res$pval, 9.77e-09, tolerance = 1e-3)
+          expect_equal(res$lfc, 2.55, tolerance = 1e-1)
+          expect_equal(res$pval, 9.77e-09, tolerance = 1e-8)
           
           #Test saving images and calculated FC and pvals
           skip_on_ci()

@@ -1,7 +1,7 @@
 ---
-title: "Integration_Test_NSCLC"
+title: "Integration Test Human Non-small Cell Lung Carcinoma (NSCLC)"
 output: html_document
-date: '2022-12-21'
+last update: 'May 24, 2023'
 
 ---
 
@@ -62,7 +62,13 @@ This runs the DSPworkflow package to completion using the Non Small Cell Lung Ca
                               pheno.data.sheet = "Template",
                               pheno.data.dcc.col.name = "Sample_ID",
                               protocol.data.col.names = c("aoi", "roi"),
-                              experiment.data.col.names = c("panel"))
+                              experiment.data.col.names = c("panel"),
+                              slide.name.col = "slide name", 
+                              class.col = "class", 
+                              region.col = "region", 
+                              segment.col = "segment",
+                              area.col = "area",
+                              nuclei.col = "nuclei")
   
   # For creating fixture RDS
   create.rds <- TRUE
@@ -73,7 +79,7 @@ This runs the DSPworkflow package to completion using the Non Small Cell Lung Ca
   
   print(sdesign.list$sankey.plot)
   print("Created GeoMx Object\n\n")
-  pData(sdesign.list$object)[,c("slide name","class","segment")]  
+  pData(sdesign.list$object)[,c("slide_name","class","segment")]  
   
   
 ```
@@ -100,8 +106,8 @@ qc.output <-  qcProc(object = sdesign.list$object,
     # For creating a fixture RDS
     create.rds <- TRUE
     if(create.rds) {
-      qc.human.kidney <- qc.output$object
-      saveRDS(qc.human.kidney, file = "tests/testthat/fixtures/Human_NSCLC/qcHumanNSCLC.RDS")
+      qc.human.nsclc <- qc.output$object
+      saveRDS(qc.human.nsclc, file = "tests/testthat/fixtures/Human_NSCLC/qcHumanNSCLC.RDS")
   }
 
 ```
@@ -112,8 +118,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
     goi <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
-    filtering.output <- filtering(object = qc.output$object, 
-                            pkc.file = annotation(qc.output$object), 
+    filtering.output <- filtering(object = qc.output$object,
                             loq.cutoff = 2, 
                             loq.min = 2, 
                             cut.segment = .05, 
@@ -126,8 +131,8 @@ qc.output <-  qcProc(object = sdesign.list$object,
     
   create.rds <- TRUE
   if(create.rds) {
-    filtering.human.kidney <- filtering.output$object
-    saveRDS(filtering.human.kidney, file = "tests/testthat/fixtures/Human_NSCLC/filteringHumanNSCLC.RDS")
+    filtering.human.nsclc <- filtering.output$object
+    saveRDS(filtering.human.nsclc, file = "tests/testthat/fixtures/Human_NSCLC/filteringHumanNSCLC.RDS")
   } 
 
 ```
@@ -137,19 +142,29 @@ qc.output <-  qcProc(object = sdesign.list$object,
   
 ```{r Normalization, echo=FALSE}
   
-    normalization.output <- geomxnorm(
+    q3.normalization.output <- geomxNorm(
                                   object = filtering.output$object, 
-                                  norm = "quant")
+                                  norm = "q3")
     
-    print(normalization.output$multi.plot)
-    print(normalization.output$boxplot)
+    print(q3.normalization.output$multi.plot)
+    print(q3.normalization.output$boxplot.raw)
+    print(q3.normalization.output$boxplot.norm)
+    
+    neg.normalization.output <- geomxNorm(
+                                  object = filtering.output$object, 
+                                  norm = "neg")
+    
+    print(neg.normalization.output$multi.plot)
+    print(neg.normalization.output$boxplot.raw)
+    print(neg.normalization.output$boxplot.norm)
     
     create.rds <- TRUE
     if(create.rds) {
-      normalization.human.kidney <- normalization.output$object
-      saveRDS(normalization.human.kidney, file = "tests/testthat/fixtures/Human_NSCLC/normalizationHumanNSCLC.RDS")
+      q3.normalization.human.nsclc <- q3.normalization.output$object
+      saveRDS(q3.normalization.human.nsclc, file = "tests/testthat/fixtures/Human_NSCLC/q3normalizationHumanNSCLC.RDS")
+      neg.normalization.human.nsclc <- neg.normalization.output$object
+      saveRDS(neg.normalization.human.nsclc, file = "tests/testthat/fixtures/Human_NSCLC/negnormalizationHumanNSCLC.RDS")
     }
-
 ```
 
 
@@ -158,21 +173,16 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ```{r Unsupervised Analysis, echo=FALSE}
 
     #Test Unsupervised Analysis:
-    target.Data <- NormOut.list$`Normalized Dataframe`
-    UnSupervisedoutput <- DimReduct(object = target.Data,
+    unsupervised.output <- dimReduct(object = q3.normalization.output$object,
                         point.size = 3,
                         point.alpha = 1,
                         color.variable1 = "region",
                         shape.variable = "class"
     )
     
-    #unsupervisedAnalysisHumanNSCLC <- UnSupervisedoutput$dsp.object
-    
-    #saveRDS(unsupervisedAnalysisHumanNSCLC, file = "unsupervisedAnalysisHumanNSCLC.RDS")
-    
-    print(UnSupervisedoutput$plot.list$PCA)
-    print(UnSupervisedoutput$plot.list$tSNE)
-    print(UnSupervisedoutput$plot.list$UMAP)
+    print(unsupervised.output$plot$PCA)
+    print(unsupervised.output$plot$tSNE)
+    print(unsupervised.output$plot$UMAP)
 
 ```
 
@@ -182,14 +192,8 @@ qc.output <-  qcProc(object = sdesign.list$object,
  
 ```{r Clustering high CV Genes, echo=FALSE}
 
-    target.Data <- UnSupervisedoutput$dsp.object  
-    
-    dsp.list <- HeatMap(target.data = target.Data, 
+    heatmap.output <- heatMap(object = unsupervised.output$object, 
                         ngenes = 200, 
-                        image.width = 3600, 
-                        image.height = 1800, 
-                        image.resolution = 300, 
-                        image.filename = "heatmap.clust.highCVgenes.png",
                         scale.by.row.or.col = "row", 
                         show.rownames = FALSE, 
                         show.colnames = FALSE, 
@@ -205,7 +209,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
                         norm.method = "quant")
 
 
-    print(dsp.list$plot)
+    print(heatmap.output$plot)
     
   
 ```
@@ -216,20 +220,21 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
 ```{r Differential Expression Analysis,  echo=FALSE}
 
-    data <- UnSupervisedoutput$dsp.object 
-    #goi <- c("GABBR2", "ALDOC", "NCAM1", "SLC17A1", "SNAP25", "VIM", "COL3A1", "COL1A1", "COL4A1", "FN1")
-    goi <- c("ALDOC", "NCAM1", "SNAP25", "VIM", "COL3A1", "COL1A1", "COL4A1", "FN1")
-    data <- data[goi,]
+    goi <- c("ALDOC", "NCAM1", "SNAP25", "VIM", "COL3A1", 
+             "COL1A1", "COL4A1", "FN1")
+    
+    object <- q3.normalization.output$object
+    object <- object[goi,]
     Gene <- Subset <- NULL
     
     #First analysis:
-    reslist.1 <- DiffExpr(object = data, 
-                          analysisType = "Within Groups", 
-                          regionCol = "segment", 
+    reslist.1 <- diffExpr(object = object, 
+                          analysis.type = "Within Groups", 
+                          region.col = "segment", 
                           regions = c("tumor", "TME"), 
-                          groupCol = "class", 
+                          group.col = "class", 
                           groups = c("cancer"), 
-                          slideCol = "slide name")
+                          n.cores = 4)
     grid.draw(reslist.1$sample_table)
     grid.newpage()
     grid.draw(reslist.1$summary_table)
@@ -253,13 +258,13 @@ qc.output <-  qcProc(object = sdesign.list$object,
     cat("expected value is significant")
     
     #Second analysis:
-    reslist.2 <- DiffExpr(object = data,
-                          analysisType = "Between Groups", 
-                          regionCol = "region", 
+    reslist.2 <- diffExpr(object = object, 
+                          analysis.type = "Between Groups", 
+                          region.col = "region", 
                           regions = c("brain"), 
-                          groupCol = "segment", 
+                          group.col = "segment", 
                           groups = c("TME", "control"), 
-                          slideCol = "slide name")
+                          n.cores = 4)
     grid.draw(reslist.2$sample_table)
     grid.newpage()
     grid.draw(reslist.2$summary_table)
@@ -281,7 +286,6 @@ qc.output <-  qcProc(object = sdesign.list$object,
     
     cat(paste0("\nvalue of VIM pval is:",pval.2))
     cat("expected value is significant")
-
 ```
 ## 8. Volcano Plot
 
@@ -291,18 +295,15 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
 ```{r Violin Plot, echo=FALSE}
 
-    test_data <- UnSupervisedoutput$dsp.object
+    genes <- c("ALDOC", "NCAM1", "SNAP25", "VIM", "COL3A1", 
+             "COL1A1", "COL4A1", "FN1")
     
-    test_genes <- head(rownames(test_data@assayData$q_norm),5)
-    
-    test_genes <- c("VIM")
-    
-    violin_plot_test <- violin_function(data = test_data, 
-                                        genes = test_genes,
-                                        group = "segment")
-    grid.arrange(violin_plot_test)
-    
-    #print("Violin Plot Done")
+    violin.plot.test <- violinPlot(object = q3.normalization.output$object, 
+                                        expr.type = "q_norm", 
+                                        genes = genes,
+                                        group = "region",
+                                        facet.by = "segment")
+    grid.arrange(violin.plot.test)
 
 ```
 
@@ -310,27 +311,22 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
 ```{r Spatial Deconvolution, echo=FALSE}
 
-refdir <- "/rstudio-files/ccr-dceg-data/data/CellProfileLibrary/Human/Adult/"
-    load(paste0(refdir,"Lung_HCA.RData"))
-    ref_mtx_test <- profile_matrix
-    annot_1 <- data.frame(CellID = colnames(ref_mtx_test),LabeledCellType = colnames(ref_mtx_test))
+    ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
+                       row.names=1, check.names=FALSE)
+    rownames(ref.mtx) = sample(rownames(q3.normalization.output$object), size = 1500, replace = FALSE)
+    ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
     
-    target_demoData <- UnSupervisedoutput$dsp.object
-    dsp_qnorm_test = target_demoData@assayData$q_norm
-    dsp_negnorm_test = target_demoData@assayData$q_norm
+    spatial.output <- spatialDeconvolution(object = q3.normalization.output$object, 
+                                           expr.type = "q_norm", 
+                                           ref.mtx = ref.mtx, 
+                                           ref.annot = ref.annot,
+                                           prof.mtx = NULL, 
+                                           use.custom.prof.mtx = TRUE,
+                                           cell.id.col = "CellID", 
+                                           celltype.col = "LabeledCellType", 
+                                           group.by = "segment")
     
-    #To derive neg probes: 
-    target_demoData@featureData@data$TargetName[target_demoData@featureData@data$Negative == TRUE] 
-    
-    dsp_negnorm_test = derive_GeoMx_background(norm = target_demoData@assayData$q_norm,
-                                 probepool = fData(target_demoData)$Module,
-                                 negnames = c("NegProbe-WTX"))
-    
-    spatial_output <- spatial_deconvolution(dsp_qnorm = dsp_qnorm_test, 
-                                  dsp_negnorm = dsp_negnorm_test, 
-                                  ref_mtx = ref_mtx_test, ref_annot = annot_1)
-    
-    print(spatial_output$figures)
+    print(spatial.output$figures)
 
     print("Spatial Deconvolution Done")
 

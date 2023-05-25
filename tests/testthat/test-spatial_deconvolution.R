@@ -97,7 +97,7 @@ test_that("Spatial Deconvolution works for Mouse Thymus data", {
   # Check for consistent cell fractions and signature across runs
   expect_equal(res$dsp.data$beta["alpha.beta.T.cell",
                                  "DSP-1001660007393-A-H10.dcc"], 
-               333.5415, tolerance = 1e-3)
+               134.7, tolerance = 1e-3)
   
   expect_equal(res$dsp.data$X["0610009B22Rik","Proliferating.thymocyte"],0.1316, 
                tolerance = 1e-3)
@@ -132,7 +132,7 @@ test_that("Spatial Deconvolution works for Human Colon data", {
   # Check for consistent cell fractions and signature across runs
   expect_equal(res$dsp.data$beta["pericyte",
                                  "DSP-1012550000101-H-F07.dcc"], 
-               32.655, tolerance = 1e-3)
+               12.76, tolerance = 1e-3)
   
   expect_equal(res$dsp.data$X["GSN","endothelial.cell.type.1"], 3.2146, 
                tolerance = 1e-3)

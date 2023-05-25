@@ -6,28 +6,28 @@ selectNormalizedRtd <- function(dataset) {
     
     print("selected kidney dataset") 
     object <- readRDS(test_path("fixtures/Human_Kidney", 
-                                "normalizationHumanKidney.RDS"))
+                                "q3normalizationHumanKidney.RDS"))
   
   # Mouse thymus cancer dataset from PMID 36049655
   } else if (dataset == "thymus"){
     
     print("selected thymus dataset")
     object <- readRDS(test_path("fixtures/Mouse_Thymus", 
-                                "normalizationMouseThymus.RDS"))
+                                "q3normalizationMouseThymus.RDS"))
   
   # Human colon cancer dataset from Nanostring Spatial Organ Atlas
   } else if (dataset == "colon"){
     
     print("selected colon dataset")
     object <- readRDS(test_path("fixtures/Human_Colon", 
-                                "normalizationHumanColon.RDS"))
+                                "q3normalizationHumanColon.RDS"))
   
   # Human non-small cell lung carcinoma dataset from PMID 36216799
   } else if (dataset == "nsclc"){
     
     print("selected nsclc dataset")
     object <- readRDS(test_path("fixtures/Human_NSCLC", 
-                                "normalizationHumanNSCLC.RDS"))
+                                "q3normalizationHumanNSCLC.RDS"))
     
   }
 

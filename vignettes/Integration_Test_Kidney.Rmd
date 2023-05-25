@@ -1,7 +1,7 @@
 ---
-title: "Integration_Test_Kidney"
+title: "Integration Test Human Kidney"
 output: html_document
-date: '2022-11-30'
+last update: 'May 24, 2023'
 
 ---
 
@@ -70,7 +70,7 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
                                 nuclei.col = "nuclei")
   
   # For creating fixture RDS
-  create.rds <- FALSE
+  create.rds <- TRUE
   if(create.rds) {
     study.design.human.kidney <- sdesign.list$object
     saveRDS(study.design.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/studyDesignHumanKidney.RDS")
@@ -100,7 +100,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
                         print.plots = TRUE)
     print(qc.output$segments.qc)
     
-  create.rds <- FALSE
+  create.rds <- TRUE
   if(create.rds) {
     qc.human.kidney <- qc.output$object
     saveRDS(qc.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/qcHumanKidney.RDS")
@@ -125,7 +125,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
     print(filtering.output$`sankey.plot`)
     print(filtering.output$`genes.detected.plot`)
     
-  create.rds <- FALSE
+  create.rds <- TRUE
   if(create.rds) {
     filtering.human.kidney <- filtering.output$object
     saveRDS(filtering.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/filteringHumanKidney.RDS")
@@ -140,7 +140,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
   
     q3.normalization.output <- geomxNorm(
                                   object = filtering.output$object, 
-                                  norm = "quant")
+                                  norm = "q3")
     
     print(q3.normalization.output$multi.plot)
     print(q3.normalization.output$boxplot.raw)
@@ -154,10 +154,12 @@ qc.output <-  qcProc(object = sdesign.list$object,
     print(neg.normalization.output$boxplot.raw)
     print(neg.normalization.output$boxplot.norm)
     
-    create.rds <- FALSE
+    create.rds <- TRUE
     if(create.rds) {
-      normalization.human.kidney <- normalization.output$object
-      saveRDS(normalization.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/normalizationHumanKidney.RDS")
+      q3.normalization.human.kidney <- q3.normalization.output$object
+      saveRDS(q3.normalization.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/q3normalizationHumanKidney.RDS")
+      neg.normalization.human.kidney <- neg.normalization.output$object
+      saveRDS(neg.normalization.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/negnormalizationHumanKidney.RDS")
     }
     
 ```
@@ -309,16 +311,15 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ```{r Spatial Deconvolution, echo=FALSE}
 
     
-
-
     ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
                        row.names=1, check.names=FALSE)
-    rownames(ref.mtx) = sample(rownames(normalization.output$object), size = 1500, replace = FALSE)
+    rownames(ref.mtx) = sample(rownames(q3.normalization.output$object), size = 1500, replace = FALSE)
     ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
-    
     spatial.output <- spatialDeconvolution(object = q3.normalization.output$object, 
                                            expr.type = "q_norm", 
                                            ref.mtx = ref.mtx, 
+                                           prof.mtx = NULL, 
+                                           use.custom.prof.mtx = TRUE, 
                                            ref.annot = ref.annot, 
                                            cell.id.col = "CellID", 
                                            celltype.col = "LabeledCellType", 
@@ -327,5 +328,4 @@ qc.output <-  qcProc(object = sdesign.list$object,
     print(spatial.output$figures)
 
     print("Spatial Deconvolution Done")
-
 ```
