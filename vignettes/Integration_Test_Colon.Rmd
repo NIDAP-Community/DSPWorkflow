@@ -216,7 +216,7 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
 ```{r Differential Expression Analysis,  echo=FALSE}
 
     goi <- c("CD274", "CD8A", "CD68", "EPCAM",
-             "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+             "KRT18", "JCHAIN")
     
     object <- q3.normalization.output$object
     object <- object[goi,]
@@ -292,7 +292,7 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
 ```{r Violin Plot, echo=FALSE}
 
     genes <- c("CD274", "CD8A", "CD68", "EPCAM",
-         "KRT18", "NPHS1", "NPHS2", "CALB1", "PIGR")
+             "KRT18", "JCHAIN")
     
     violin.plot.test <- violinPlot(object = q3.normalization.output$object, 
                                         expr.type = "q_norm", 
@@ -309,12 +309,14 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
 
     ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
                        row.names=1, check.names=FALSE)
-    rownames(ref.mtx) = sample(rownames(normalization.output$object), size = 1500, replace = FALSE)
+    rownames(ref.mtx) = sample(rownames(q3.normalization.output$object), size = 1500, replace = FALSE)
     ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
     
     spatial.output <- spatialDeconvolution(object = q3.normalization.output$object, 
                                            expr.type = "q_norm", 
                                            ref.mtx = ref.mtx, 
+                                           prof.mtx = NULL, 
+                                           use.custom.prof.mtx = TRUE,
                                            ref.annot = ref.annot, 
                                            cell.id.col = "CellID", 
                                            celltype.col = "LabeledCellType", 
