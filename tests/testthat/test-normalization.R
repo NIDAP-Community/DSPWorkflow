@@ -4,7 +4,7 @@ test_that("Normalization Success for Kidney", {
   
   normalization.output <- do.call(geomxNorm,kidney.dat)
   
-  expected.elements = c("multi.plot", "boxplot", "object")
+  expected.elements = c("multi.plot", "boxplot.raw", "boxplot.norm", "object")
   expect_setequal(names(normalization.output), expected.elements)
   
 })
@@ -15,7 +15,7 @@ test_that("Normalization Success for thymus", {
   
   normalization.output <- do.call(geomxNorm,thymus.dat)
   
-  expected.elements = c("multi.plot", "boxplot", "object")
+  expected.elements = c("multi.plot", "boxplot.raw", "boxplot.norm", "object")
   expect_setequal(names(normalization.output), expected.elements)
   
 })
@@ -26,7 +26,7 @@ test_that("Normalization Success for colon", {
   
   normalization.output <- do.call(geomxNorm,colon.dat)
   
-  expected.elements = c("multi.plot", "boxplot", "object")
+  expected.elements = c("multi.plot", "boxplot.raw", "boxplot.norm",  "object")
   expect_setequal(names(normalization.output), expected.elements)
   
 })
@@ -37,7 +37,7 @@ test_that("Normalization Success for nsclc", {
   
   normalization.output <- do.call(geomxNorm,nsclc.dat)
   
-  expected.elements = c("multi.plot", "boxplot", "object")
+  expected.elements = c("multi.plot", "boxplot.raw", "boxplot.norm",  "object")
   expect_setequal(names(normalization.output), expected.elements)
   
 })
@@ -57,7 +57,7 @@ test_that("Normalization Success", {
   # Load the test annotation files with faulty field names 
   # and check for an error message
   kidney.dat$norm <- c("quantile")
-  expect_error(do.call(geomxNorm,kidney.dat), "Error: quantile needs to be quant")
+  expect_error(do.call(geomxNorm,kidney.dat), "Error: quantile needs to be q3")
 })
 
 test_that("Normalization Success", {
@@ -66,7 +66,7 @@ test_that("Normalization Success", {
   # Load the test annotation files with faulty field names 
   # and check for an error message
   kidney.dat$norm <- c("Quantile")
-  expect_error(do.call(geomxNorm,kidney.dat), "Error: Quantile needs to be quant")
+  expect_error(do.call(geomxNorm,kidney.dat), "Error: Quantile needs to be q3")
 })
 
 test_that("Normalization Success", {
@@ -74,8 +74,8 @@ test_that("Normalization Success", {
   
   # Load the test annotation files with faulty field names 
   # and check for an error message
-  kidney.dat$norm <- c("Quant")
-  expect_error(do.call(geomxNorm,kidney.dat), "Error: Quant needs to be quant")
+  kidney.dat$norm <- c("quant")
+  expect_error(do.call(geomxNorm,kidney.dat), "Error: quant needs to be q3")
 })
 
 test_that("Normalization Success", {

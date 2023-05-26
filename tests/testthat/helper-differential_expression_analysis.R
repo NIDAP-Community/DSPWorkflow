@@ -5,7 +5,7 @@ getDeParams <- function(data, test) {
     group.col = "class"
     regions = c("glomerulus", "tubule")
     region.col = "region"
-    slide.col = "slide name"
+    slide.col = "slide_name"
     n.cores = 16
     if (test == "Within") {
       analysis.type = "Within Groups"
@@ -14,7 +14,7 @@ getDeParams <- function(data, test) {
     }
   } else if (data == "thymus") {
     object <- selectNormalizedRtd("thymus")
-    slide.col = "slide name"
+    slide.col = "slide_name"
     n.cores = 4
     if (test == "Within") {
       analysis.type = "Within Groups"
@@ -31,7 +31,7 @@ getDeParams <- function(data, test) {
     }
   } else if (data == "colon") {
     object <- selectNormalizedRtd("colon")
-    slide.col = "slide name"
+    slide.col = "slide_name"
     n.cores = 4
     if (test == "Within") {
       analysis.type = "Within Groups"
@@ -48,7 +48,7 @@ getDeParams <- function(data, test) {
     }
   } else if (data == "nsclc") {
     object <- selectNormalizedRtd("nsclc")
-    slide.col = "slide name"
+    slide.col = "slide_name"
     n.cores = 4
     if (test == "Within") {
       analysis.type = "Within Groups"

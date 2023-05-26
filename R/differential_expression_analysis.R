@@ -62,7 +62,7 @@ diffExpr <- function(object,
                      group.col,
                      regions,
                      region.col,
-                     slide.col = "slide name",
+                     slide.col = "slide_name",
                      element = "q_norm",
                      multi.core = TRUE,
                      n.cores = 1,
@@ -75,15 +75,11 @@ diffExpr <- function(object,
   # Check the number of cores available for the current machine
   available.cores <- detectCores()
   
+  # Adjust the number of cores selected within the machine's range
   if (n.cores > available.cores) {
     print(paste0("The number of cores selected is greater than the number of available cores, reducing number of cores to maximum of ", available.cores))
     n.cores <- available.cores
   }
-  
-  # Adjust the number of cores selected within the machine's range
-  
-
-  
   
   testClass <- testRegion <- Gene <- Subset <- NULL
   
@@ -126,25 +122,20 @@ diffExpr <- function(object,
         setdiff(unique(Biobase::pData(object)[[region.col]]),
                 unique(levels(Biobase::pData(object)$testRegion)))
       regdiff <- paste0(regdiff, collapse = ", ")
-      message(
-        paste0(
+      cat(
+        sprintf(
           "At least one of the regions within the Region Column was not selected
-            and is excluded:\n",
-          regdiff,
-          "\n"
-        )
+            and is excluded: %s\n", regdiff)
       )
-    }
-    else if (param.na[1] == "testClass") {
+    } else if (param.na[1] == "testClass") {
       classdiff <-
         setdiff(unique(Biobase::pData(object)[[group.col]]),
                 unique(levels(Biobase::pData(object)$testClass)))
       classdiff <- paste0(classdiff, collapse = ", ")
-      message(
-        "At least one of the groups within the Group Column was not selected and
-          is excluded:\n",
-        classdiff,
-        "\n"
+      cat(
+        sprintf(
+          "At least one of the groups within the Group Column was not selected and
+            is excluded: %s\n", classdiff)
       )
     }
   }
@@ -172,7 +163,7 @@ diffExpr <- function(object,
   options(digits = 3)
   
   if (analysis.type == "Within Groups") {
-    cat("Running Within Group Analysis between Regions")
+    cat("Running Within Group Analysis between Regions\n")
     if (reg.length < 2) {
       if ("testRegion" %in% param.na) {
         stop("Cannot run Within Group Analysis with 1 Region.\n")
@@ -185,17 +176,25 @@ diffExpr <- function(object,
       ind[is.na(ind)] <- FALSE
       ind2 <- Biobase::pData(object)$testRegion %in% regions
       ind2[is.na(ind2)] <- FALSE
-      mixed.out <- mixedModelDE(
-        object[, ind & ind2],
-        elt = element,
-        modelFormula = ~ testRegion + (1 + testRegion |
-                                         slide),
-        groupVar = "testRegion",
-        multiCore = multi.core,
-        nCores = n.cores,
-        pAdjust = p.adjust,
-        pairwise = pairwise
-      )
+      #Check to see if there are 2 regions for comparison:
+      object.sub <- object[, ind & ind2]
+      r <- length(unique(pData(object.sub)$testRegion))
+      cat(sprintf("Number of regions in group %s: %s \n", status,r))
+      if(r < 2){
+        stop("There are not enough sample regions to do the analysis")
+      } else {
+        mixed.out <- mixedModelDE(
+          object.sub,
+          elt = element,
+          modelFormula = ~ testRegion + (1 + testRegion |
+                                           slide),
+          groupVar = "testRegion",
+          multiCore = multi.core,
+          nCores = n.cores,
+          pAdjust = p.adjust,
+          pairwise = pairwise
+        )
+      }
       
       # format results as data.frame
       test.results <- do.call(rbind, mixed.out["lsmeans", ])
@@ -218,7 +217,7 @@ diffExpr <- function(object,
       results <- rbind(results, test.results)
     }
   } else {
-    cat("Running Between Group Analysis for Regions")
+    cat("Running Between Group Analysis for Regions\n")
     if (grp.length < 2) {
       if ("testClass" %in% param.na) {
         stop("Cannot run Between Group Analysis with 1 Group.\n")
@@ -231,17 +230,25 @@ diffExpr <- function(object,
       ind[is.na(ind)] <- FALSE
       ind2 <- Biobase::pData(object)$testClass %in% groups
       ind2[is.na(ind2)] <- FALSE
-      mixed.out <-
-        mixedModelDE(
-          object[, ind & ind2],
-          elt = element,
-          modelFormula = ~ testClass + (1 | slide),
-          groupVar = "testClass",
-          multiCore = multi.core,
-          nCores = n.cores,
-          pAdjust = p.adjust,
-          pairwise = pairwise
-        )
+      object.sub <- object[, ind & ind2]
+      #Check to see if there are 2 groups for comparison:
+      r <- length(unique(pData(object.sub)$testClass))
+      cat(sprintf("Number of groups in region %s: %s \n", region, r))
+      if(r < 2){
+        stop("There are not enough sample groups to do the analysis")
+      } else {
+        mixed.out <-
+          mixedModelDE(
+            object.sub,
+            elt = element,
+            modelFormula = ~ testClass + (1 | slide),
+            groupVar = "testClass",
+            multiCore = multi.core,
+            nCores = n.cores,
+            pAdjust = p.adjust,
+            pairwise = pairwise
+          )
+      }
       
       # format results as data.frame
       test.results <- do.call(rbind, mixed.out["lsmeans", ])

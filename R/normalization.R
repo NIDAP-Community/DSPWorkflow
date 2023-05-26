@@ -10,7 +10,7 @@
 #'          NanostringGeoMxSet, outputs a normalized NanostringGeoMxSet
 #'          
 #' @param object A NanoStringGeoMxSet dataset
-#' @param norm A vector with options of c(quant or neg)
+#' @param norm A vector with options of c(q3 or neg)
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 geom_histogram
 #' @importFrom ggplot2 scale_x_continuous
@@ -32,7 +32,7 @@
 #' @return A list containing the ggplot grid, a boxplot, an normalized dataframe.
 
 
-# To call function, must have object = object; norm = c(quant or neg)
+# To call function, must have object = object; norm = c(q3 or neg)
 geomxNorm <- function(object, norm) {
   
   if(class(object)[1] != "NanoStringGeoMxSet"){
@@ -87,33 +87,50 @@ geomxNorm <- function(object, norm) {
                        rel_widths = c(0.43,0.57))
   multi.plot <- plot_grid(plt1, btm.row, ncol = 1, labels = c("A", ""))
   
-  if(norm == "quant"){
+  if(norm == "q3"){
     # Q3 norm (75th percentile) for WTA/CTA  with or without custom spike-ins
     object <- normalize(object,
                         norm_method = "quant", 
                         desiredQuantile = .75,
                         toElt = "q_norm")
     
-    transform1<- assayDataElement(object[,1:10], elt = "q_norm")
-    transform2<- as.data.frame(transform1)
-    transform3<- melt(transform2)
-    ggboxplot <- ggplot(transform3, aes(variable, value)) +
+    # The raw counts boxplot
+    transform1.raw<- exprs(object[,1:10])
+    transform2.raw<- as.data.frame(transform1.raw)
+    transform3.raw<- melt(transform2.raw)
+    ggboxplot.raw <- ggplot(transform3.raw, aes(variable, value)) +
       stat_boxplot(geom = "errorbar") +
       geom_boxplot(fill="#2CA02C") +
       scale_y_log10() +
       xlab("Segment") + 
-      ylab("Counts, Quant. Normailzed") +
+      ylab("Counts, Raw") +
+      ggtitle("Q3 Norm Counts") +
+      scale_x_discrete(labels=c(1:10))
+    
+    # The normalized counts boxplot
+    transform1.norm<- assayDataElement(object[,1:10], elt = "q_norm")
+    transform2.norm<- as.data.frame(transform1.norm)
+    transform3.norm<- melt(transform2.norm)
+    ggboxplot.norm <- ggplot(transform3.norm, aes(variable, value)) +
+      stat_boxplot(geom = "errorbar") +
+      geom_boxplot(fill="#2CA02C") +
+      scale_y_log10() +
+      xlab("Segment") + 
+      ylab("Counts, Q3 Normalized") +
       ggtitle("Quant Norm Counts") +
       scale_x_discrete(labels=c(1:10))
   }
-  if(norm == "Quant"){
-    stop(paste0("Error: Quant needs to be quant" ))
+  if(norm == "Q3"){
+    stop(paste0("Error: Q3 needs to be q3" ))
   }
   if(norm == "quantile"){
-    stop(paste0("Error: quantile needs to be quant" ))
+    stop(paste0("Error: quantile needs to be q3" ))
   }
   if(norm == "Quantile"){
-    stop(paste0("Error: Quantile needs to be quant" ))
+    stop(paste0("Error: Quantile needs to be q3" ))
+  }
+  if(norm == "quant"){
+    stop(paste0("Error: quant needs to be q3" ))
   }
   
   if(norm == "neg"){
@@ -123,15 +140,29 @@ geomxNorm <- function(object, norm) {
                         fromElt = "exprs",
                         toElt = "neg_norm")
     
-    transform1<- assayDataElement(object[,1:10], elt = "neg_norm")
-    transform2<- as.data.frame(transform1)
-    transform3<- melt(transform2)
-    ggboxplot <- ggplot(transform3, aes(variable, value)) +
+    # The raw counts boxplot
+    transform1.raw<- exprs(object[,1:10])
+    transform2.raw<- as.data.frame(transform1.raw)
+    transform3.raw<- melt(transform2.raw)
+    ggboxplot.raw <- ggplot(transform3.raw, aes(variable, value)) +
       stat_boxplot(geom = "errorbar") +
       geom_boxplot(fill="#FF7F0E") +
       scale_y_log10() +
       xlab("Segment") + 
-      ylab("Counts, Neg. Normailzed") +
+      ylab("Counts, Raw") +
+      ggtitle("Neg Norm Counts") +
+      scale_x_discrete(labels=c(1:10))
+    
+    # The normalized counts boxplot
+    transform1.norm<- assayDataElement(object[,1:10], elt = "neg_norm")
+    transform2.norm<- as.data.frame(transform1.norm)
+    transform3.norm<- melt(transform2.norm)
+    ggboxplot.norm <- ggplot(transform3.norm, aes(variable, value)) +
+      stat_boxplot(geom = "errorbar") +
+      geom_boxplot(fill="#FF7F0E") +
+      scale_y_log10() +
+      xlab("Segment") + 
+      ylab("Counts, Neg. Normalized") +
       ggtitle("Neg Norm Counts") +
       scale_x_discrete(labels=c(1:10))
   }
@@ -145,5 +176,5 @@ geomxNorm <- function(object, norm) {
     stop(paste0("Error: Negative needs to be neg" ))
   }
   
-  return(list("multi.plot" = multi.plot, "boxplot" = ggboxplot, "object" = object))
+  return(list("multi.plot" = multi.plot, "boxplot.raw" = ggboxplot.raw, "boxplot.norm" = ggboxplot.norm, "object" = object))
 }
