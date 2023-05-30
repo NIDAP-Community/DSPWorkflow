@@ -5,7 +5,7 @@ last update: 'May 24, 2023'
 
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=TRUE}
 knitr::opts_chunk$set(echo = TRUE)
 library(devtools)
 library(rprojroot)
@@ -25,7 +25,7 @@ This runs the DSPworkflow package to completion using the Mouse Thymus Dataset:
 
 ## 1. Study Design:
 
-```{r Study Design, echo=FALSE}
+```{r Study Design, echo=TRUE}
   
   # Set paths for downloading dcc files
   downloads.path <- test_path("fixtures/Mouse_Thymus/downloaded/")
@@ -85,7 +85,7 @@ This runs the DSPworkflow package to completion using the Mouse Thymus Dataset:
 
 ## 2. QC Preprocessing:
 
-```{r QC Preprocessing, echo=FALSE}
+```{r QC Preprocessing, echo=TRUE}
 
 qc.output <-  qcProc(object = sdesign.list$object,
                         min.segment.reads = 1000,
@@ -110,7 +110,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
 ## 3. Filtering:
 
-```{r Filtering, echo=FALSE}
+```{r Filtering, echo=TRUE}
     
     goi <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
     
@@ -135,7 +135,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
 ## 4. Normalization:
   
-```{r Normalization, echo=FALSE}
+```{r Normalization, echo=TRUE}
     
     q3.normalization.output <- geomxNorm(
                                   object = filtering.output$object, 
@@ -166,7 +166,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
 ## 5. Unsupervised Analysis:
 
-```{r Unsupervised Analysis, echo=FALSE}
+```{r Unsupervised Analysis, echo=TRUE}
 
     #Test Unsupervised Analysis:
     unsupervised.output <- dimReduct(object = q3.normalization.output$object,
@@ -186,7 +186,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ## 6. Clustering high CV Genes and Heatmap:
 
  
-```{r Clustering high CV Genes, echo=FALSE}
+```{r Clustering high CV Genes, echo=TRUE}
 
     heatmap.output <- heatMap(object = unsupervised.output$object, 
                         ngenes = 200, 
@@ -214,7 +214,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ## 7. Differential Expression Analysis:
 
 
-```{r Differential Expression Analysis,  echo=FALSE}
+```{r Differential Expression Analysis,  echo=TRUE}
 
     goi <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", 
              "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
@@ -289,7 +289,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
 ## 9. Violin Plot
 
-```{r Violin Plot, echo=FALSE}
+```{r Violin Plot, echo=TRUE}
     
     genes <- c("Plb1", "Ccr7", "Oas2", "Oas1a", "Oas1b", "Rhbdl2", "Dlst", 
                "Naa15", "Rab11a", "Desi1", "Tfdp1", "Foxn1")
@@ -305,7 +305,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
 ## 10. Spatial Deconvolution:
 
-```{r Spatial Deconvolution, echo=FALSE}
+```{r Spatial Deconvolution, echo=TRUE}
 
     ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
                        row.names=1, check.names=FALSE)
