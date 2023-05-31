@@ -5,7 +5,7 @@ last update: 'May 24, 2023'
 
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=TRUE}
 knitr::opts_chunk$set(echo = TRUE)
 library(devtools)
 library(rprojroot)
@@ -24,7 +24,7 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
 
 ## 1. Study Design:
 
-```{r Study Design, echo=FALSE}
+```{r Study Design, echo=TRUE}
   
   # Set paths for downloading dcc files
   downloads.path <- test_path("fixtures/Human_Colon/downloaded/")
@@ -83,7 +83,7 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
 
 ## 2. QC Preprocessing:
 
-```{r QC Preprocessing, echo=FALSE}
+```{r QC Preprocessing, echo=TRUE}
     
     qc.output <-  qcProc(object = sdesign.list$object,
                         min.segment.reads = 1000,
@@ -109,7 +109,7 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
 
 ## 3. Filtering:
 
-```{r Filtering, echo=FALSE}
+```{r Filtering, echo=TRUE}
     
     goi <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
@@ -134,7 +134,7 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
 
 ## 4. Normalization:
   
-```{r Normalization, echo=FALSE}
+```{r Normalization, echo=TRUE}
   
     q3.normalization.output <- geomxNorm(
                                   object = filtering.output$object, 
@@ -165,7 +165,7 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
 
 ## 5. Unsupervised Analysis:
 
-```{r Unsupervised Analysis, echo=FALSE}
+```{r Unsupervised Analysis, echo=TRUE}
 
     #Test Unsupervised Analysis:
     unsupervised.output <- dimReduct(object = q3.normalization.output$object,
@@ -185,7 +185,7 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
 ## 6. Clustering high CV Genes and Heatmap:
 
  
-```{r Clustering high CV Genes, echo=FALSE}
+```{r Clustering high CV Genes, echo=TRUE}
 
     heatmap.output <- heatMap(object = unsupervised.output$object, 
                         ngenes = 200, 
@@ -213,7 +213,7 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
 ## 7. Differential Expression Analysis:
 
 
-```{r Differential Expression Analysis,  echo=FALSE}
+```{r Differential Expression Analysis,  echo=TRUE}
 
     goi <- c("CD274", "CD8A", "CD68", "EPCAM",
              "KRT18", "JCHAIN")
@@ -289,7 +289,7 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
 
 ## 9. Violin Plot
 
-```{r Violin Plot, echo=FALSE}
+```{r Violin Plot, echo=TRUE}
 
     genes <- c("CD274", "CD8A", "CD68", "EPCAM",
              "KRT18", "JCHAIN")
@@ -305,7 +305,7 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
 
 ## 10. Spatial Deconvolution:
 
-```{r Spatial Deconvolution, echo=FALSE}
+```{r Spatial Deconvolution, echo=TRUE}
 
     ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
                        row.names=1, check.names=FALSE)
