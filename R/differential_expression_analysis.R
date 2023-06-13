@@ -28,7 +28,7 @@
 #' @param n.cores Number of cores to use, set to 1 if running in serial mode
 #'  (default is 1)
 #' @param p.adjust Method to use for pvalue adjustment. Choices are "holm",
-#'  "hochberg","hommel","bonferroni","BH","BY","fdr","none". (default is "BY")
+#'  "hochberg","hommel","bonferroni","BH","BY","fdr","none". (default is "BH")
 #' @param pairwise Boolean to calculate least-square means pairwise differences
 #'  (default is TRUE)
 #' @param fc.lim Fold Change limit for summarizing genes of interest (default
@@ -54,7 +54,7 @@
 #' @export
 #'
 #' @return a list containing mixed model output data frame, grid tables for
-#' samples and summary of genelists
+#' samples used in analysis and summary of significant genelists
 
 diffExpr <- function(object,
                      analysis.type,
@@ -66,7 +66,7 @@ diffExpr <- function(object,
                      element = "q_norm",
                      multi.core = TRUE,
                      n.cores = 1,
-                     p.adjust = "BY",
+                     p.adjust = "BH",
                      pairwise = TRUE,
                      fc.lim = 1.2,
                      pval.lim.1 = 0.05,
