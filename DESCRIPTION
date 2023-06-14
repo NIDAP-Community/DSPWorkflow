@@ -6,7 +6,8 @@ Authors@R: c(person("Rui", "He", email = "rui.he@nih.gov", role = "aut"),
     person("Ned", "Cauley", email = "ned.cauley@nih.gov", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-8968-6621")), 
     person("Jing", "Bian", email = "bianjh@nih.gov", role = "aut", comment = c(ORCID = "0000-0001-7109-716X")), 
     person("Difei", "Wang", email = "difei.wang2@nih.gov", role = "aut", comment = c(ORCID = "0000-0003-4088-3859")),
-    person("Chad", "Highfill", email = "chad.highfill@nih.gov", role = "aut", comment = c(ORCID = "0000-0003-0046-3593")))
+    person("Chad", "Highfill", email = "chad.highfill@nih.gov", role = "aut", comment = c(ORCID = "0000-0003-0046-3593")),
+    person("Aleksandra", "Michalowski", email = "michaloa@nih.gov", role = "aut", comment = c(ORCID = "0000-0001-9259-6101")))
 Description: A set of functions for analyzing RNA data from the spatial 
     transcriptomics approach Digital Spatial Profiling (Nanostring). The user 
     provides read count data and annotations, and the package outputs 
