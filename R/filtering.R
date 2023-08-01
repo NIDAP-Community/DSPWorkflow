@@ -154,9 +154,10 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
   if(class(goi)[1] != "character"){
     stop(paste0("Error: You have the wrong data class, must be character vector" ))
   }
-  goi.df <- data.frame(Gene = goi,
+  goi.table <- data.frame(Gene = goi,
                        Number = fData(object)[goi, "DetectedSegments"],
                        DetectionRate = percent(fData(object)[goi, "DetectionRate"]))
+  #goi.table <- capture.output(print(goi.df, row.name = FALSE))
   
   ## 4.5.3 Gene Filtering
   # Plot detection rate:
@@ -191,5 +192,5 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
   # retain only detected genes of interest
   goi <- goi[goi %in% rownames(object)]
   
-  return(list("stacked.bar.plot" = stacked.bar.plot, "tab" = tab, "sankey.plot" = sankey.plot, "genes.detected.plot" = genes.detected.plot, "object" = object))
+  return(list("stacked.bar.plot" = stacked.bar.plot, "tab" = tab, "sankey.plot" = sankey.plot, "goi.table" = goi.table, "genes.detected.plot" = genes.detected.plot, "object" = object))
 }

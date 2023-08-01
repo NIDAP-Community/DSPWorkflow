@@ -71,7 +71,7 @@ This runs the DSPworkflow package to completion using the Human Colon Cancer Dat
   
   print(sdesign.list$sankey.plot)
   print("Created GeoMx Object\n\n")
-  pData(sdesign.list$object)[,c("slide name","class","segment")]  
+  pData(sdesign.list$object)[,c("slide_name","class","segment")]  
   
   
 ```
@@ -117,6 +117,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
     print(filtering.output$`tab`)
     print(filtering.output$`sankey.plot`)
     print(filtering.output$`genes.detected.plot`)
+    print(filtering.output$'goi.table', row.names = FALSE)
     
   create.rds <- FALSE
   if(create.rds) {
