@@ -297,8 +297,8 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
     violin.plot.test <- violinPlot(object = q3.normalization.output$object, 
                                         expr.type = "q_norm", 
                                         genes = genes,
-                                        group = "region",
-                                        facet.by = "segment")
+                                        group = "segment",
+                                        facet.by = "region")
     grid.arrange(violin.plot.test)
 
 ```
