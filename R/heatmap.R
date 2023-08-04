@@ -136,6 +136,8 @@ heatMap <- function(
     color = col.palette,
     annotation_col = anno.col
   )
+
+
   
   ## gene.df converts to data frame
   gene.df <- as.data.frame(plot.genes)
