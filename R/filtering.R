@@ -64,6 +64,8 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
     }
   }
   pData(object)$loq <- loq
+
+
   
   ## 4.5.0 Filtering
   loq.mat <- c()
