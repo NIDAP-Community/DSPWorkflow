@@ -27,6 +27,8 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
   if(class(object)[1] != "NanoStringGeoMxSet"){
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
   }
+
+
   
   # run reductions ====
   color.variable <- NULL
