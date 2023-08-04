@@ -295,14 +295,13 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
 ```{r Violin Plot, echo=TRUE}
     
-    genes <- c("CD274", "CD8A", "CD68", "EPCAM",
-         "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+    genes <- c("CLIC5","FYN")
     
     violin.plot.test <- violinPlot(object = q3.normalization.output$object, 
                                         expr.type = "q_norm", 
                                         genes = genes,
-                                        group = "region",
-                                        facet.by = "segment")
+                                        group = "class",
+                                        facet.by = "region")
     grid.arrange(violin.plot.test)
 
 ```
