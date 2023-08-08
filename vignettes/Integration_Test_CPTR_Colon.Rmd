@@ -63,10 +63,10 @@ This runs the DSPworkflow package to completion using the Human Colon Cancer Dat
                                 experiment.data.col.names = c("panel"))
   
   # For creating fixture RDS
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
-    study.design.human.kidney <- sdesign.list$object
-    saveRDS(study.design.human.kidney, file = "tests/testthat/fixtures/Human_Colon_CPTR/studyDesignHumanColonCPTR.RDS")
+    study.design.human.coloncptr <- sdesign.list$object
+    saveRDS(study.design.human.coloncptr, file = "tests/testthat/fixtures/Human_Colon_CPTR/studyDesignHumanColonCPTR.RDS")
   }
   
   print(sdesign.list$sankey.plot)
@@ -84,19 +84,19 @@ qc.output <-  qcProc(object = sdesign.list$object,
                         min.segment.reads = 1000, 
                         percent.trimmed = 80,    
                         percent.stitched = 80,   
-                        percent.aligned = 75,    
+                        percent.aligned = 80,    
                         percent.saturation = 50, 
                         min.negative.count = 1,   
-                        max.ntc.count = 9000,     
+                        max.ntc.count = 1000,     
                         min.nuclei = 20,         
                         min.area = 1000,
                         print.plots = TRUE)
     print(qc.output$segments.qc)
     
-  create.rds <- FALSE
+  create.rds <- TRUE
   if(create.rds) {
-    qc.human.kidney <- qc.output$object
-    saveRDS(qc.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/qcHumanKidney.RDS")
+    qc.human.coloncptr <- qc.output$object
+    saveRDS(qc.human.coloncptr, file = "tests/testthat/fixtures/Human_Colon_CPTR/qcHumanColonCPTR.RDS")
   }
 
 ```
@@ -119,10 +119,10 @@ qc.output <-  qcProc(object = sdesign.list$object,
     print(filtering.output$`genes.detected.plot`)
     print(filtering.output$'goi.table', row.names = FALSE)
     
-  create.rds <- FALSE
+  create.rds <- TRUE
   if(create.rds) {
-    filtering.human.kidney <- filtering.output$object
-    saveRDS(filtering.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/filteringHumanKidney.RDS")
+    filtering.human.coloncptr <- filtering.output$object
+    saveRDS(filtering.human.coloncptr, file = "tests/testthat/fixtures/Human_Colon_CPTR/filteringHumanColonCPTR.RDS")
   }
 
 ```
@@ -132,17 +132,28 @@ qc.output <-  qcProc(object = sdesign.list$object,
   
 ```{r Normalization, echo=FALSE}
   
-    normalization.output <- geomxNorm(
+     q3.normalization.output <- geomxNorm(
                                   object = filtering.output$object, 
-                                  norm = "quant")
+                                  norm = "q3")
     
-    print(normalization.output$multi.plot)
-    print(normalization.output$boxplot)
+    print(q3.normalization.output$multi.plot)
+    print(q3.normalization.output$boxplot.raw)
+    print(q3.normalization.output$boxplot.norm)
+    
+    neg.normalization.output <- geomxNorm(
+                                  object = filtering.output$object, 
+                                  norm = "neg")
+    
+    print(neg.normalization.output$multi.plot)
+    print(neg.normalization.output$boxplot.raw)
+    print(neg.normalization.output$boxplot.norm)
     
     create.rds <- FALSE
     if(create.rds) {
-      normalization.human.kidney <- normalization.output$object
-      saveRDS(normalization.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/normalizationHumanKidney.RDS")
+      q3.normalization.human.coloncptr <- q3.normalization.output$object
+      saveRDS(q3.normalization.human.coloncptr, file = "tests/testthat/fixtures/Human_Colon_CPTR/q3normalizationHumanColon_CPTR.RDS")
+      neg.normalization.human.coloncptr <- neg.normalization.output$object
+      saveRDS(neg.normalization.human.coloncptr, file = "tests/testthat/fixtures/Human_Colon_CPTR/negnormalizationHumanColon_CPTR.RDS")
     }
     
 ```
@@ -153,7 +164,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ```{r Unsupervised Analysis, echo=FALSE}
 
     #Test Unsupervised Analysis:
-    unsupervised.output <- dimReduct(object = normalization.output$object,
+    unsupervised.output <- dimReduct(object = q3.normalization.output$object,
                         point.size = 3,
                         point.alpha = 1,
                         color.variable1 = "region",
@@ -201,9 +212,9 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ```{r Differential Expression Analysis,  echo=FALSE}
 
     goi <- c("CD274", "CD8A", "CD68", "EPCAM",
-             "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+         "KRT18", "NPHS1", "CLDN8")
     
-    object <- normalization.output$object
+    object <- q3.normalization.output$object
     object <- object[goi,]
     Gene <- Subset <- NULL
     
@@ -211,10 +222,10 @@ qc.output <-  qcProc(object = sdesign.list$object,
     reslist.1 <- diffExpr(object = object, 
                           analysis.type = "Within Groups", 
                           region.col = "region", 
-                          regions = c("glomerulus", "tubule"), 
-                          group.col = "class", 
-                          groups = c("DKD", "normal"), 
-                          n.cores = 1)
+                          regions = c("superficial", "deep"), 
+                          group.col = "segment", 
+                          groups = c("pancytokeratin"), 
+                          n.cores = 8)
     grid.draw(reslist.1$sample_table)
     grid.newpage()
     grid.draw(reslist.1$summary_table)
@@ -223,28 +234,28 @@ qc.output <-  qcProc(object = sdesign.list$object,
     pval_col1 <- colnames(reslist.1$result)[grepl("_pval",colnames(reslist.1$result))]
     
     lfc.1 <- reslist.1$result %>% 
-              dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% 
+              dplyr::filter(Gene == "CALB1") %>% 
               select(all_of(lfc_col1)) %>% 
               as.numeric()
     pval.1 <- reslist.1$result %>% 
-              dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% 
+              dplyr::filter(Gene == "CALB1") %>% 
               select(all_of(pval_col1)) %>% 
               as.numeric()
     
-    cat(paste0("\n\nvalue of CALB Fold Change is:", lfc.1))
+    cat(paste0("\n\nvalue of CALB1 Fold Change is:", lfc.1))
     cat("expected value is -2.014")
     
-    cat(paste0("\nvalue of CALB pval is:",pval.1))
+    cat(paste0("\nvalue of CALB1 pval is:",pval.1))
     cat("expected value is 0.0274")
     
     #Second analysis:
     reslist.2 <- diffExpr(object = object, 
-                          analysis.type = "Between Groups", 
+                          analysis.type = "Within Groups", 
                           region.col = "region", 
-                          regions = c("glomerulus", "tubule"), 
-                          group.col = "class", 
-                          groups = c("DKD", "normal"), 
-                          n.cores = 1)
+                          regions = c("superficial", "deep"), 
+                          group.col = "segment", 
+                          groups = c("negative"), 
+                          n.cores = 8)
     grid.draw(reslist.2$sample_table)
     grid.newpage()
     grid.draw(reslist.2$summary_table)
@@ -278,13 +289,13 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ```{r Violin Plot, echo=FALSE}
     
     genes <- c("CD274", "CD8A", "CD68", "EPCAM",
-         "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+         "KRT18", "NPHS1", "CLDN8")
     
-    violin.plot.test <- violinPlot(object = normalization.output$object, 
+    violin.plot.test <- violinPlot(object = q3.normalization.output$object, 
                                         expr.type = "q_norm", 
                                         genes = genes,
-                                        group = "region",
-                                        facet.by = "segment")
+                                        group = "class",
+                                        facet.by = "region")
     grid.arrange(violin.plot.test)
 
 ```
@@ -293,17 +304,15 @@ qc.output <-  qcProc(object = sdesign.list$object,
 
 ```{r Spatial Deconvolution, echo=FALSE}
 
-    
-
-
     ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
                        row.names=1, check.names=FALSE)
-    rownames(ref.mtx) = sample(rownames(normalization.output$object), size = 1500, replace = FALSE)
+    rownames(ref.mtx) = sample(rownames(q3.normalization.output$object), size = 1500, replace = FALSE)
     ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
-    
-    spatial.output <- spatialDeconvolution(object = normalization.output$object, 
+    spatial.output <- spatialDeconvolution(object = q3.normalization.output$object, 
                                            expr.type = "q_norm", 
                                            ref.mtx = ref.mtx, 
+                                           prof.mtx = NULL, 
+                                           use.custom.prof.mtx = TRUE, 
                                            ref.annot = ref.annot, 
                                            cell.id.col = "CellID", 
                                            celltype.col = "LabeledCellType", 
