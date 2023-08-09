@@ -20,12 +20,16 @@
 
 # To call function, must have data = raw object, dsp.obj = QC demoData, 
 # loq.cutoff 2 is recommended, loq.min 2 is recommend, 
-# cut.segment = remove segments with less than 10% of the genes detected; .05-.1 recommended,
+# cut.segment = remove segments with less than x% of the genes detected; .05-.1 recommended,
 # goi = goi (genes of interest). Must be a vector of genes (i.e c("PDCD1", "CD274")),
-filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
+filtering <- function(object, 
+                      loq.cutoff = 2, 
+                      loq.min = 2, 
+                      cut.segment = 0.05, 
+                      goi) {
   
   if(class(object)[1] != "NanoStringGeoMxSet"){
-    stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
+    stop(paste0("Error: The input object must be a NanoStringGeoMxSet" ))
   }
   
   # run reductions ====
@@ -35,21 +39,18 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
   ##4.4Limit of Quantification
   # Define LOQ SD threshold and minimum value
   if(class(loq.cutoff)[1] != "numeric"){
-    stop(paste0("Error: You have the wrong data class, must be numeric" ))
+    stop(paste0("Error: LOQ cutoff must be numeric" ))
   }
   if(class(loq.min)[1] != "numeric"){
-    stop(paste0("Error: You have the wrong data class, must be numeric" ))
+    stop(paste0("Error: LOQ min must be numeric" ))
   }
   # Define Modules
   #pkc.file <- pkc.file
   pkc.file <- annotation(object)
   if(class(pkc.file)[1] != "character"){
-    stop(paste0("Error: You have the wrong data class, must be character" ))
+    stop(paste0("The pkc file name must be character" ))
   }
   modules <- gsub(".pkc", "", pkc.file)
-  
-  # Collapse probes to gene targets
-  #target_Data <- aggregateCounts(data)
   
   # Calculate LOQ per module tested
   loq <- data.frame(row.names = colnames(object))
@@ -78,7 +79,7 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
   # ensure ordering since this is stored outside of the geomxSet
   loq.mat <- loq.mat[fData(object)$TargetName, ]
   
-  ##4.5.1S egment Gene Detection
+  ##4.5.1S Segment Gene Detection
   # Save detection rate information to pheno data
   pData(object)$GenesDetected <- 
     colSums(loq.mat, na.rm = TRUE)
@@ -104,13 +105,14 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
   
   
   # cut percent genes detected at 1, 5, 10, 15
-  tab<- kable(table(pData(object)$DetectionThreshold, pData(object)$class))
+  segment.table <- kable(table(pData(object)$DetectionThreshold, 
+                               pData(object)$class))
   if(class(cut.segment)[1] != "numeric"){
     stop(paste0("Error: You have the wrong data class, must be numeric" ))
   }
   object <- object[, pData(object)$GeneDetectionRate >= cut.segment]
   if(cut.segment > 1 | cut.segment < 0){
-    stop(paste0("Error: You need perecentage in decimals between 0-1" ))
+    stop(paste0("Error: List percentage as a decimal between 0-1" ))
   }
   
   # select the annotations we want to show, use `` to surround column names with
@@ -154,7 +156,7 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
   if(class(goi)[1] != "character"){
     stop(paste0("Error: You have the wrong data class, must be character vector" ))
   }
-  goi.df <- data.frame(Gene = goi,
+  goi.table <- data.frame(Gene = goi,
                        Number = fData(object)[goi, "DetectedSegments"],
                        DetectionRate = percent(fData(object)[goi, "DetectionRate"]))
   
@@ -191,5 +193,5 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
   # retain only detected genes of interest
   goi <- goi[goi %in% rownames(object)]
   
-  return(list("stacked.bar.plot" = stacked.bar.plot, "tab" = tab, "sankey.plot" = sankey.plot, "genes.detected.plot" = genes.detected.plot, "object" = object))
+  return(list("stacked.bar.plot" = stacked.bar.plot, "segment.table" = segment.table, "goi.table" = goi.table, "sankey.plot" = sankey.plot, "genes.detected.plot" = genes.detected.plot, "object" = object))
 }
