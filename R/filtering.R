@@ -136,7 +136,7 @@ filtering <- function(object,
   sankey.plot <- ggplot(test.gr, aes(x, id = id, split = y, value = n)) +
     geom_parallel_sets(aes(fill = region), alpha = 0.5, axis.width = 0.1) +
     geom_parallel_sets_axes(axis.width = 0.2) +
-    geom_parallel_sets_labels(color = "white", size = 5) +
+    geom_parallel_sets_labels(color = "gray", size = 5, angle = 0) +
     theme_classic(base_size = 17) + 
     theme(legend.position = "bottom",
           axis.ticks.y = element_blank(),
