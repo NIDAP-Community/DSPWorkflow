@@ -167,6 +167,7 @@ filtering <- function(object,
   goi.table <- data.frame(Gene = goi,
                        Number = fData(object)[goi, "DetectedSegments"],
                        DetectionRate = percent(fData(object)[goi, "DetectionRate"]))
+  #goi.table <- capture.output(print(goi.df, row.name = FALSE))
   
   ## 4.5.3 Gene Filtering
   

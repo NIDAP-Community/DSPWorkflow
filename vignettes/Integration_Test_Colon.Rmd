@@ -123,6 +123,7 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
     print(filtering.output$`tab`)
     print(filtering.output$`sankey.plot`)
     print(filtering.output$`genes.detected.plot`)
+    print(filtering.output$'goi.table', row.names = FALSE)
     
   create.rds <- TRUE
   if(create.rds) {

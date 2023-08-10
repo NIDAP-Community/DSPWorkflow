@@ -125,8 +125,9 @@ qc.output <-  qcProc(object = sdesign.list$object,
     print(filtering.output$`tab`)
     print(filtering.output$`sankey.plot`)
     print(filtering.output$`genes.detected.plot`)
+    print(filtering.output$'goi.table', row.names = FALSE)
     
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     filtering.human.kidney <- filtering.output$object
     saveRDS(filtering.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/filteringHumanKidney.RDS")
@@ -155,7 +156,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
     print(neg.normalization.output$boxplot.raw)
     print(neg.normalization.output$boxplot.norm)
     
-    create.rds <- TRUE
+    create.rds <- FALSE
     if(create.rds) {
       q3.normalization.human.kidney <- q3.normalization.output$object
       saveRDS(q3.normalization.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/q3normalizationHumanKidney.RDS")
