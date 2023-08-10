@@ -5,7 +5,8 @@ test_that("Test Kidney Data", {
   filtering.output <- do.call(filtering,kidney.dat)
   
   expected.elements = c("stacked.bar.plot", 
-                        "tab", 
+                        "segment.table", 
+                        "goi.table", 
                         "sankey.plot", 
                         "genes.detected.plot", 
                         "object")
@@ -21,7 +22,8 @@ test_that("Test Colon Data", {
   filtering.output <- do.call(filtering,colon.dat)
   
   expected.elements = c("stacked.bar.plot", 
-                        "tab", 
+                        "segment.table", 
+                        "goi.table", 
                         "sankey.plot", 
                         "genes.detected.plot", 
                         "object")
@@ -37,7 +39,8 @@ test_that("Test thymus Data", {
   filtering.output <- do.call(filtering,thymus.dat)
   
   expected.elements = c("stacked.bar.plot", 
-                        "tab", 
+                        "segment.table", 
+                        "goi.table", 
                         "sankey.plot", 
                         "genes.detected.plot", 
                         "object")
@@ -53,7 +56,8 @@ test_that("Test nsclc Data", {
   filtering.output <- do.call(filtering,nsclc.dat)
   
   expected.elements = c("stacked.bar.plot", 
-                        "tab", 
+                        "segment.table", 
+                        "goi.table", 
                         "sankey.plot", 
                         "genes.detected.plot", 
                         "object")
@@ -66,42 +70,42 @@ test_that("Filtering Success", {
   kidney.dat <- selectDatasetFiltering("kidney")
  
   kidney.dat$object <- c(1,2,3,5)
-  expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be NanoStringGeoMxSet")
+  expect_error(do.call(filtering,kidney.dat), "Error: The input object must be a NanoStringGeoMxSet")
 })
 
 test_that("Filtering Success", {
   kidney.dat <- selectDatasetFiltering("kidney")
   
   kidney.dat$loq.cutoff <- c("A")
-  expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be numeric")
+  expect_error(do.call(filtering,kidney.dat), "Error: LOQ cutoff must be numeric")
 })
 
 test_that("Filtering Success", {
   kidney.dat <- selectDatasetFiltering("kidney")
   
   kidney.dat$loq.min <- c("A")
-  expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be numeric")
-})
-
-#test_that("Filtering Success", {
-  #kidney.dat <- selectDatasetFiltering("kidney")
-  
-  #kidney.dat$pkc.file <- 10
-  #expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be character")
-#})
-
-test_that("Filtering Success", {
-  kidney.dat <- selectDatasetFiltering("kidney")
-  
-  kidney.dat$cut.segment <- c("A")
-  expect_error(do.call(filtering,kidney.dat), "Error: You have the wrong data class, must be numeric")
+  expect_error(do.call(filtering,kidney.dat), "Error: LOQ min must be numeric")
 })
 
 test_that("Filtering Success", {
   kidney.dat <- selectDatasetFiltering("kidney")
   
-  kidney.dat$cut.segment <- 10
-  expect_error(do.call(filtering,kidney.dat), "Error: You need perecentage in decimals between 0-1")
+  kidney.dat$segment.gene.rate.cutoff <- c("A")
+  expect_error(do.call(filtering,kidney.dat), "Error: segment.gene.rate.cutoff must be numeric")
+})
+
+test_that("Filtering Success", {
+  kidney.dat <- selectDatasetFiltering("kidney")
+  
+  kidney.dat$segment.gene.rate.cutoff <- 10
+  expect_error(do.call(filtering,kidney.dat), "Error: segment.gene.rate.cutoff must be between 0-1")
+})
+
+test_that("Filtering Success", {
+  kidney.dat <- selectDatasetFiltering("kidney")
+  
+  kidney.dat$study.gene.rate.cutoff <- 10
+  expect_error(do.call(filtering,kidney.dat), "Error: study.gene.rate.cutoff must be between 0-1")
 })
 
 test_that("Filtering Success", {
