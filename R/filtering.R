@@ -29,6 +29,7 @@ filtering <- function(object,
                       loq.min = 2, 
                       segment.gene.rate.cutoff = 0.05,
                       study.gene.rate.cutoff = 0.05, 
+                      sankey.exclude.slide = FALSE, 
                       goi) {
   
   if(class(object)[1] != "NanoStringGeoMxSet"){
@@ -121,19 +122,44 @@ filtering <- function(object,
   
   # Create a post-filtering Sankey Plot
   
-  # select the annotations we want to show, use `` to surround column names with
-  # spaces or special symbols
-  count.mat <- count(pData(object), `slide_name`, class, region, segment)
+  # Create a count matrix with or without slide name
+  if(sankey.exclude.slide == TRUE){
+    count.mat <-
+      count(pData(object), class, region, segment)
+  } else {
+    count.mat <-
+      count(pData(object), slide_name, class, region, segment)
+  }
+  
   if(class(object)[1] != "NanoStringGeoMxSet"){
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
   }
-  # simplify the slide_names
-  count.mat$`slide_name` <- gsub("disease", "d", gsub("normal", "n", count.mat$`slide_name`))
-  # gather the data and plot in order: class, slide_name, region, segment
-  test.gr <- gather_set_data(count.mat, 1:4)
-  test.gr$x <-factor(test.gr$x, levels = c("class", "slide_name", "region", "segment"))
+  
+  # Gather the data and plot in order: class, slide name, region, segment
+  # gather_set_data creates x, id, y, and n fields within sankey.count.data
+  # Establish the levels of the Sankey with or without the slide name
+  if(sankey.exclude.slide == TRUE){
+    sankey.count.data <- gather_set_data(count.mat, 1:3)
+    sankey.count.data$x <-
+      factor(
+        sankey.count.data$x,
+        levels = c("class", "region", "segment")
+      )
+    # For position of Sankey 100 segment scale
+    adjust.scale.pos = 1
+  } else {
+    sankey.count.data <- gather_set_data(count.mat, 1:4)
+    sankey.count.data$x <-
+      factor(
+        sankey.count.data$x,
+        levels = c("class", "slide_name", "region", "segment")
+      )
+    # For position of Sankey 100 segment scale
+    adjust.scale.pos = 0
+  }
+  
   # plot Sankey
-  sankey.plot <- ggplot(test.gr, aes(x, id = id, split = y, value = n)) +
+  sankey.plot <- ggplot(sankey.count.data, aes(x, id = id, split = y, value = n)) +
     geom_parallel_sets(aes(fill = region), alpha = 0.5, axis.width = 0.1) +
     geom_parallel_sets_axes(axis.width = 0.2) +
     geom_parallel_sets_labels(color = "gray", size = 5, angle = 0) +
@@ -145,10 +171,19 @@ filtering <- function(object,
     scale_y_continuous(expand = expansion(0)) + 
     scale_x_discrete(expand = expansion(0)) +
     labs(x = "", y = "") +
-    annotate(geom = "segment", x = 4.25, xend = 4.25, y = 20, 
-             yend = 120, lwd = 2) +
-    annotate(geom = "text", x = 4.19, y = 70, angle = 90, size = 5,
-             hjust = 0.5, label = "100 segments")
+    annotate(geom = "segment", 
+             x = (4.25 - adjust.scale.pos), 
+             xend = (4.25 - adjust.scale.pos), 
+             y = 20, 
+             yend = 120, 
+             lwd = 2) +
+    annotate(geom = "text", 
+             x = (4.19 - adjust.scale.pos), 
+             y = 70, 
+             angle = 90, 
+             size = 5,
+             hjust = 0.5, 
+             label = "100 segments")
   
   
   
