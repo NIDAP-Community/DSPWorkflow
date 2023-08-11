@@ -60,7 +60,8 @@ studyDesign <- function(dcc.files,
                         region.col = "region", 
                         segment.col = "segment",
                         area.col = "area",
-                        nuclei.col = "nuclei") {
+                        nuclei.col = "nuclei", 
+                        sankey.exclude.slide = FALSE) {
   
   # load all input data into a GeoMX object
   object <-
@@ -131,8 +132,17 @@ studyDesign <- function(dcc.files,
   
   # select the annotations we want to show, use `` to surround column
   # names with spaces or special symbols
-  count.mat <-
-    count(pData(object), `slide_name`, class, region, segment)
+  
+  # Create a count matrix with or without slide name
+  if(sankey.exclude.slide == TRUE){
+    count.mat <-
+      count(pData(object), class, region, segment)
+  } else {
+    count.mat <-
+      count(pData(object), slide_name, class, region, segment)
+  }
+  
+
   
   # Remove any rows with NA values
   na.per.column <- colSums(is.na(count.mat))
@@ -144,14 +154,28 @@ studyDesign <- function(dcc.files,
   }
    
   
-  # gather the data and plot in order: class, slide name, region, segment
+  # Gather the data and plot in order: class, slide name, region, segment
   # gather_set_data creates x, id, y, and n fields within sankey.count.data
-  sankey.count.data <- gather_set_data(count.mat, 1:4)
-  sankey.count.data$x <-
-    factor(
-      sankey.count.data$x,
-      levels = c("class", "slide_name", "region", "segment")
-    )
+  # Establish the levels of the Sankey with or without the slide name
+  if(sankey.exclude.slide == TRUE){
+    sankey.count.data <- gather_set_data(count.mat, 1:3)
+    sankey.count.data$x <-
+      factor(
+        sankey.count.data$x,
+        levels = c("class", "region", "segment")
+      )
+    # For position of Sankey 100 segment scale
+    adjust.scale.pos = 1
+  } else {
+    sankey.count.data <- gather_set_data(count.mat, 1:4)
+    sankey.count.data$x <-
+      factor(
+        sankey.count.data$x,
+        levels = c("class", "slide_name", "region", "segment")
+      )
+    # For position of Sankey 100 segment scale
+    adjust.scale.pos = 0
+  }
   
   # plot Sankey diagram
   sankey.plot <-
@@ -167,7 +191,7 @@ studyDesign <- function(dcc.files,
     geom_parallel_sets_labels(color = "gray",
                               size = 5,
                               angle = 0) +
-    theme_classic(base_size = 17) +
+    theme_classic(base_size = 14) +
     theme(
       legend.position = "bottom",
       axis.ticks.y = element_blank(),
@@ -179,15 +203,15 @@ studyDesign <- function(dcc.files,
     labs(x = "", y = "") +
     annotate(
       geom = "segment",
-      x = 4.25,
-      xend = 4.25,
+      x = (4.25 - adjust.scale.pos),
+      xend = (4.25 - adjust.scale.pos),
       y = 20,
       yend = 120,
       lwd = 2
     ) +
     annotate(
       geom = "text",
-      x = 4.19,
+      x = (4.19 - adjust.scale.pos),
       y = 70,
       angle = 90,
       size = 5,
