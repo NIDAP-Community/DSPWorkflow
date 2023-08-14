@@ -19,13 +19,21 @@
 #' @return A list containing the ....
 
 # To call function, must have data = raw object, dsp.obj = QC demoData, 
-# loq.cutoff 2 is recommended, loq.min 2 is recommend, 
-# cut.segment = remove segments with less than 10% of the genes detected; .05-.1 recommended,
+# loq.cutoff 2 is recommended,
+# loq.min 2 is recommend, 
+# segment.gene.rate.cutoff = remove segments with less than x% of the gene set detected; .05-.1 recommended,
+# study.gene.rate.cutoff = remove genes detected in less than x% of segments; .05-.2 recommended,
 # goi = goi (genes of interest). Must be a vector of genes (i.e c("PDCD1", "CD274")),
-filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
+filtering <- function(object, 
+                      loq.cutoff = 2, 
+                      loq.min = 2, 
+                      segment.gene.rate.cutoff = 0.05,
+                      study.gene.rate.cutoff = 0.05, 
+                      sankey.exclude.slide = FALSE, 
+                      goi) {
   
   if(class(object)[1] != "NanoStringGeoMxSet"){
-    stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
+    stop(paste0("Error: The input object must be a NanoStringGeoMxSet" ))
   }
   
   # run reductions ====
@@ -35,21 +43,17 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
   ##4.4Limit of Quantification
   # Define LOQ SD threshold and minimum value
   if(class(loq.cutoff)[1] != "numeric"){
-    stop(paste0("Error: You have the wrong data class, must be numeric" ))
+    stop(paste0("Error: LOQ cutoff must be numeric" ))
   }
   if(class(loq.min)[1] != "numeric"){
-    stop(paste0("Error: You have the wrong data class, must be numeric" ))
+    stop(paste0("Error: LOQ min must be numeric" ))
   }
   # Define Modules
-  #pkc.file <- pkc.file
   pkc.file <- annotation(object)
   if(class(pkc.file)[1] != "character"){
-    stop(paste0("Error: You have the wrong data class, must be character" ))
+    stop(paste0("The pkc file name must be character" ))
   }
   modules <- gsub(".pkc", "", pkc.file)
-  
-  # Collapse probes to gene targets
-  #target_Data <- aggregateCounts(data)
   
   # Calculate LOQ per module tested
   loq <- data.frame(row.names = colnames(object))
@@ -78,7 +82,7 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
   # ensure ordering since this is stored outside of the geomxSet
   loq.mat <- loq.mat[fData(object)$TargetName, ]
   
-  ##4.5.1S egment Gene Detection
+  # Evaluate and Filter Segment Gene Detection Rate
   # Save detection rate information to pheno data
   pData(object)$GenesDetected <- 
     colSums(loq.mat, na.rm = TRUE)
@@ -102,33 +106,63 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
          y = "Segments, #",
          fill = "Segment Type")
   
-  
   # cut percent genes detected at 1, 5, 10, 15
-  tab<- kable(table(pData(object)$DetectionThreshold, pData(object)$class))
-  if(class(cut.segment)[1] != "numeric"){
-    stop(paste0("Error: You have the wrong data class, must be numeric" ))
+  segment.table <- kable(table(pData(object)$DetectionThreshold, 
+                               pData(object)$class))
+  if(class(segment.gene.rate.cutoff)[1] != "numeric"){
+    stop(paste0("Error: segment.gene.rate.cutoff must be numeric" ))
   }
-  object <- object[, pData(object)$GeneDetectionRate >= cut.segment]
-  if(cut.segment > 1 | cut.segment < 0){
-    stop(paste0("Error: You need perecentage in decimals between 0-1" ))
+  if(segment.gene.rate.cutoff > 1 | segment.gene.rate.cutoff < 0){
+    stop(paste0("Error: segment.gene.rate.cutoff must be between 0-1" ))
   }
   
-  # select the annotations we want to show, use `` to surround column names with
-  # spaces or special symbols
-  count.mat <- count(pData(object), `slide_name`, class, region, segment)
+  # Filter the data using the cutoff for gene detection rate
+  object <-
+    object[, pData(object)$GeneDetectionRate >= segment.gene.rate.cutoff]
+  
+  # Create a post-filtering Sankey Plot
+  
+  # Create a count matrix with or without slide name
+  if(sankey.exclude.slide == TRUE){
+    count.mat <-
+      count(pData(object), class, region, segment)
+  } else {
+    count.mat <-
+      count(pData(object), slide_name, class, region, segment)
+  }
+  
   if(class(object)[1] != "NanoStringGeoMxSet"){
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
   }
-  # simplify the slide_names
-  count.mat$`slide_name` <- gsub("disease", "d", gsub("normal", "n", count.mat$`slide_name`))
-  # gather the data and plot in order: class, slide_name, region, segment
-  test.gr <- gather_set_data(count.mat, 1:4)
-  test.gr$x <-factor(test.gr$x, levels = c("class", "slide_name", "region", "segment"))
+  
+  # Gather the data and plot in order: class, slide name, region, segment
+  # gather_set_data creates x, id, y, and n fields within sankey.count.data
+  # Establish the levels of the Sankey with or without the slide name
+  if(sankey.exclude.slide == TRUE){
+    sankey.count.data <- gather_set_data(count.mat, 1:3)
+    sankey.count.data$x <-
+      factor(
+        sankey.count.data$x,
+        levels = c("class", "region", "segment")
+      )
+    # For position of Sankey 100 segment scale
+    adjust.scale.pos = 1
+  } else {
+    sankey.count.data <- gather_set_data(count.mat, 1:4)
+    sankey.count.data$x <-
+      factor(
+        sankey.count.data$x,
+        levels = c("class", "slide_name", "region", "segment")
+      )
+    # For position of Sankey 100 segment scale
+    adjust.scale.pos = 0
+  }
+  
   # plot Sankey
-  sankey.plot<- ggplot(test.gr, aes(x, id = id, split = y, value = n)) +
+  sankey.plot <- ggplot(sankey.count.data, aes(x, id = id, split = y, value = n)) +
     geom_parallel_sets(aes(fill = region), alpha = 0.5, axis.width = 0.1) +
     geom_parallel_sets_axes(axis.width = 0.2) +
-    geom_parallel_sets_labels(color = "white", size = 5) +
+    geom_parallel_sets_labels(color = "gray", size = 5, angle = 0) +
     theme_classic(base_size = 17) + 
     theme(legend.position = "bottom",
           axis.ticks.y = element_blank(),
@@ -137,12 +171,23 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
     scale_y_continuous(expand = expansion(0)) + 
     scale_x_discrete(expand = expansion(0)) +
     labs(x = "", y = "") +
-    annotate(geom = "segment", x = 4.25, xend = 4.25, y = 20, 
-             yend = 120, lwd = 2) +
-    annotate(geom = "text", x = 4.19, y = 70, angle = 90, size = 5,
-             hjust = 0.5, label = "100 segments")
+    annotate(geom = "segment", 
+             x = (4.25 - adjust.scale.pos), 
+             xend = (4.25 - adjust.scale.pos), 
+             y = 20, 
+             yend = 120, 
+             lwd = 2) +
+    annotate(geom = "text", 
+             x = (4.19 - adjust.scale.pos), 
+             y = 70, 
+             angle = 90, 
+             size = 5,
+             hjust = 0.5, 
+             label = "100 segments")
   
-  ##4.5.2 Gene Detection Rate
+  
+  
+  # Evaluate and Filter Study-wide Gene Detection Rate 
   # Calculate detection rate:
   loq.mat <- loq.mat[, colnames(object)]
   fData(object)$DetectedSegments <- rowSums(loq.mat, na.rm = TRUE)
@@ -154,11 +199,21 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
   if(class(goi)[1] != "character"){
     stop(paste0("Error: You have the wrong data class, must be character vector" ))
   }
-  goi.df <- data.frame(Gene = goi,
+  goi.table <- data.frame(Gene = goi,
                        Number = fData(object)[goi, "DetectedSegments"],
                        DetectionRate = percent(fData(object)[goi, "DetectionRate"]))
+  #goi.table <- capture.output(print(goi.df, row.name = FALSE))
   
   ## 4.5.3 Gene Filtering
+  
+  # Check that the study gene rate cutoff is correctly entered
+  if(class(study.gene.rate.cutoff)[1] != "numeric"){
+    stop(paste0("Error: study.gene.rate.cutoff must be numeric" ))
+  }
+  if(study.gene.rate.cutoff > 1 | study.gene.rate.cutoff < 0){
+    stop(paste0("Error: study.gene.rate.cutoff must be between 0-1" ))
+  }
+  
   # Plot detection rate:
   plot.detect <- data.frame(Freq = c(1, 5, 10, 20, 30, 50))
   plot.detect$Number <-
@@ -181,15 +236,12 @@ filtering <- function(object, loq.cutoff, loq.min, cut.segment, goi) {
     labs(x = "% of Segments",
          y = "Genes Detected, % of Panel > loq")
   
-  # Subset to target genes detected in at least 10% of the samples.
-  #   Also manually include the negative control probe, for downstream use
+  # Subset for genes above the study gene detection rate cutoff
+  # Manually include the negative control probe, for downstream use
   negative.probe.fData <- subset(fData(object), CodeClass == "Negative")
   neg.probes <- unique(negative.probe.fData$TargetName)
-  object <- object[fData(object)$DetectionRate >= 0.1 |
+  object <- object[fData(object)$DetectionRate >= study.gene.rate.cutoff |
                      fData(object)$TargetName %in% neg.probes, ]
   
-  # retain only detected genes of interest
-  goi <- goi[goi %in% rownames(object)]
-  
-  return(list("stacked.bar.plot" = stacked.bar.plot, "tab" = tab, "sankey.plot" = sankey.plot, "genes.detected.plot" = genes.detected.plot, "object" = object))
+  return(list("stacked.bar.plot" = stacked.bar.plot, "segment.table" = segment.table, "goi.table" = goi.table, "sankey.plot" = sankey.plot, "genes.detected.plot" = genes.detected.plot, "object" = object))
 }
