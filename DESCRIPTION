@@ -1,6 +1,6 @@
 Package: DSPWorkflow
 Title: A Workflow for Analyzing Digital Spatial Profiling RNA Data
-Version: 0.9.5.1
+Version: 1.1.1.0
 Authors@R: c(person("Rui", "He", email = "rui.he@nih.gov", role = "aut"), 
     person("Maggie", "Cam", email = "maggie.cam@nih.gov", role = "aut", comment = c(ORCID = "0000-0001-8190-9766")), 
     person("Ned", "Cauley", email = "ned.cauley@nih.gov", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-8968-6621")), 
