@@ -77,7 +77,9 @@ diffExpr <- function(object,
   
   # Adjust the number of cores selected within the machine's range
   if (n.cores > available.cores) {
-    print(paste0("The number of cores selected is greater than the number of available cores, reducing number of cores to maximum of ", available.cores))
+    print(paste0("The number of cores selected is greater than the number of 
+                 available cores, reducing number of cores to maximum of ", 
+                 available.cores))
     n.cores <- available.cores
   }
   
@@ -117,7 +119,7 @@ diffExpr <- function(object,
   param.na <- names(ind.na[ind.na > 0])
   
   if (length(param.na) > 0) {
-    if (param.na[1] == "testRegion") {
+    if ("testRegion" %in% param.na) {
       regdiff <-
         setdiff(unique(Biobase::pData(object)[[region.col]]),
                 unique(levels(Biobase::pData(object)$testRegion)))
@@ -127,7 +129,7 @@ diffExpr <- function(object,
           "At least one of the regions within the Region Column was not selected
             and is excluded: %s\n", regdiff)
       )
-    } else if (param.na[1] == "testClass") {
+    } else if ("testClass" %in% param.na) {
       classdiff <-
         setdiff(unique(Biobase::pData(object)[[group.col]]),
                 unique(levels(Biobase::pData(object)$testClass)))
