@@ -84,7 +84,7 @@ diffExpr <- function(object,
   }
   
   testClass <- testRegion <- Gene <- Subset <- NULL
-  
+   
   # convert test variables to factors after checking input
   reg.check <- regions[!regions %in% Biobase::pData(object)[[region.col]]]
   if (length(reg.check) > 0) {
