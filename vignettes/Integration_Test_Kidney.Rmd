@@ -216,6 +216,40 @@ qc.output <-  qcProc(object = sdesign.list$object,
   
 ```
 
+## 7.1 Subset Data
+
+```{r Subset data,  echo=FALSE}
+
+  # Subset data for separate normal and tumor datasets
+  
+  subset.object <- q3.normalization.output$object
+
+  q3.normalization.normal <- subset.object[, pData(subset.object)$slide_name == "normal3"] 
+
+```
+
+## 7.2 Subset Filtering
+
+```{r ref-Filter, echo=FALSE}
+
+  # Rerun filtering to reset the gene and segment detection rate
+  
+    goi <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+    
+    filtering.subset.output <- filtering(object = q3.normalization.normal,
+                            loq.cutoff = 2, 
+                            loq.min = 2, 
+                            segment.gene.rate.cutoff = 0.01, 
+                            study.gene.rate.cutoff = 0.01, 
+                            goi = goi, 
+                            sankey.exclude.slide = FALSE)
+    
+    print(filtering.subset.output$`stacked.bar.plot`)
+    print(filtering.subset.output$`tab`)
+    print(filtering.subset.output$`sankey.plot`)
+    print(filtering.subset.output$`genes.detected.plot`)
+    print(filtering.subset.output$'goi.table', row.names = FALSE)
+```
 
 ## 7. Differential Expression Analysis:
 
@@ -225,8 +259,9 @@ qc.output <-  qcProc(object = sdesign.list$object,
     goi <- c("CD274", "CD8A", "CD68", "EPCAM",
              "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
     
-    object <- q3.normalization.output$object
-    object <- object[goi,]
+    #object <- q3.normalization.output$object
+    #object <- object[goi,]
+    object <- filtering.subset.output$object
     Gene <- Subset <- NULL
     
     #First analysis:
@@ -235,8 +270,8 @@ qc.output <-  qcProc(object = sdesign.list$object,
                           region.col = "region", 
                           regions = c("glomerulus", "tubule"), 
                           group.col = "class", 
-                          groups = c("DKD", "normal"), 
-                          n.cores = 1)
+                          groups = c("normal"), 
+                          n.cores = 8)
     grid.draw(reslist.1$sample_table)
     grid.newpage()
     grid.draw(reslist.1$summary_table)

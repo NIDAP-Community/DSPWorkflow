@@ -60,7 +60,8 @@ This runs the DSPworkflow package to completion using the Human Colon Cancer Dat
                                 pheno.data.sheet = "Template",
                                 pheno.data.dcc.col.name = "Sample_ID",
                                 protocol.data.col.names = c("aoi", "roi"),
-                                experiment.data.col.names = c("panel"))
+                                experiment.data.col.names = c("panel"), 
+                                sankey.exclude.slide = TRUE)
   
   # For creating fixture RDS
   create.rds <- FALSE
@@ -75,6 +76,21 @@ This runs the DSPworkflow package to completion using the Human Colon Cancer Dat
   
   
 ```
+
+## 1.1 Subset Data
+
+```{r Subset data,  echo=FALSE}
+
+  # Subset data for separate normal and tumor datasets
+  
+  subset.object <- sdesign.list$object
+
+  subset.normal <- subset.object[, pData(subset.object)$class == "normal"] 
+
+  subset.cancer <- subset.object[, pData(subset.object)$class == "cancer"] 
+  
+
+```  
 
 ## 2. QC Preprocessing:
 
@@ -93,7 +109,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
                         print.plots = TRUE)
     print(qc.output$segments.qc)
     
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     qc.human.coloncptr <- qc.output$object
     saveRDS(qc.human.coloncptr, file = "tests/testthat/fixtures/Human_Colon_CPTR/qcHumanColonCPTR.RDS")
@@ -110,8 +126,10 @@ qc.output <-  qcProc(object = sdesign.list$object,
     filtering.output <- filtering(object = qc.output$object,
                             loq.cutoff = 2, 
                             loq.min = 2, 
-                            cut.segment = .1, 
-                            goi = goi)
+                            segment.gene.rate.cutoff = 0.05, 
+                            study.gene.rate.cutoff = 0.05, 
+                            goi = goi, 
+                            sankey.exclude.slide = TRUE)
     
     print(filtering.output$`stacked.bar.plot`)
     print(filtering.output$`tab`)
@@ -119,7 +137,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
     print(filtering.output$`genes.detected.plot`)
     print(filtering.output$'goi.table', row.names = FALSE)
     
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     filtering.human.coloncptr <- filtering.output$object
     saveRDS(filtering.human.coloncptr, file = "tests/testthat/fixtures/Human_Colon_CPTR/filteringHumanColonCPTR.RDS")
@@ -158,6 +176,36 @@ qc.output <-  qcProc(object = sdesign.list$object,
     
 ```
 
+##4.1 Retrieve Gene list
+
+```{r Retrieve gene list, echo=FALSE}
+
+  #Grab Normal aSMA gene list
+
+  class.subset <- "normal"
+
+  region.subset1 <- "deep"
+  region.subset2 <- "superficial"
+  
+  region.subset.list <- c("deep","superficial","tumor")
+  
+  for(region in region.subset.list){
+    print(region)
+  }
+  
+  segment.subset <- "negative"
+  
+  subset.object <- q3.normalization.output$object
+  
+  subset.normal <- subset.object[, pData(subset.object)$class == class.subset]
+  #subset.object.region <- subset.object[, pData(subset.object)$region == region.subset1 |  pData(subset.object)$region == region.subset2]
+  subset.object.region <- subset.object[, pData(subset.object)$region %in% region.subset.list]
+  subset.normal.asma <- subset.normal[, pData(subset.normal)$segment == "aSMA"]
+  
+  normal.asma.q3.gene.list <- subset.normal.asma@assayData$q_norm
+
+```
+
 
 ## 5. Unsupervised Analysis:
 
@@ -167,8 +215,9 @@ qc.output <-  qcProc(object = sdesign.list$object,
     unsupervised.output <- dimReduct(object = q3.normalization.output$object,
                         point.size = 3,
                         point.alpha = 1,
-                        color.variable1 = "region",
-                        shape.variable = "class"
+                        color.variable1 = "segment", 
+                        color.variable2 = "class", 
+                        shape.variable = "region"
     )
     
     print(unsupervised.output$plot$PCA)
@@ -205,17 +254,57 @@ qc.output <-  qcProc(object = sdesign.list$object,
   
 ```
 
+## 7.1 Subset Data
 
-## 7. Differential Expression Analysis:
+```{r Subset data,  echo=FALSE}
+
+  # Subset data for separate normal and tumor datasets
+  
+  subset.object <- q3.normalization.output$object
+
+  q3.normalization.normal <- subset.object[, pData(subset.object)$class == "normal"] 
+
+  q3.normalization.cancer <- subset.object[, pData(subset.object)$class == "cancer"] 
+
+```
+
+## 7.2 Subset Filtering
+
+```{r ref-Filter, echo=FALSE}
+
+  # Rerun filtering to reset the gene and segment detection rate
+  
+    goi <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+    
+    filtering.subset.output <- filtering(object = q3.normalization.normal,
+                            loq.cutoff = 2, 
+                            loq.min = 2, 
+                            segment.gene.rate.cutoff = 0.01, 
+                            study.gene.rate.cutoff = 0.01, 
+                            goi = goi, 
+                            sankey.exclude.slide = TRUE)
+    
+    print(filtering.subset.output$`stacked.bar.plot`)
+    print(filtering.subset.output$`tab`)
+    print(filtering.subset.output$`sankey.plot`)
+    print(filtering.subset.output$`genes.detected.plot`)
+    print(filtering.subset.output$'goi.table', row.names = FALSE)
+```
+
+## 7.3 Differential Expression Analysis:
 
 
 ```{r Differential Expression Analysis,  echo=FALSE}
 
-    goi <- c("CD274", "CD8A", "CD68", "EPCAM",
-         "KRT18", "NPHS1", "CLDN8")
+    #goi <- c("PDCD1", "CD274", "CD8A", "CD68", "EPCAM",
+    #     "KRT18", "NPHS1", "CLDN8")
+
+    #goi <- c("PDCD1")
     
-    object <- q3.normalization.output$object
-    object <- object[goi,]
+    #object <- q3.normalization.output$object
+    #object <- q3.normalization.normal
+    object <- filtering.subset.output$object
+    #object <- object[goi,]
     Gene <- Subset <- NULL
     
     #First analysis:
@@ -247,9 +336,9 @@ qc.output <-  qcProc(object = sdesign.list$object,
     
     cat(paste0("\nvalue of CALB1 pval is:",pval.1))
     cat("expected value is 0.0274")
-    
+    print(x)
     #Second analysis:
-    reslist.2 <- diffExpr(object = object, 
+    reslist.2 <- diffExpr(object = q3.normalization.normal, 
                           analysis.type = "Within Groups", 
                           region.col = "region", 
                           regions = c("superficial", "deep"), 
