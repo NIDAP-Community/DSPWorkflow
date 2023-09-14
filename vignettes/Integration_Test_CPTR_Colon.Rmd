@@ -93,7 +93,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
                         print.plots = TRUE)
     print(qc.output$segments.qc)
     
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     qc.human.coloncptr <- qc.output$object
     saveRDS(qc.human.coloncptr, file = "tests/testthat/fixtures/Human_Colon_CPTR/qcHumanColonCPTR.RDS")
@@ -110,7 +110,9 @@ qc.output <-  qcProc(object = sdesign.list$object,
     filtering.output <- filtering(object = qc.output$object,
                             loq.cutoff = 2, 
                             loq.min = 2, 
-                            cut.segment = .1, 
+                            segment.gene.rate.cutoff = 0.05, 
+                            study.gene.rate.cutoff = 0.05, 
+                            sankey.exclude.slide = TRUE, 
                             goi = goi)
     
     print(filtering.output$`stacked.bar.plot`)
@@ -119,7 +121,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
     print(filtering.output$`genes.detected.plot`)
     print(filtering.output$'goi.table', row.names = FALSE)
     
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     filtering.human.coloncptr <- filtering.output$object
     saveRDS(filtering.human.coloncptr, file = "tests/testthat/fixtures/Human_Colon_CPTR/filteringHumanColonCPTR.RDS")
@@ -206,7 +208,9 @@ qc.output <-  qcProc(object = sdesign.list$object,
 ```
 
 
-## 7. Differential Expression Analysis:
+
+
+## 7 Differential Expression Analysis:
 
 
 ```{r Differential Expression Analysis,  echo=FALSE}
@@ -218,13 +222,42 @@ qc.output <-  qcProc(object = sdesign.list$object,
     object <- object[goi,]
     Gene <- Subset <- NULL
     
-    #First analysis:
-    reslist.1 <- diffExpr(object = object, 
+    # Test linear model with no mixed effect (one slide analysis)
+    
+    subset.object <- object[, pData(object)[["class"]] == "normal"]
+    
+    reslist.lm <- diffExpr(object = subset.object, 
                           analysis.type = "Within Groups", 
                           region.col = "region", 
                           regions = c("superficial", "deep"), 
                           group.col = "segment", 
                           groups = c("pancytokeratin"), 
+                          n.cores = 8)
+    grid.draw(reslist.lm$sample_table)
+    grid.newpage()
+    grid.draw(reslist.lm$summary_table)
+    
+    lfc_col_lm <- colnames(reslist.lm$result)[grepl("logFC",colnames(reslist.lm$result))]
+    pval_col_lm <- colnames(reslist.lm$result)[grepl("_pval",colnames(reslist.lm$result))]
+    
+    lfc.lm <- reslist.lm$result %>% 
+              dplyr::filter(Gene == "CALB1") %>% 
+              select(all_of(lfc_col_lm)) %>% 
+              as.numeric()
+    pval.lm <- reslist.lm$result %>% 
+              dplyr::filter(Gene == "CALB1") %>% 
+              select(all_of(pval_col_lm)) %>% 
+              as.numeric()
+    
+    
+    # Test linear mixed effect model
+    
+    reslist.1 <- diffExpr(object = object, 
+                          analysis.type = "Between Groups", 
+                          region.col = "region", 
+                          regions = c("superficial"), 
+                          group.col = "segment", 
+                          groups = c("pancytokeratin","negative"), 
                           n.cores = 8)
     grid.draw(reslist.1$sample_table)
     grid.newpage()
@@ -264,11 +297,11 @@ qc.output <-  qcProc(object = sdesign.list$object,
     pval_col2 <- colnames(reslist.2$result)[grepl("_pval",colnames(reslist.2$result))]
     
     lfc.2 <- reslist.2$result %>% 
-              dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% 
+              dplyr::filter(Gene == "CALB1") %>% 
               select(all_of(lfc_col2)) %>% 
               as.numeric()
     pval.2 <- reslist.2$result %>% 
-              dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% 
+              dplyr::filter(Gene == "CALB1") %>% 
               select(all_of(pval_col2)) %>% 
               as.numeric()
     
