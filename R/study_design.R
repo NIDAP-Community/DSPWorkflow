@@ -25,6 +25,12 @@
 #' sequencing data.
 #' @param experiment.data.col.names  Character list of column names from
 #' phenoDataFile containing data about the experiment's meta-data.
+#' @param slide.name.col The name of the field that contains the slide names
+#' @param class.col The name of the field that contains the class annotation
+#' @param region.col The name of the field that contains the class annotation
+#' @param segment.col The name of the field that contains the class annotation
+#' 
+#'
 #'
 #' @importFrom GeomxTools readNanoStringGeoMxSet
 #' @importFrom knitr kable
@@ -61,7 +67,8 @@ studyDesign <- function(dcc.files,
                         segment.col = "segment",
                         area.col = "area",
                         nuclei.col = "nuclei", 
-                        sankey.exclude.slide = FALSE) {
+                        sankey.exclude.slide = FALSE, 
+                        segment.id.length = 4) {
   
   # load all input data into a GeoMX object
   object <-
@@ -121,6 +128,23 @@ studyDesign <- function(dcc.files,
   colnames(object@phenoData@data)[colnames(object@phenoData@data) == nuclei.col] = "nuclei"
   rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == area.col] = "area"
   rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == nuclei.col] = "nuclei" 
+  
+  # Reformat to remove spaces and dashes in the main annotation columns
+  annotation.columns <- c("class", "region", "segment")
+  
+  for(column in annotation.columns){
+    pData(object)[[column]] <- gsub("\\s+", "", pData(object)[[column]])
+    pData(object)[[column]] <- gsub("-", "", pData(object)[[column]])
+  }
+  
+  # Establish the segment specific IDs
+  pData(object)$segmentID <- paste0(substr(pData(object)$class, 1, segment.id.length),
+                                    "|",
+                                    substr(pData(object)$region, 1, segment.id.length),
+                                    "|",
+                                    substr(pData(object)$segment, 1, segment.id.length),
+                                    "|",
+                                    sData(object)$roi)
   
   # Establish variables for the Sankey plot
   slide_name <- region <- segment <- x <- id <- y <- n <- NULL
