@@ -40,6 +40,10 @@ filtering <- function(object,
   color.variable <- NULL
   
   ### Start Function
+  
+  # Set up lists of segment IDs
+  segment.list.total <- pData(object)$segmentID
+  
   ##4.4Limit of Quantification
   # Define LOQ SD threshold and minimum value
   if(class(loq.cutoff)[1] != "numeric"){
