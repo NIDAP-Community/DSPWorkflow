@@ -68,10 +68,12 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
                                 region.col = "region", 
                                 segment.col = "segment",
                                 area.col = "area",
-                                nuclei.col = "nuclei")
+                                nuclei.col = "nuclei", 
+                                sankey.exclude.slide = FALSE, 
+                                segment.id.length = 4)
   
   # For creating fixture RDS
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     study.design.human.kidney <- sdesign.list$object
     saveRDS(study.design.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/studyDesignHumanKidney.RDS")
@@ -79,7 +81,7 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
   
   print(sdesign.list$sankey.plot)
   print("Created GeoMx Object\n\n")
-  pData(sdesign.list$object)[,c("slide_name","class","segment")]  
+  pData(sdesign.list$object)[,c("slide_name","class","segment","segmentID")]  
   
   
 ```
@@ -101,7 +103,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
                         print.plots = TRUE)
     print(qc.output$segments.qc)
     
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     qc.human.kidney <- qc.output$object
     saveRDS(qc.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/qcHumanKidney.RDS")
@@ -118,11 +120,13 @@ qc.output <-  qcProc(object = sdesign.list$object,
     filtering.output <- filtering(object = qc.output$object,
                             loq.cutoff = 2, 
                             loq.min = 2, 
-                            cut.segment = .1, 
+                            segment.gene.rate.cutoff = 0.1,
+                            study.gene.rate.cutoff = 0.1, 
+                            sankey.exclude.slide = FALSE, 
                             goi = goi)
     
     print(filtering.output$`stacked.bar.plot`)
-    print(filtering.output$`tab`)
+    print(filtering.output$`segment.table`)
     print(filtering.output$`sankey.plot`)
     print(filtering.output$`genes.detected.plot`)
     print(filtering.output$'goi.table', row.names = FALSE)
