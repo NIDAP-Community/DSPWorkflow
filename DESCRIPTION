@@ -23,7 +23,8 @@ RoxygenNote: 7.2.1
 Suggests: 
     testthat (== 3.1.4)
 Depends:
-    R (>= 4.1.3), 
+    R (>= 4.1.3)
+Imports:
     Biobase (>= 2.54.0),
     BiocGenerics (== 0.40.0),
     cowplot (== 1.1.1),
@@ -47,5 +48,4 @@ Depends:
     umap (== 0.2.9.0),
     magrittr (== 2.0.3),
     ComplexHeatmap (== 2.10.0)
-Imports:
 Config/testthat/edition: 3
