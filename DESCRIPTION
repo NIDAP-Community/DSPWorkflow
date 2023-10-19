@@ -20,6 +20,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
+biocViews:
 Suggests: 
     testthat (>= 3.1.4)
 Depends:
@@ -36,7 +37,7 @@ Imports:
     grid (>= 4.1.3),
     gtable (>= 0.3.0),
     knitr (>= 1.40),
-    NanoStringNCTools (== 1.2.0),
+    NanoStringNCTools (>= 1.2.0),
     patchwork (>= 1.1.2),
     reshape2 (>= 1.4.4),
     Rtsne (>= 0.16),
