@@ -101,7 +101,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
                         print.plots = TRUE)
     print(qc.output$segments.qc)
     
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     qc.human.kidney <- qc.output$object
     saveRDS(qc.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/qcHumanKidney.RDS")
@@ -118,11 +118,12 @@ qc.output <-  qcProc(object = sdesign.list$object,
     filtering.output <- filtering(object = qc.output$object,
                             loq.cutoff = 2, 
                             loq.min = 2, 
-                            cut.segment = .1, 
+                            segment.gene.rate.cutoff = 0.05,
+                            study.gene.rate.cutoff = 0.05, 
                             goi = goi)
     
     print(filtering.output$`stacked.bar.plot`)
-    print(filtering.output$`tab`)
+    print(filtering.output$`segment.table`)
     print(filtering.output$`sankey.plot`)
     print(filtering.output$`genes.detected.plot`)
     print(filtering.output$'goi.table', row.names = FALSE)

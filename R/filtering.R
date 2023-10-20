@@ -10,6 +10,19 @@
 #' @details This function will run various filtering parameters for NanoStringGeoMxSet datasets
 #' 
 #' @param object A NanoStringGeoMxSet dataset
+#' @param loq.cutoff The number of standard deviations above the negative probe 
+#' geometric mean to use as a cutoff for the limit of quantification
+#' @param loq.min The minimum value for the limit of quantification
+#' @param segment.gene.rate.cutoff A decimal for the minimum cutoff for the 
+#' genes detected in a given segment over the total number of genes in the 
+#' probe set
+#' @param study.gene.rate.cutoff = A decimal for the minimum cutoff for the 
+#' average amount a given gene is detected in all segments
+#' @param sankey.exclude.slide A toggle for including the slide name in the 
+#' Sankey Plot
+#' @param goi A list of genes of interest to evaluate for their study-wide 
+#' detection rate
+#' 
 #' @importFrom scales percent
 #' @importFrom Biobase pData
 #' @importFrom Biobase fData
@@ -18,12 +31,6 @@
 #' @export
 #' @return A list containing the ....
 
-# To call function, must have data = raw object, dsp.obj = QC demoData, 
-# loq.cutoff 2 is recommended,
-# loq.min 2 is recommend, 
-# segment.gene.rate.cutoff = remove segments with less than x% of the gene set detected; .05-.1 recommended,
-# study.gene.rate.cutoff = remove genes detected in less than x% of segments; .05-.2 recommended,
-# goi = goi (genes of interest). Must be a vector of genes (i.e c("PDCD1", "CD274")),
 filtering <- function(object, 
                       loq.cutoff = 2, 
                       loq.min = 2, 
@@ -174,7 +181,7 @@ filtering <- function(object,
   
   # plot Sankey
   sankey.plot <- ggplot(sankey.count.data, aes(x, id = id, split = y, value = n)) +
-    geom_parallel_sets(aes(fill = region), alpha = 0.5, axis.width = 0.1) +
+    geom_parallel_sets(aes(fill = class), alpha = 0.5, axis.width = 0.1) +
     geom_parallel_sets_axes(axis.width = 0.2) +
     geom_parallel_sets_labels(color = "gray", size = 5, angle = 0) +
     theme_classic(base_size = 17) + 

@@ -1,8 +1,8 @@
-#' @title Spatial Deconvolution
-#'
 #' Helper functions comes from
 #' https://bioconductor.org/packages/release/bioc/vignettes/SpatialDecon/inst/doc/SpatialDecon_vignette_NSCLC.html
-#'
+#' 
+#' @title Spatial Deconvolution
+#' 
 #' @description spatialDeconvolution estimate cell composition across DSP
 #'              samples from reference expression matrix
 #'
@@ -41,18 +41,6 @@
 #' @importFrom ComplexHeatmap pheatmap
 #'
 #' @export
-#' @example Do not run: spatialDeconvolution(object = NanostringGeomx,
-#'                                           expr.type = "q_norm",
-#'                                           prof.mtx = profile_matrix,
-#'                                           clust.rows = TRUE,
-#'                                           clust.cols = TRUE,
-#'                                           group.by = "none",
-#'                                           plot.fontsize = 5,
-#'                                           use.custom.prof.mtx = FALSE,
-#'                                           ref.mtx = reference_matrix,
-#'                                           ref.annot = reference_annotation,
-#'                                           cell.id.col = "CellID",
-#'                                           celltype.col = "LabeledCellType")
 #'
 #' @return A list dsp.data containing the results of spatial deconvolution,
 #' res$beta: matrix of estimated cell abundances
@@ -66,7 +54,7 @@
 
 
 spatialDeconvolution <- function(object,
-                                 expr.type,
+                                 expr.type = "q_norm",
                                  prof.mtx,
                                  clust.rows = TRUE,
                                  clust.cols = TRUE,
@@ -79,8 +67,8 @@ spatialDeconvolution <- function(object,
                                  min.genes = 10,
                                  ref.mtx,
                                  ref.annot,
-                                 cell.id.col,
-                                 celltype.col) {
+                                 cell.id.col = "CellID",
+                                 celltype.col = "LabeledCellType") {
   
   # Check for Parameter Misspecification Error(s)
   if (!expr.type %in% names(object@assayData)) {

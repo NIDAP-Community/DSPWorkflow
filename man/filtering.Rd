@@ -4,10 +4,36 @@
 \alias{filtering}
 \title{Filtering NanoStringGeoMxSet dataset}
 \usage{
-filtering(object, loq.cutoff, loq.min, cut.segment, goi)
+filtering(
+  object,
+  loq.cutoff = 2,
+  loq.min = 2,
+  segment.gene.rate.cutoff = 0.05,
+  study.gene.rate.cutoff = 0.05,
+  sankey.exclude.slide = FALSE,
+  goi
+)
 }
 \arguments{
 \item{object}{A NanoStringGeoMxSet dataset}
+
+\item{loq.cutoff}{The number of standard deviations above the negative probe
+geometric mean to use as a cutoff for the limit of quantification}
+
+\item{loq.min}{The minimum value for the limit of quantification}
+
+\item{segment.gene.rate.cutoff}{A decimal for the minimum cutoff for the
+genes detected in a given segment over the total number of genes in the
+probe set}
+
+\item{study.gene.rate.cutoff}{= A decimal for the minimum cutoff for the
+average amount a given gene is detected in all segments}
+
+\item{sankey.exclude.slide}{A toggle for including the slide name in the
+Sankey Plot}
+
+\item{goi}{A list of genes of interest to evaluate for their study-wide
+detection rate}
 }
 \value{
 A list containing the ....
