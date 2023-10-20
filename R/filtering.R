@@ -135,25 +135,39 @@ filtering <- function(object,
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
   }
   
-  # Gather the data and plot in order: class, slide name, region, segment
   # gather_set_data creates x, id, y, and n fields within sankey.count.data
   # Establish the levels of the Sankey with or without the slide name
   if(sankey.exclude.slide == TRUE){
+    # Create a dataframe used to make the Sankey plot
     sankey.count.data <- gather_set_data(count.mat, 1:3)
-    sankey.count.data$x <-
-      factor(
-        sankey.count.data$x,
-        levels = c("class", "region", "segment")
-      )
+    
+    # Define the annotations to use for the Sankey x axis labels
+    sankey.count.data$x[sankey.count.data$x == 1] <- "class"
+    sankey.count.data$x[sankey.count.data$x == 2] <- "region"
+    sankey.count.data$x[sankey.count.data$x == 3] <- "segment"
+    
+    factor(
+      sankey.count.data$x,
+      levels = c("class", "region", "segment")
+    )
+    
     # For position of Sankey 100 segment scale
     adjust.scale.pos = 1
   } else {
+    # Create a dataframe used to make the Sankey plot
     sankey.count.data <- gather_set_data(count.mat, 1:4)
-    sankey.count.data$x <-
-      factor(
-        sankey.count.data$x,
-        levels = c("class", "slide_name", "region", "segment")
-      )
+    
+    # Define the annotations to use for the Sankey x axis labels
+    sankey.count.data$x[sankey.count.data$x == 1] <- "slide_name"
+    sankey.count.data$x[sankey.count.data$x == 2] <- "class"
+    sankey.count.data$x[sankey.count.data$x == 3] <- "region"
+    sankey.count.data$x[sankey.count.data$x == 4] <- "segment"
+    
+    factor(
+      sankey.count.data$x,
+      levels = c("class", "slide_name", "region", "segment")
+    )
+    
     # For position of Sankey 100 segment scale
     adjust.scale.pos = 0
   }
