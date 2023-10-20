@@ -71,7 +71,7 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
                                 nuclei.col = "nuclei")
   
   # For creating fixture RDS
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     study.design.human.kidney <- sdesign.list$object
     saveRDS(study.design.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/studyDesignHumanKidney.RDS")
