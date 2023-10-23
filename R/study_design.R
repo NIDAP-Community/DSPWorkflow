@@ -132,7 +132,7 @@ studyDesign <- function(dcc.files,
   rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == nuclei.col] = "nuclei" 
   
   # Reformat to remove spaces and dashes in the main annotation columns
-  annotation.columns <- c("class", "region", "segment")
+  annotation.columns <- c("class", "region", "segment", "slide_name")
   
   for(column in annotation.columns){
     pData(object)[[column]] <- gsub("\\s+", "", pData(object)[[column]])
@@ -145,7 +145,9 @@ studyDesign <- function(dcc.files,
                                     substr(pData(object)$region, 1, segment.id.length),
                                     "|",
                                     substr(pData(object)$segment, 1, segment.id.length),
-                                    "|",
+                                    "|", 
+                                    substr(pData(object)$slide_name, 1, segment.id.length), 
+                                    "|", 
                                     sData(object)$roi)
   
   # Establish variables for the Sankey plot
