@@ -10,6 +10,19 @@
 #' @details This function will run various filtering parameters for NanoStringGeoMxSet datasets
 #' 
 #' @param object A NanoStringGeoMxSet dataset
+#' @param loq.cutoff The number of standard deviations above the negative probe 
+#' geometric mean to use as a cutoff for the limit of quantification
+#' @param loq.min The minimum value for the limit of quantification
+#' @param segment.gene.rate.cutoff A decimal for the minimum cutoff for the 
+#' genes detected in a given segment over the total number of genes in the 
+#' probe set
+#' @param study.gene.rate.cutoff = A decimal for the minimum cutoff for the 
+#' average amount a given gene is detected in all segments
+#' @param sankey.exclude.slide A toggle for including the slide name in the 
+#' Sankey Plot
+#' @param goi A list of genes of interest to evaluate for their study-wide 
+#' detection rate
+#' 
 #' @importFrom scales percent
 #' @importFrom Biobase pData
 #' @importFrom Biobase fData
@@ -18,12 +31,6 @@
 #' @export
 #' @return A list containing the ....
 
-# To call function, must have data = raw object, dsp.obj = QC demoData, 
-# loq.cutoff 2 is recommended,
-# loq.min 2 is recommend, 
-# segment.gene.rate.cutoff = remove segments with less than x% of the gene set detected; .05-.1 recommended,
-# study.gene.rate.cutoff = remove genes detected in less than x% of segments; .05-.2 recommended,
-# goi = goi (genes of interest). Must be a vector of genes (i.e c("PDCD1", "CD274")),
 filtering <- function(object, 
                       loq.cutoff = 2, 
                       loq.min = 2, 
@@ -135,32 +142,46 @@ filtering <- function(object,
     stop(paste0("Error: You have the wrong data class, must be NanoStringGeoMxSet" ))
   }
   
-  # Gather the data and plot in order: class, slide name, region, segment
   # gather_set_data creates x, id, y, and n fields within sankey.count.data
   # Establish the levels of the Sankey with or without the slide name
   if(sankey.exclude.slide == TRUE){
+    # Create a dataframe used to make the Sankey plot
     sankey.count.data <- gather_set_data(count.mat, 1:3)
-    sankey.count.data$x <-
-      factor(
-        sankey.count.data$x,
-        levels = c("class", "region", "segment")
-      )
+    
+    # Define the annotations to use for the Sankey x axis labels
+    sankey.count.data$x[sankey.count.data$x == 1] <- "class"
+    sankey.count.data$x[sankey.count.data$x == 2] <- "region"
+    sankey.count.data$x[sankey.count.data$x == 3] <- "segment"
+    
+    factor(
+      sankey.count.data$x,
+      levels = c("class", "region", "segment")
+    )
+    
     # For position of Sankey 100 segment scale
     adjust.scale.pos = 1
   } else {
+    # Create a dataframe used to make the Sankey plot
     sankey.count.data <- gather_set_data(count.mat, 1:4)
-    sankey.count.data$x <-
-      factor(
-        sankey.count.data$x,
-        levels = c("class", "slide_name", "region", "segment")
-      )
+    
+    # Define the annotations to use for the Sankey x axis labels
+    sankey.count.data$x[sankey.count.data$x == 1] <- "slide_name"
+    sankey.count.data$x[sankey.count.data$x == 2] <- "class"
+    sankey.count.data$x[sankey.count.data$x == 3] <- "region"
+    sankey.count.data$x[sankey.count.data$x == 4] <- "segment"
+    
+    factor(
+      sankey.count.data$x,
+      levels = c("class", "slide_name", "region", "segment")
+    )
+    
     # For position of Sankey 100 segment scale
     adjust.scale.pos = 0
   }
   
   # plot Sankey
   sankey.plot <- ggplot(sankey.count.data, aes(x, id = id, split = y, value = n)) +
-    geom_parallel_sets(aes(fill = region), alpha = 0.5, axis.width = 0.1) +
+    geom_parallel_sets(aes(fill = class), alpha = 0.5, axis.width = 0.1) +
     geom_parallel_sets_axes(axis.width = 0.2) +
     geom_parallel_sets_labels(color = "gray", size = 5, angle = 0) +
     theme_classic(base_size = 17) + 

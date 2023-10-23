@@ -19,18 +19,13 @@
 #' @importFrom gridExtra arrangeGrob
 #'
 #' @export
-#' @example Do not run: violinPlot(object = NanostringGeomx, 
-#'                                 expr.type = "q_norm", 
-#'                                 genes = c("FOXP3","CD4"), 
-#'                                 group = "CellType", 
-#'                                 facet.by = "segment")
 #'
 #' @return an arranged grob of violin plots
 
 violinPlot <- function(object,
-                       expr.type,
-                       genes,
-                       group,
+                       expr.type = "q_norm",
+                       genes = c("FOXP3","CD4"),
+                       group = "CellType",
                        facet.by = "none") {
   
   # Check for Parameter Misspecification Error(s)
