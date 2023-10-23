@@ -25,6 +25,16 @@
 #' sequencing data.
 #' @param experiment.data.col.names  Character list of column names from
 #' phenoDataFile containing data about the experiment's meta-data.
+#' @param slide.name.col The name of the field that contains the slide names
+#' @param class.col The name of the field that contains the class annotation
+#' @param region.col The name of the field that contains the region annotation
+#' @param segment.col The name of the field that contains the segment name
+#' @param area.col The name of the field that contains the segment area 
+#' @param nuclei.col The name of the field that contains the nuclei number
+#' @param sankey.exclude.slide A toggle for including the slide name in the
+#'  Sankey plot
+#' @param segment.id.length The number of characters to use from each of the 
+#' annotation fields class, region, and segment to create the segment ID
 #'
 #' @importFrom GeomxTools readNanoStringGeoMxSet
 #' @importFrom knitr kable
@@ -46,8 +56,6 @@
 #' @export
 #' @return A list containing the NanoString Object and the Sankey plot.
 
-
-
 studyDesign <- function(dcc.files,
                         pkc.files,
                         pheno.data.file,
@@ -61,7 +69,8 @@ studyDesign <- function(dcc.files,
                         segment.col = "segment",
                         area.col = "area",
                         nuclei.col = "nuclei", 
-                        sankey.exclude.slide = FALSE) {
+                        sankey.exclude.slide = FALSE, 
+                        segment.id.length = 4) {
   
   # load all input data into a GeoMX object
   object <-
@@ -122,6 +131,25 @@ studyDesign <- function(dcc.files,
   rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == area.col] = "area"
   rownames(object@phenoData@varMetadata)[rownames(object@phenoData@varMetadata) == nuclei.col] = "nuclei" 
   
+  # Reformat to remove spaces and dashes in the main annotation columns
+  annotation.columns <- c("class", "region", "segment", "slide_name")
+  
+  for(column in annotation.columns){
+    pData(object)[[column]] <- gsub("\\s+", "", pData(object)[[column]])
+    pData(object)[[column]] <- gsub("-", "", pData(object)[[column]])
+  }
+  
+  # Establish the segment specific IDs
+  pData(object)$segmentID <- paste0(substr(pData(object)$class, 1, segment.id.length),
+                                    "|",
+                                    substr(pData(object)$region, 1, segment.id.length),
+                                    "|",
+                                    substr(pData(object)$segment, 1, segment.id.length),
+                                    "|", 
+                                    substr(pData(object)$slide_name, 1, segment.id.length), 
+                                    "|", 
+                                    sData(object)$roi)
+  
   # Establish variables for the Sankey plot
   slide_name <- region <- segment <- x <- id <- y <- n <- NULL
   
@@ -153,26 +181,39 @@ studyDesign <- function(dcc.files,
     rownames(count.mat) <- 1:nrow(count.mat)
   }
    
-  
-  # Gather the data and plot in order: class, slide name, region, segment
   # gather_set_data creates x, id, y, and n fields within sankey.count.data
   # Establish the levels of the Sankey with or without the slide name
   if(sankey.exclude.slide == TRUE){
+    # Create a dataframe used to make the Sankey plot
     sankey.count.data <- gather_set_data(count.mat, 1:3)
-    sankey.count.data$x <-
-      factor(
-        sankey.count.data$x,
-        levels = c("class", "region", "segment")
-      )
+    
+    # Define the annotations to use for the Sankey x axis labels
+    sankey.count.data$x[sankey.count.data$x == 1] <- "class"
+    sankey.count.data$x[sankey.count.data$x == 2] <- "region"
+    sankey.count.data$x[sankey.count.data$x == 3] <- "segment"
+    
+    factor(
+      sankey.count.data$x,
+      levels = c("class", "region", "segment")
+    )
+    
     # For position of Sankey 100 segment scale
     adjust.scale.pos = 1
   } else {
+    # Create a dataframe used to make the Sankey plot
     sankey.count.data <- gather_set_data(count.mat, 1:4)
-    sankey.count.data$x <-
-      factor(
-        sankey.count.data$x,
-        levels = c("class", "slide_name", "region", "segment")
-      )
+    
+    # Define the annotations to use for the Sankey x axis labels
+    sankey.count.data$x[sankey.count.data$x == 1] <- "slide_name"
+    sankey.count.data$x[sankey.count.data$x == 2] <- "class"
+    sankey.count.data$x[sankey.count.data$x == 3] <- "region"
+    sankey.count.data$x[sankey.count.data$x == 4] <- "segment"
+
+    factor(
+      sankey.count.data$x,
+      levels = c("class", "slide_name", "region", "segment")
+    )
+    
     # For position of Sankey 100 segment scale
     adjust.scale.pos = 0
   }
@@ -186,7 +227,7 @@ studyDesign <- function(dcc.files,
              split = y,
              value = n
            )) +
-    geom_parallel_sets(aes(fill = region), alpha = 0.5, axis.width = 0.1) +
+    geom_parallel_sets(aes(fill = class), alpha = 0.5, axis.width = 0.1) +
     geom_parallel_sets_axes(axis.width = 0.2) +
     geom_parallel_sets_labels(color = "gray",
                               size = 5,
