@@ -11,11 +11,11 @@ diffExpr(
   group.col,
   regions,
   region.col,
-  slide.col = "slide name",
+  slide.col = "slide_name",
   element = "q_norm",
   multi.core = TRUE,
   n.cores = 1,
-  p.adjust = "BY",
+  p.adjust = "fdr",
   pairwise = TRUE,
   fc.lim = 1.2,
   pval.lim.1 = 0.05,
@@ -50,7 +50,7 @@ slide)}
 (default is 1)}
 
 \item{p.adjust}{Method to use for pvalue adjustment. Choices are "holm",
-"hochberg","hommel","bonferroni","BH","BY","fdr","none". (default is "BY")}
+"hochberg","hommel","bonferroni","BH","BY","fdr","none". (default is "BH")}
 
 \item{pairwise}{Boolean to calculate least-square means pairwise differences
 (default is TRUE)}
@@ -66,7 +66,7 @@ is 1.2)}
 }
 \value{
 a list containing mixed model output data frame, grid tables for
-samples and summary of genelists
+samples used in analysis and summary of significant genelists
 }
 \description{
 diffExpr returns a DEG table with fold changes and p-values and
