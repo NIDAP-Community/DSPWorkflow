@@ -1,0 +1,335 @@
+---
+title: "Integration Test Human Kidney"
+output:
+  html_document: default
+  pdf_document: default
+last update: May 24, 2023
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+library(devtools)
+library(rprojroot)
+load_all()
+
+root <- rprojroot::find_package_root_file()
+
+knitr::opts_chunk$set(fig.width=12, fig.height=8, out.width = '100%') 
+knitr::opts_knit$set(root.dir = root)
+
+```
+
+## R Markdown
+
+This runs the DSPworkflow package to completion using the Human Kidney Dataset:
+
+## 1. Study Design:
+
+```{r Study Design, echo=TRUE}
+
+  # Set paths for downloading dcc files
+  downloads.path <- test_path("fixtures/Human_Kidney/downloaded/")
+  tar.file.name <- "kidney_dccs.tar.gz"
+  full.tar.path <- paste0(downloads.path,tar.file.name)
+  
+  # Check if dcc files were previously downloaded
+  if (!file.exists(full.tar.path)) {
+    
+    # Download dcc files and place in data folder
+    data.url <- "http://hpc.nih.gov/~CCBR/DSPWorkflow/kidney_dccs.tar.gz"
+    download.file(data.url, full.tar.path)
+    untar(full.tar.path, exdir = downloads.path)
+  }
+  
+  dcc.files <- dir(
+    file.path(
+      downloads.path,
+      "dccs"
+    ),
+    pattern = ".dcc$",
+    full.names = TRUE,
+    recursive = TRUE
+  )
+    
+  pkc.files <-
+    test_path("fixtures/Human_Kidney/TAP_H_WTA_v1.0.pkc")
+  pheno.data.file <-
+    test_path("fixtures/Human_Kidney/kidney_annotations.xlsx")
+  
+  sdesign.list <- studyDesign(dcc.files = dcc.files, 
+                                pkc.files = pkc.files,
+                                pheno.data.file = pheno.data.file,
+                                pheno.data.sheet = "Template",
+                                pheno.data.dcc.col.name = "Sample_ID",
+                                protocol.data.col.names = c("aoi", "roi"),
+                                experiment.data.col.names = c("panel"),
+                                slide.name.col = "slide name", 
+                                class.col = "class", 
+                                region.col = "region", 
+                                segment.col = "segment",
+                                area.col = "area",
+                                nuclei.col = "nuclei")
+  
+  # For creating fixture RDS
+  create.rds <- FALSE
+  if(create.rds) {
+    study.design.human.kidney <- sdesign.list$object
+    saveRDS(study.design.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/studyDesignHumanKidney.RDS")
+  }
+  
+  print(sdesign.list$sankey.plot)
+  print("Created GeoMx Object\n\n")
+  pData(sdesign.list$object)[,c("slide_name","class","segment")]  
+  
+  
+```
+
+## 2. QC Preprocessing:
+
+```{r QC Preprocessing, echo=TRUE}
+
+qc.output <-  qcProc(object = sdesign.list$object,
+                        min.segment.reads = 1000, 
+                        percent.trimmed = 80,    
+                        percent.stitched = 80,   
+                        percent.aligned = 75,    
+                        percent.saturation = 50, 
+                        min.negative.count = 1,   
+                        max.ntc.count = 9000,     
+                        min.nuclei = 20,         
+                        min.area = 1000,
+                        print.plots = TRUE)
+    print(qc.output$segments.qc)
+    
+  create.rds <- FALSE
+  if(create.rds) {
+    qc.human.kidney <- qc.output$object
+    saveRDS(qc.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/qcHumanKidney.RDS")
+  }
+
+```
+
+## 3. Filtering:
+
+```{r Filtering, echo=TRUE}
+  
+    goi <- c("PDCD1", "CD274", "IFNG", "CD8A", "CD68", "EPCAM", "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+    
+    filtering.output <- filtering(object = qc.output$object,
+                            loq.cutoff = 2, 
+                            loq.min = 2, 
+                            segment.gene.rate.cutoff = 0.05,
+                            study.gene.rate.cutoff = 0.05, 
+                            sankey.exclude.slide = FALSE,  
+                            goi = goi)
+    
+    print(filtering.output$`stacked.bar.plot`)
+    print(filtering.output$`segment.table`)
+    print(filtering.output$`sankey.plot`)
+    print(filtering.output$`genes.detected.plot`)
+    print(filtering.output$'goi.table', row.names = FALSE)
+    
+  create.rds <- FALSE
+  if(create.rds) {
+    filtering.human.kidney <- filtering.output$object
+    saveRDS(filtering.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/filteringHumanKidney.RDS")
+  }
+
+```
+
+
+## 4. Normalization:
+  
+```{r Normalization, echo=TRUE}
+  
+    q3.normalization.output <- geomxNorm(
+                                  object = filtering.output$object, 
+                                  norm = "q3")
+    
+    print(q3.normalization.output$multi.plot)
+    print(q3.normalization.output$boxplot.raw)
+    print(q3.normalization.output$boxplot.norm)
+    
+    neg.normalization.output <- geomxNorm(
+                                  object = filtering.output$object, 
+                                  norm = "neg")
+    
+    print(neg.normalization.output$multi.plot)
+    print(neg.normalization.output$boxplot.raw)
+    print(neg.normalization.output$boxplot.norm)
+    
+    create.rds <- FALSE
+    if(create.rds) {
+      q3.normalization.human.kidney <- q3.normalization.output$object
+      saveRDS(q3.normalization.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/q3normalizationHumanKidney.RDS")
+      neg.normalization.human.kidney <- neg.normalization.output$object
+      saveRDS(neg.normalization.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/negnormalizationHumanKidney.RDS")
+    }
+    
+```
+
+
+## 5. Unsupervised Analysis:
+
+```{r Unsupervised Analysis, echo=TRUE}
+
+    #Test Unsupervised Analysis:
+    unsupervised.output <- dimReduct(object = q3.normalization.output$object,
+                        point.size = 3,
+                        point.alpha = 1,
+                        color.variable1 = "region",
+                        shape.variable = "class"
+    )
+    
+    print(unsupervised.output$plot$PCA)
+    print(unsupervised.output$plot$tSNE)
+    print(unsupervised.output$plot$UMAP)
+
+```
+
+
+## 6. Clustering high CV Genes and Heatmap:
+
+ 
+```{r Clustering high CV Genes, echo=TRUE}
+    
+    heatmap.output <- heatMap(object = unsupervised.output$object, 
+                        ngenes = 200, 
+                        scale.by.row.or.col = "row", 
+                        show.rownames = FALSE, 
+                        show.colnames = FALSE, 
+                        clustering.method = "average", 
+                        cluster.rows = TRUE, 
+                        cluster.cols = TRUE,
+                        clustering.distance.rows = "correlation", 
+                        clustering.distance.cols = "correlation", 
+                        annotation.row = NA, 
+                        annotation.col = c("class", "segment", "region"), 
+                        breaks.by.values = seq(-3, 3, 0.05), 
+                        heatmap.color = colorRampPalette(c("blue", "white", "red"))(120), 
+                        norm.method = "quant")
+
+
+    print(heatmap.output$plot)
+    
+  
+```
+
+
+## 7. Differential Expression Analysis:
+
+
+```{r Differential Expression Analysis,  echo=TRUE}
+
+    goi <- c("CD274", "CD8A", "CD68", "EPCAM",
+             "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+    
+    object <- q3.normalization.output$object
+    object <- object[goi,]
+    Gene <- Subset <- NULL
+    
+    #First analysis:
+    reslist.1 <- diffExpr(object = object, 
+                          analysis.type = "Within Groups", 
+                          region.col = "region", 
+                          regions = c("glomerulus", "tubule"), 
+                          group.col = "class", 
+                          groups = c("DKD", "normal"), 
+                          n.cores = 1)
+    grid.draw(reslist.1$sample_table)
+    grid.newpage()
+    grid.draw(reslist.1$summary_table)
+    
+    lfc_col1 <- colnames(reslist.1$result)[grepl("logFC",colnames(reslist.1$result))]
+    pval_col1 <- colnames(reslist.1$result)[grepl("_pval",colnames(reslist.1$result))]
+    
+    lfc.1 <- reslist.1$result %>% 
+              dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% 
+              select(all_of(lfc_col1)) %>% 
+              as.numeric()
+    pval.1 <- reslist.1$result %>% 
+              dplyr::filter(Gene == "CALB1" & Subset == "normal") %>% 
+              select(all_of(pval_col1)) %>% 
+              as.numeric()
+    
+    cat(paste0("\n\nvalue of CALB Fold Change is:", lfc.1))
+    cat("expected value is -2.014")
+    
+    cat(paste0("\nvalue of CALB pval is:",pval.1))
+    cat("expected value is 0.0274")
+    
+    #Second analysis:
+    reslist.2 <- diffExpr(object = object, 
+                          analysis.type = "Between Groups", 
+                          region.col = "region", 
+                          regions = c("glomerulus", "tubule"), 
+                          group.col = "class", 
+                          groups = c("DKD", "normal"), 
+                          n.cores = 1)
+    grid.draw(reslist.2$sample_table)
+    grid.newpage()
+    grid.draw(reslist.2$summary_table)
+    
+    lfc_col2 <- colnames(reslist.2$result)[grepl("logFC",colnames(reslist.2$result))]
+    pval_col2 <- colnames(reslist.2$result)[grepl("_pval",colnames(reslist.2$result))]
+    
+    lfc.2 <- reslist.2$result %>% 
+              dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% 
+              select(all_of(lfc_col2)) %>% 
+              as.numeric()
+    pval.2 <- reslist.2$result %>% 
+              dplyr::filter(Gene == "CALB1" & Subset == "tubule") %>% 
+              select(all_of(pval_col2)) %>% 
+              as.numeric()
+    
+    cat(paste0("\n\nvalue of CALB Fold Change is:", lfc.2))
+    cat("expected value is -1.408")
+    
+    cat(paste0("\nvalue of CALB pval is:",pval.2))
+    cat("expected value is 0.01268")
+    
+
+```
+## 8. Volcano Plot
+
+#This part is run on NIDAP.
+
+## 9. Violin Plot
+
+```{r Violin Plot, echo=TRUE}
+    
+    genes <- c("CD274", "CD8A", "CD68", "EPCAM",
+         "KRT18", "NPHS1", "NPHS2", "CALB1", "CLDN8")
+    
+    violin.plot.test <- violinPlot(object = q3.normalization.output$object, 
+                                        expr.type = "q_norm", 
+                                        genes = genes,
+                                        group = "region",
+                                        facet.by = "segment")
+    grid.arrange(violin.plot.test)
+
+```
+
+## 10. Spatial Deconvolution:
+
+```{r Spatial Deconvolution, echo=TRUE}
+
+    
+    ref.mtx = read.csv(test_path("fixtures", "sample_spatial_deconv_mtx.csv"), 
+                       row.names=1, check.names=FALSE)
+    rownames(ref.mtx) = sample(rownames(q3.normalization.output$object), size = 1500, replace = FALSE)
+    ref.annot = read.csv(test_path("fixtures", "ref_annot.csv"))
+    spatial.output <- spatialDeconvolution(object = q3.normalization.output$object, 
+                                           expr.type = "q_norm", 
+                                           ref.mtx = ref.mtx, 
+                                           prof.mtx = NULL, 
+                                           use.custom.prof.mtx = TRUE, 
+                                           ref.annot = ref.annot, 
+                                           cell.id.col = "CellID", 
+                                           celltype.col = "LabeledCellType", 
+                                           group.by = "segment")
+    
+    print(spatial.output$figures)
+
+    print("Spatial Deconvolution Done")
+```
