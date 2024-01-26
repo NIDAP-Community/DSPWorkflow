@@ -100,6 +100,8 @@ qc.output <-  qcProc(object = sdesign.list$object,
                         min.area = 1000,
                         print.plots = TRUE)
     print(qc.output$segments.qc)
+    print(qc.output$segment.flags)
+    print(qc.output$probe.flags)
     
   create.rds <- FALSE
   if(create.rds) {
