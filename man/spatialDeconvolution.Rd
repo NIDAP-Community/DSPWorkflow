@@ -2,25 +2,25 @@
 % Please edit documentation in R/spatial_deconvolution.R
 \name{spatialDeconvolution}
 \alias{spatialDeconvolution}
-\title{Spatial Deconvolution
-
-Helper functions comes from
-https://bioconductor.org/packages/release/bioc/vignettes/SpatialDecon/inst/doc/SpatialDecon_vignette_NSCLC.html}
+\title{Spatial Deconvolution}
 \usage{
 spatialDeconvolution(
   object,
-  expr.type,
-  ref.mtx,
-  ref.annot,
-  cell.id.col,
-  celltype.col,
-  group.by = NULL,
-  out.directory = NULL,
-  matrix.name = "customDSPmtx",
+  expr.type = "q_norm",
+  prof.mtx,
+  clust.rows = TRUE,
+  clust.cols = TRUE,
+  group.by = "none",
+  plot.fontsize = 5,
+  use.custom.prof.mtx = FALSE,
+  discard.celltype = FALSE,
   normalize = FALSE,
   min.cell.num = 0,
   min.genes = 10,
-  discard.celltype = FALSE
+  ref.mtx,
+  ref.annot,
+  cell.id.col = "CellID",
+  celltype.col = "LabeledCellType"
 )
 }
 \arguments{
@@ -28,29 +28,39 @@ spatialDeconvolution(
 
 \item{expr.type}{Name of slot containing normalized gene expression data}
 
-\item{ref.mtx}{Reference expression matrix (Gene x Reference_Samples)}
+\item{prof.mtx}{Use stored profile matrix}
 
-\item{ref.annot}{Reference data.frame with cell.id and celltype information}
+\item{clust.rows}{Cluster rows in heatmap (Default: TRUE)}
+
+\item{clust.cols}{Cluster columns in heatmap (Default: TRUE)}
+
+\item{group.by}{Organize heatmap / barplot columns by metadata group
+(Default: "none")}
+
+\item{plot.fontsize}{Set size of labels on all figures (Default: 5)}
+
+\item{discard.celltype}{Remove any celltype(s) that is not of interest
+(Default: FALSE)}
+
+\item{normalize}{Scale profile matrix gene expression according to gene count
+(Default: FALSE)}
+
+\item{min.cell.num}{Prevent deconvolution of celltype(s) if number of
+corresponding cells is below this threshold (Default: 0)}
+
+\item{min.genes}{Filter cells based on minimum number of genes expressed
+(Default: 10)}
+
+\item{ref.mtx}{Custom reference expression matrix (Gene x Reference_Samples)}
+
+\item{ref.annot}{Custom reference data.frame with cell.id and celltype
+information}
 
 \item{cell.id.col}{Column of data.frame containing cell.id.col info}
 
 \item{celltype.col}{Column of data.frame containing celltype info}
 
-\item{group.by}{Organize heatmap / barplot columns by metadata group}
-
-\item{out.directory}{Path to desired output directory, set to NULL if matrix
-should not be written}
-
-\item{matrix.name}{Name given to deconvolution signature matrix}
-
-\item{normalize}{Scale profile matrix gene expression according to gene count}
-
-\item{min.cell.num}{Prevent deconvolution of celltype(s) if number of
-corresponding cells is below this threshold}
-
-\item{min.genes}{Filter cells based on minimum number of genes expressed}
-
-\item{discard.celltype}{Remove any celltype(s) that is not of interest}
+\item{use.custom.matrix}{Generate custom profile matrix (Default: FALSE)}
 }
 \value{
 A list dsp.data containing the results of spatial deconvolution,
@@ -68,6 +78,9 @@ spatialDeconvolution estimate cell composition across DSP
 samples from reference expression matrix
 }
 \details{
+Helper functions comes from
+https://bioconductor.org/packages/release/bioc/vignettes/SpatialDecon/inst/doc/SpatialDecon_vignette_NSCLC.html
+
 Uses Nanostring developed functions to compute estimated cell
 fractions in DSP samples. Allows for users to group samples based
 on metadata information
