@@ -13,3 +13,7 @@ Future development will include support for [protein data](https://bioconductor.
 The development environment is provided in the Dockerfile/ directory, there are two sets of files:
   1. Conda_container/ : The container includes a conda environment: DSPWorkflow_NDIAP.
   2. Plain_R_container/ : Then container includes a plain R environment.
+
+Datetime: 2024-01-30 20:30:13, Version:  r-dspworkflow-dev-test-0.1.0-r41_0.tar.bz2
+<br>[View Commit Log](Commit_Log_r-dspworkflow-dev-test-0.1.0-r41_0.log)
+<br>Deployment Status: Success
