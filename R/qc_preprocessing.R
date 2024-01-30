@@ -58,21 +58,21 @@ geomxToolsDefaults <- getAnywhere("DEFAULTS")$objs[[1]]
 #' - Summary tables for segment, probe, and gene filtering ("table")
 
 qcProc <-  function(object,
-                   min.segment.reads = 1000,
-                   percent.trimmed = 80,
-                   percent.stitched = 80,
-                   percent.aligned = 80,
-                   percent.saturation = 50,
-                   min.nuclei = 200,
-                   min.area = 16000,
-                   min.negative.count = 10,
-                   max.ntc.count = 60,
-                   min.probe.ratio = 0.1,
-                   outlier.test.alpha = 0.01,
-                   percent.fail.grubbs = 20,
-                   remove.local.outliers = FALSE,
-                   shift.counts.zero = TRUE,
-                   print.plots = FALSE) {
+                    min.segment.reads = 1000,
+                    percent.trimmed = 80,
+                    percent.stitched = 80,
+                    percent.aligned = 80,
+                    percent.saturation = 50,
+                    min.nuclei = 200,
+                    min.area = 16000,
+                    min.negative.count = 10,
+                    max.ntc.count = 60,
+                    min.probe.ratio = 0.1,
+                    outlier.test.alpha = 0.01,
+                    percent.fail.grubbs = 20,
+                    remove.local.outliers = FALSE,
+                    shift.counts.zero = TRUE,
+                    print.plots = FALSE) {
   # Prerun ####
   ## functions ####
   ## graphical summaries of QC statistics
@@ -292,12 +292,13 @@ qcProc <-  function(object,
   tables <- list()
   pData(object) <-
     pData(object)[, !colnames(pData(object)) %in% neg.cols]
+  
   # Summarize & Remove Segments ####
   ## summarize NTC values (Frequency of Segments with a given NTC count)
   if (!is.null(qc.params$maxNTCCount)) {
     tab = table(NTC_Count = sData(object)$NTC)
     print(kable(tab, col.names = c("NTC Count", "# of Segments"),
-          caption = "Summary for the NTC values"))
+                caption = "Summary for the NTC values"))
     tab = as.data.frame(tab)
     colnames(tab) = c("NTC_Count", "# Segments")
     tables$NTC_Count = tab 
@@ -308,6 +309,137 @@ qcProc <-  function(object,
     rownames_to_column("Parameter")
   ## object size before segment removal
   size.before <- dim(object)
+  
+  ##### Obtain a list of all flagged rows for segment QC #####
+  
+  # Gather annotation information for flag list export
+  
+  ## Annotation columns
+  annotation.data <- pData(object)
+  
+  ## Annotation column names
+  annotation.column.names <- colnames(annotation.data)
+  
+  ## Start the list of selected annotation columns
+  select.annotation.columns <- "segmentID"
+  
+  ## Check if area and nuclei are included
+  if("area" %in% annotation.column.names){ 
+    select.annotation.columns <- c("area", select.annotation.columns)
+  } 
+  if("nuclei" %in% annotation.column.names){ 
+    select.annotation.columns <- c("nuclei", select.annotation.columns)
+  }
+  
+  ## The annotation names based on selected columns as a df
+  ## drop = FALSE ensures single column is still a df
+  select.annotation.data <- annotation.data[, select.annotation.columns, 
+                                            drop = FALSE]
+  select.annotation.data <- rownames_to_column(select.annotation.data, 
+                                               var = "SampleID")
+  
+  # Gather the QC flagged rows
+  
+  ## Gather the qc data
+  segment.qc.data <- object@protocolData@data
+  
+  ## The nested flag dataframe
+  flag.columns <- segment.qc.data %>% select(starts_with("QCFlags"))
+  
+  ## Rows with a positive flag
+  flagged.rows <- flag.columns[rowSums(flag.columns$QCFlags == TRUE) > 0, ]
+  flagged.rows <- rownames_to_column(flagged.rows, var = "SampleID")
+  
+  # Gather the additional QC data
+  
+  ## Additional QC column names
+  add.qc.column.names <- c("Raw", 
+                           "Trimmed (%)",
+                           "Stitched (%)",
+                           "Aligned (%)",
+                           "Saturated (%)",
+                           "NegGeoMean")
+  
+  ## Check for NTC column
+  if("NTC" %in% colnames(segment.qc.data)){
+    add.qc.column.names <- c("NTC", add.qc.column.names)
+  }
+  
+  ## Additional QC data
+  add.qc.columns <- segment.qc.data[, add.qc.column.names]
+  add.qc.columns <- rownames_to_column(add.qc.columns, var = "SampleID")
+  
+  ## Convert single column matrix and dataframes into vectors
+  ## May cause an issue if there is more then one PKC file
+  matrix.column <- add.qc.columns$NegGeoMean
+  vector.column <- as.vector(matrix.column)
+  add.qc.columns$NegGeoMean <- vector.column
+  
+  add.qc.columns$TrimmedPerc <- sapply(add.qc.columns$`Trimmed (%)`, 
+                                       function(x) unname(unlist(x)))
+  add.qc.columns$TrimmedPerc <- as.vector(add.qc.columns$TrimmedPerc[,1])
+  
+  add.qc.columns$StitchedPerc <- sapply(add.qc.columns$`Stitched (%)`, 
+                                       function(x) unname(unlist(x)))
+  add.qc.columns$StitchedPerc <- as.vector(add.qc.columns$StitchedPerc[,1])
+  
+  add.qc.columns$AlignedPerc <- sapply(add.qc.columns$`Aligned (%)`, 
+                                       function(x) unname(unlist(x)))
+  add.qc.columns$AlignedPerc <- as.vector(add.qc.columns$AlignedPerc[,1])
+  
+  add.qc.columns$SaturatedPerc <- sapply(add.qc.columns$`Saturated (%)`, 
+                                       function(x) unname(unlist(x)))
+  add.qc.columns$SaturatedPerc <- as.vector(add.qc.columns$SaturatedPerc[,1])
+  
+  ## Remove the nested data frames
+  add.qc.columns <- add.qc.columns[, -which(names(add.qc.columns) == "Trimmed (%)")]
+  add.qc.columns <- add.qc.columns[, -which(names(add.qc.columns) == "Stitched (%)")]
+  add.qc.columns <- add.qc.columns[, -which(names(add.qc.columns) == "Aligned (%)")]
+  add.qc.columns <- add.qc.columns[, -which(names(add.qc.columns) == "Saturated (%)")]
+  
+  # Create the final QC flag data frame with all additional info
+  
+  ## Merge the annotation, flag, and additional qc data frames
+  merge.qc.flagged.df <- merge(merge(select.annotation.data, add.qc.columns, 
+                                     by = "SampleID"), 
+                               flagged.rows, by = "SampleID")
+  
+  ## Reorder columns so that info is next to flag
+  final.column.order <- c("SampleID", 
+                          "segmentID", 
+                          "Raw", 
+                          "LowReads", 
+                          "TrimmedPerc", 
+                          "LowTrimmed", 
+                          "StitchedPerc", 
+                          "LowStitched", 
+                          "AlignedPerc", 
+                          "LowAligned", 
+                          "SaturatedPerc", 
+                          "LowSaturation", 
+                          "NegGeoMean", 
+                          "LowNegatives")
+  
+  ## Add NTC, area, and/or nuclei if part of annotation
+  if("NTC" %in% annotation.column.names){ 
+    final.column.order <- c(final.column.order, "NTC", "HighNTC")
+  } 
+  if("area" %in% annotation.column.names){ 
+    final.column.order <- c(final.column.order, "area", "LowArea")
+  } 
+  if("nuclei" %in% annotation.column.names){ 
+    final.column.order <- c(final.column.order, "nuclei", "LowNuclei")
+  }
+  
+  ## The final QC flag df
+  final.flagged.segment.df <- merge.qc.flagged.df[, final.column.order]
+  
+  ## Final renaming of columns
+  colnames(final.flagged.segment.df)[colnames(final.flagged.segment.df) == "Raw"] <- "RawReadCount"
+
+  
+  # Create the output object
+  
   ## remove flagged segments
   object <- object[, seg.qc.results$QCStatus == "PASS"]
   ## object size after segment removal
@@ -315,8 +447,8 @@ qcProc <-  function(object,
   ## print object size before and after segment removal
   tab <- data.frame(size.before, size.after)
   print(kable(tab,
-    col.names = c("# Before Removal", "# After Removal"),
-    caption = "Summary for Segment QC Removal"
+              col.names = c("# Before Removal", "# After Removal"),
+              caption = "Summary for Segment QC Removal"
   ))
   tables$Segment_QC_Removal <- tab %>% rownames_to_column("element")
   
@@ -343,6 +475,71 @@ qcProc <-  function(object,
           !probe.qc.results$GlobalGrubbsOutlier
       )
     )
+  
+  # Create a df of the probes that have been flagged
+  
+  ## Gather the rows that are outliers for gobal or local tests
+  global.rows <- rownames(probe.qc.results)[probe.qc.results$GlobalGrubbsOutlier]
+  local.rows <- rownames(probe.qc.results)[rowSums(probe.qc.results[, -2:-1]) > 0 &
+  !probe.qc.results$GlobalGrubbsOutlier]
+  
+  flagged.probes <- c(global.rows,local.rows)
+  
+  flagged.probe.df <- data.frame(RTS_ID = flagged.probes)
+  
+  flagged.probe.df$FlagType <- ifelse(flagged.probe.df$RTS_ID 
+                                      %in% global.rows, "Global", "Local")
+  
+  # Initialize an empty list to store results for each probe
+  result.list <- list()
+  
+  ## Establish a list of probes flagged as local outliers and the corresponding
+  ## segment the probe is flagged in
+  for (probe.id in local.rows) {
+    # Get the row index for the probe ID
+    row.index <- which(rownames(probe.qc.results) == probe.id)
+    
+    # Check which columns are TRUE for the corresponding row
+    true.columns <- colnames(probe.qc.results)[probe.qc.results[row.index, -c(1, 2)] > 0]
+    
+    # Remove the extraneous text
+    true.columns <- gsub("LocalGrubbsOutlier\\.", "", true.columns)
+    
+    # Store the result in the list
+    result.list[[probe.id]] <- true.columns
+  }
+  
+  ## To store the segmens(s) a probe was flagged in with the local test
+  flagged.probe.df$LocalFlag <- NA
+  
+  ## Combine the local flag data with the main probe flag df
+  matching.rows <- which(flagged.probe.df$RTS_ID %in% local.rows)
+  flagged.probe.df$LocalFlag[matching.rows] <- 
+    sapply(flagged.probe.df$RTS_ID[matching.rows], 
+           function(probe) {paste(result.list[[probe]], collapse = ",")})
+  
+  # Add the gene name to the probe flag df
+  
+  ## Columns from the probe annotation
+  probe.columns <- c("RTS_ID","TargetName")
+  
+  ## Gather the probe ID to gene name mapping
+  probe.id.gene.mapping <- fData(object)[, probe.columns]
+  
+  ## Subset the probe id to gene name mapping
+  probe.id.gene.mapping <- probe.id.gene.mapping[
+    probe.id.gene.mapping$RTS_ID %in% flagged.probe.df$RTS_ID, ]
+  
+  ## Add the mapping to the local probe df
+  flagged.probe.df <- merge(flagged.probe.df, probe.id.gene.mapping, by="RTS_ID")
+  
+  ## Rearrange column order for final local flag df
+  probe.df.column.order <- c("TargetName", "RTS_ID", "FlagType", "LocalFlag")
+  final.flagged.probe.df <- flagged.probe.df[, probe.df.column.order]
+  
+  
+  # Finish subsetting the object to remove flagged probes
+  
   ## subset object to exclude all that did not pass Ratio & Global testing
   probe.qc.passed <-
     subset(object,
@@ -383,7 +580,9 @@ qcProc <-  function(object,
   output <- list(
     "object" = object,
     "plot" = plot.list,
-    "table" = tables
-    )
+    "table" = tables,
+    "segment.flags" = final.flagged.segment.df, 
+    "probe.flags" = final.flagged.probe.df
+  )
   invisible(output)
 }

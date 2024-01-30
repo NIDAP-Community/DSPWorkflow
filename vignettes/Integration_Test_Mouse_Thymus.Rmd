@@ -71,7 +71,7 @@ This runs the DSPworkflow package to completion using the Mouse Thymus Dataset:
                                 nuclei.col = "nuclei")
   
   # For creating fixture RDS
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     study.design.mouse.thymus <- sdesign.list$object
     saveRDS(study.design.mouse.thymus, file = "tests/testthat/fixtures/Mouse_Thymus/studyDesignMouseThymus.RDS")
@@ -99,8 +99,10 @@ qc.output <-  qcProc(object = sdesign.list$object,
                         min.area = 16000,
                         print.plots = TRUE)
     print(qc.output$segments.qc)
+    print(qc.output$segment.flags)
+    print(qc.output$probe.flags)
     
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     qc.mouse.thymus <- qc.output$object
     saveRDS(qc.mouse.thymus, file = "tests/testthat/fixtures/Mouse_Thymus/qcMouseThymus.RDS")
