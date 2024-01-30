@@ -1,9 +1,9 @@
 name: Gitflow Action for R Package Development
-run-name: ${{ github.actor }} now ${{ github.event_name }} to ${{ github.ref_name }}
+run-name: ${{ github.actor }} ${{ github.event_name }} to ${{ github.ref_name }}
 
 on:
   push:
-    branches: ['*', '!dev', '!main']
+    branches: ['*', '!dev', '!main', '!release_dev', '!Conda_Package', '!github_page']
     
   pull_request:
     types: ['opened', 'closed']
@@ -11,7 +11,13 @@ on:
 
 jobs:
   Activating_Parser:
-    uses: fnlcr-bids-sdsi/gitflow-R/.github/workflows/parser.yml@DSPWorkflow
+    uses: fnlcr-bids-sdsi/gitflow-R/.github/workflows/parser.yml@master
     with:
       image_to_use: ghcr.io/nidap-community/dsp_ci_cd:latest
-
+      package_name: "r-dspworkflow"
+      r_version: "4.1.3"
+      artifact_rid_production: "ri.artifacts.main.repository.20ce29a2-3803-4eae-b325-8fe367d47d1e"
+      artifact_rid_development: "ri.stemma.main.repository.2172e505-c98f-43d4-881a-47e170aadbe1"
+    secrets:
+      NIDAP_TOKEN_PRODUCTION: ${{ secrets.NIDAP_TOKEN_PRODUCTION }}
+      NIDAP_TOKEN_DEVELOPMENT: ${{ secrets.NIDAP_TOKEN_DEVELOPMENT }}
