@@ -70,7 +70,7 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
                                 nuclei.col = "nuclei")
   
   # For creating fixture RDS
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     study.design.human.colon <- sdesign.list$object
     saveRDS(study.design.human.colon, file = "tests/testthat/fixtures/Human_Colon/studyDesignHumanColon.RDS")
@@ -97,8 +97,10 @@ This runs the DSPworkflow package to completion using the Human Colon Dataset:
                         min.area = 1000,
                         print.plots = TRUE)
     print(qc.output$segments.qc)
+    print(qc.output$segment.flags)
+    print(qc.output$probe.flags)
     
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     qc.human.colon<- qc.output$object
     saveRDS(qc.human.colon, file = "tests/testthat/fixtures/Human_Colon/qcHumanColon.RDS")

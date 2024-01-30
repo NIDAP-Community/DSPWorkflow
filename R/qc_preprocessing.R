@@ -353,13 +353,17 @@ qcProc <-  function(object,
   # Gather the additional QC data
   
   ## Additional QC column names
-  add.qc.column.names <- c("Raw",
-                           "NTC",
+  add.qc.column.names <- c("Raw", 
                            "Trimmed (%)",
                            "Stitched (%)",
                            "Aligned (%)",
                            "Saturated (%)",
                            "NegGeoMean")
+  
+  ## Check for NTC column
+  if("NTC" %in% colnames(segment.qc.data)){
+    add.qc.column.names <- c("NTC", add.qc.column.names)
+  }
   
   ## Additional QC data
   add.qc.columns <- segment.qc.data[, add.qc.column.names]
@@ -373,12 +377,19 @@ qcProc <-  function(object,
   
   add.qc.columns$TrimmedPerc <- sapply(add.qc.columns$`Trimmed (%)`, 
                                        function(x) unname(unlist(x)))
+  add.qc.columns$TrimmedPerc <- as.vector(add.qc.columns$TrimmedPerc[,1])
+  
   add.qc.columns$StitchedPerc <- sapply(add.qc.columns$`Stitched (%)`, 
                                        function(x) unname(unlist(x)))
+  add.qc.columns$StitchedPerc <- as.vector(add.qc.columns$StitchedPerc[,1])
+  
   add.qc.columns$AlignedPerc <- sapply(add.qc.columns$`Aligned (%)`, 
                                        function(x) unname(unlist(x)))
+  add.qc.columns$AlignedPerc <- as.vector(add.qc.columns$AlignedPerc[,1])
+  
   add.qc.columns$SaturatedPerc <- sapply(add.qc.columns$`Saturated (%)`, 
                                        function(x) unname(unlist(x)))
+  add.qc.columns$SaturatedPerc <- as.vector(add.qc.columns$SaturatedPerc[,1])
   
   ## Remove the nested data frames
   add.qc.columns <- add.qc.columns[, -which(names(add.qc.columns) == "Trimmed (%)")]
@@ -406,12 +417,13 @@ qcProc <-  function(object,
                           "LowAligned", 
                           "SaturatedPerc", 
                           "LowSaturation", 
-                          "NTC", 
-                          "HighNTC", 
                           "NegGeoMean", 
                           "LowNegatives")
   
-  ## Add area and/or nuclei if part of annotation
+  ## Add NTC, area, and/or nuclei if part of annotation
+  if("NTC" %in% annotation.column.names){ 
+    final.column.order <- c(final.column.order, "NTC", "HighNTC")
+  } 
   if("area" %in% annotation.column.names){ 
     final.column.order <- c(final.column.order, "area", "LowArea")
   } 
