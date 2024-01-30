@@ -1,6 +1,0 @@
-GeomxTools
-NanoStringNCTools
-SpatialDecon
-tidyverse
-pheatmap
-stringr
