@@ -2,7 +2,36 @@
 
 
 
-## v0.1.0 (2024-01-30)
+## v1.3.1 (2024-01-31)
+
+### Build
+
+* build: Update artifact destination for production ([`e05d487`](https://github.com/NIDAP-Community/DSPWorkflow/commit/e05d487db2eea2ebdb9c7586ea9f5f05a93b0d04))
+
+### Fix
+
+* fix: Update version in DESCRIPTION, update package name in meta.yaml, and rm tar.gz in package ([`092ecfb`](https://github.com/NIDAP-Community/DSPWorkflow/commit/092ecfbee3c1d8b7264f1297a94bf06e64c266e9))
+
+### Unknown
+
+* Merge pull request #143 from NIDAP-Community/dev
+
+Removed tarballs, updated version number and Conda package name ([`6787e97`](https://github.com/NIDAP-Community/DSPWorkflow/commit/6787e97e6de6a722ed233b0c2a5dbde650017ea0))
+
+* Merge pull request #142 from NIDAP-Community/update_cd
+
+build: Update artifact destination for production ([`f0e24ad`](https://github.com/NIDAP-Community/DSPWorkflow/commit/f0e24adfb614ae3b540b10f3005c811447b9b75b))
+
+* Merge pull request #140 from NIDAP-Community/update_cd
+
+fix: Update version in DESCRIPTION, update package name in meta.yaml,… ([`485131c`](https://github.com/NIDAP-Community/DSPWorkflow/commit/485131cd230532fc22da0dc6da17dd2af956751a))
+
+
+## v1.3.0 (2024-01-30)
+
+### Documentation
+
+* docs(version): Automatic development release ([`0f85910`](https://github.com/NIDAP-Community/DSPWorkflow/commit/0f85910f4f73f6929f2c7c63047a73a6be6ce2d6))
 
 ### Feature
 
