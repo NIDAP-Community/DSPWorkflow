@@ -17,3 +17,7 @@ The development environment is provided in the Dockerfile/ directory, there are 
 Datetime: 2024-01-30 20:30:13, Version:  r-dspworkflow-dev-test-0.1.0-r41_0.tar.bz2
 <br>[View Commit Log](Commit_Log_r-dspworkflow-dev-test-0.1.0-r41_0.log)
 <br>Deployment Status: Success
+
+Datetime: 2024-01-31 17:17:44, Version:  r-dspworkflow-dev-1.3.1-r41_0.tar.bz2
+<br>[View Commit Log](Commit_Log_r-dspworkflow-dev-1.3.1-r41_0.log)
+<br>Deployment Status: Default:Unauthorized
