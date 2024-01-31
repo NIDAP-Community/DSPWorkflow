@@ -19,7 +19,7 @@ object (phenoData) and plots them on 2D scatter plots."><!-- mathjax --><script 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DSPWorkflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
       </span>
     </div>
 
@@ -27,26 +27,13 @@ object (phenoData) and plots them on 2D scatter plots."><!-- mathjax --><script 
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/NIDAP-Community/DSPWorkflow/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
-    <span class="caret"></span>
   </a>
-  <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/Integration_Test_Colon.html">Integration_Test_Human_Colon</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_Kidney.html">Integration_Test_Kidney</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_Mouse_Thymus.html">Integration_Test_Kidney</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_NSCLC.html">Integration_Test_NSCLC</a>
-    </li>
-  </ul></li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -56,7 +43,7 @@ object (phenoData) and plots them on 2D scatter plots."><!-- mathjax --><script 
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>dimReduct: Dimensional Reduction</h1>
-    
+    <small class="dont-index">Source: <a href="https://github.com/NIDAP-Community/DSPWorkflow/blob/HEAD/R/unsupervised_analysis.R" class="external-link"><code>R/unsupervised_analysis.R</code></a></small>
     <div class="hidden name"><code>dimReduct.Rd</code></div>
     </div>
 
@@ -151,9 +138,7 @@ these two variables.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">prcomp</a> <a href="https://rdrr.io/pkg/Rtsne/man/Rtsne.html" class="external-link">Rtsne</a> <a href="https://rdrr.io/pkg/umap/man/umap.html" class="external-link">umap</a></p>
-<p><code><a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">prcomp</a></code> <a href="https://rdrr.io/pkg/Rtsne/man/Rtsne.html" class="external-link">Rtsne</a></p>
-<p><code><a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">stats::prcomp</a></code> <code><a href="https://rdrr.io/pkg/Rtsne/man/Rtsne.html" class="external-link">Rtsne::Rtsne</a></code>
+    <div class="dont-index"><p><code><a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">stats::prcomp</a></code> <code><a href="https://rdrr.io/pkg/Rtsne/man/Rtsne.html" class="external-link">Rtsne::Rtsne</a></code>
 <code><a href="https://rdrr.io/pkg/umap/man/umap.html" class="external-link">umap::umap</a></code></p></div>
     </div>
 
@@ -161,7 +146,8 @@ these two variables.</p>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="co"># Default plots</span></span></span>
-<span class="r-in"><span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">dimReduct</span><span class="op">(</span>object <span class="op">=</span> <span class="va">object</span>, color.variable1<span class="op">=</span><span class="st">"region"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">dimReduct</span><span class="op">(</span>object <span class="op">=</span> <span class="va">object</span>, color.variable1<span class="op">=</span><span class="st">"region"</span>, </span></span>
+<span class="r-in"><span>print.plots<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Plot tSNE</span></span></span>
 <span class="r-in"><span><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu">dimReduct</span><span class="op">(</span>object <span class="op">=</span> <span class="va">object</span>, color.variable1<span class="op">=</span><span class="st">"region"</span>,</span></span>
 <span class="r-in"><span>print.plots <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
@@ -181,11 +167,11 @@ these two variables.</p>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by First Last.</p>
+  <p></p><p>Developed by Rui He, Maggie Cam, Ned Cauley, Jing Bian, Difei Wang, Chad Highfill, Aleksandra Michalowski.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

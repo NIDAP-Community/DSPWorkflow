@@ -18,7 +18,7 @@ control and then generates gene-level count data."><!-- mathjax --><script src="
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DSPWorkflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
       </span>
     </div>
 
@@ -26,26 +26,13 @@ control and then generates gene-level count data."><!-- mathjax --><script src="
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/NIDAP-Community/DSPWorkflow/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
-    <span class="caret"></span>
   </a>
-  <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/Integration_Test_Colon.html">Integration_Test_Human_Colon</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_Kidney.html">Integration_Test_Kidney</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_Mouse_Thymus.html">Integration_Test_Kidney</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_NSCLC.html">Integration_Test_NSCLC</a>
-    </li>
-  </ul></li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -55,7 +42,7 @@ control and then generates gene-level count data."><!-- mathjax --><script src="
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>qcProc: Quality Control and Preprocessing</h1>
-    
+    <small class="dont-index">Source: <a href="https://github.com/NIDAP-Community/DSPWorkflow/blob/HEAD/R/qc_preprocessing.R" class="external-link"><code>R/qc_preprocessing.R</code></a></small>
     <div class="hidden name"><code>qcProc.Rd</code></div>
     </div>
 
@@ -72,11 +59,10 @@ control and then generates gene-level count data.</p>
 <span>  percent.stitched <span class="op">=</span> <span class="fl">80</span>,</span>
 <span>  percent.aligned <span class="op">=</span> <span class="fl">80</span>,</span>
 <span>  percent.saturation <span class="op">=</span> <span class="fl">50</span>,</span>
-<span>  min.negative.count <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  max.ntc.count <span class="op">=</span> <span class="fl">60</span>,</span>
 <span>  min.nuclei <span class="op">=</span> <span class="fl">200</span>,</span>
 <span>  min.area <span class="op">=</span> <span class="fl">16000</span>,</span>
-<span>  min.probe.count <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  min.negative.count <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  max.ntc.count <span class="op">=</span> <span class="fl">60</span>,</span>
 <span>  min.probe.ratio <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  outlier.test.alpha <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  percent.fail.grubbs <span class="op">=</span> <span class="fl">20</span>,</span>
@@ -113,20 +99,20 @@ supplied</p></dd>
 <dd><p>minimum sequencing saturation</p></dd>
 
 
-<dt>min.negative.count</dt>
-<dd><p>minimum negative control counts</p></dd>
-
-
-<dt>max.ntc.count</dt>
-<dd><p>maximum counts observed in NTC well</p></dd>
-
-
 <dt>min.nuclei</dt>
 <dd><p>minimum # of nuclei estimated</p></dd>
 
 
 <dt>min.area</dt>
 <dd><p>minimum segment area</p></dd>
+
+
+<dt>min.negative.count</dt>
+<dd><p>minimum negative control counts</p></dd>
+
+
+<dt>max.ntc.count</dt>
+<dd><p>maximum counts observed in NTC well</p></dd>
 
 
 <dt>min.probe.ratio</dt>
@@ -150,14 +136,14 @@ greater than or equal this percent of segments</p></dd>
 excluded from exprs matrix</p></dd>
 
 
+<dt>shift.counts.zero</dt>
+<dd><p>boolean to shift 0 counts (if TRUE shift 0s by 1,
+otherwise shift all counts by 1)</p></dd>
+
+
 <dt>print.plots</dt>
 <dd><p>boolean to display plots or set to FALSE otherwise; ggplot
 objects are returned in either case</p></dd>
-
-
-<dt>shift.count.zero</dt>
-<dd><p>boolean to shift 0 counts (if TRUE shift 0s by 1,
-otherwise shift all counts by 1)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -167,6 +153,7 @@ otherwise shift all counts by 1)</p></dd>
 <p>A list of two objects:</p><ul><li><p>QC-filtered <em>NanoStringGeoMxSet</em> object with gene-level targets as features
 and the <em>QCFlags</em> data.frame appended to <em>protocolData</em> ("object")</p></li>
 <li><p>QC plots in a list of ggplot objects ("plot")</p></li>
+<li><p>Summary tables for segment, probe, and gene filtering ("table")</p></li>
 </ul></div>
     <div id="details">
     <h2>Details</h2>
@@ -187,11 +174,11 @@ geometric mean of those probes.</p>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by First Last.</p>
+  <p></p><p>Developed by Rui He, Maggie Cam, Ned Cauley, Jing Bian, Difei Wang, Chad Highfill, Aleksandra Michalowski.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

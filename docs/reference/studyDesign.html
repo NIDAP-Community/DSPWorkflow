@@ -18,7 +18,7 @@ annotation files into a GeoMX object"><!-- mathjax --><script src="https://cdnjs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DSPWorkflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
       </span>
     </div>
 
@@ -26,26 +26,13 @@ annotation files into a GeoMX object"><!-- mathjax --><script src="https://cdnjs
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/NIDAP-Community/DSPWorkflow/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
-    <span class="caret"></span>
   </a>
-  <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/Integration_Test_Colon.html">Integration_Test_Human_Colon</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_Kidney.html">Integration_Test_Kidney</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_Mouse_Thymus.html">Integration_Test_Kidney</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_NSCLC.html">Integration_Test_NSCLC</a>
-    </li>
-  </ul></li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -55,7 +42,7 @@ annotation files into a GeoMX object"><!-- mathjax --><script src="https://cdnjs
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>studyDesign: Study Design</h1>
-    
+    <small class="dont-index">Source: <a href="https://github.com/NIDAP-Community/DSPWorkflow/blob/HEAD/R/study_design.R" class="external-link"><code>R/study_design.R</code></a></small>
     <div class="hidden name"><code>studyDesign.Rd</code></div>
     </div>
 
@@ -72,7 +59,15 @@ annotation files into a GeoMX object</p>
 <span>  pheno.data.sheet <span class="op">=</span> <span class="st">"Template"</span>,</span>
 <span>  pheno.data.dcc.col.name <span class="op">=</span> <span class="st">"Sample_ID"</span>,</span>
 <span>  protocol.data.col.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"aoi"</span>, <span class="st">"roi"</span><span class="op">)</span>,</span>
-<span>  experiment.data.col.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"panel"</span><span class="op">)</span></span>
+<span>  experiment.data.col.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"panel"</span><span class="op">)</span>,</span>
+<span>  slide.name.col <span class="op">=</span> <span class="st">"slide name"</span>,</span>
+<span>  class.col <span class="op">=</span> <span class="st">"class"</span>,</span>
+<span>  region.col <span class="op">=</span> <span class="st">"region"</span>,</span>
+<span>  segment.col <span class="op">=</span> <span class="st">"segment"</span>,</span>
+<span>  area.col <span class="op">=</span> <span class="st">"area"</span>,</span>
+<span>  nuclei.col <span class="op">=</span> <span class="st">"nuclei"</span>,</span>
+<span>  sankey.exclude.slide <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  segment.id.length <span class="op">=</span> <span class="fl">4</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -113,6 +108,40 @@ sequencing data.</p></dd>
 <dd><p>Character list of column names from
 phenoDataFile containing data about the experiment's meta-data.</p></dd>
 
+
+<dt>slide.name.col</dt>
+<dd><p>The name of the field that contains the slide names</p></dd>
+
+
+<dt>class.col</dt>
+<dd><p>The name of the field that contains the class annotation</p></dd>
+
+
+<dt>region.col</dt>
+<dd><p>The name of the field that contains the region annotation</p></dd>
+
+
+<dt>segment.col</dt>
+<dd><p>The name of the field that contains the segment name</p></dd>
+
+
+<dt>area.col</dt>
+<dd><p>The name of the field that contains the segment area</p></dd>
+
+
+<dt>nuclei.col</dt>
+<dd><p>The name of the field that contains the nuclei number</p></dd>
+
+
+<dt>sankey.exclude.slide</dt>
+<dd><p>A toggle for including the slide name in the
+Sankey plot</p></dd>
+
+
+<dt>segment.id.length</dt>
+<dd><p>The number of characters to use from each of the
+annotation fields class, region, and segment to create the segment ID</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -136,11 +165,11 @@ and the corresponding fields that can be renamed: Sample_ID, aoi, roi, panel</p>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by First Last.</p>
+  <p></p><p>Developed by Rui He, Maggie Cam, Ned Cauley, Jing Bian, Difei Wang, Chad Highfill, Aleksandra Michalowski.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

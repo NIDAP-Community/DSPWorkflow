@@ -20,7 +20,7 @@ expressed genes (DEG) given manually set fold-change and p-value thresholds."><!
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DSPWorkflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
       </span>
     </div>
 
@@ -28,26 +28,13 @@ expressed genes (DEG) given manually set fold-change and p-value thresholds."><!
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/NIDAP-Community/DSPWorkflow/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
-    <span class="caret"></span>
   </a>
-  <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/Integration_Test_Colon.html">Integration_Test_Human_Colon</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_Kidney.html">Integration_Test_Kidney</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_Mouse_Thymus.html">Integration_Test_Kidney</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_NSCLC.html">Integration_Test_NSCLC</a>
-    </li>
-  </ul></li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -57,7 +44,7 @@ expressed genes (DEG) given manually set fold-change and p-value thresholds."><!
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Run a linear mixed model on GeoMxSet</h1>
-    
+    <small class="dont-index">Source: <a href="https://github.com/NIDAP-Community/DSPWorkflow/blob/HEAD/R/differential_expression_analysis.R" class="external-link"><code>R/differential_expression_analysis.R</code></a></small>
     <div class="hidden name"><code>diffExpr.Rd</code></div>
     </div>
 
@@ -76,11 +63,11 @@ expressed genes (DEG) given manually set fold-change and p-value thresholds.</p>
 <span>  <span class="va">group.col</span>,</span>
 <span>  <span class="va">regions</span>,</span>
 <span>  <span class="va">region.col</span>,</span>
-<span>  slide.col <span class="op">=</span> <span class="st">"slide name"</span>,</span>
+<span>  slide.col <span class="op">=</span> <span class="st">"slide_name"</span>,</span>
 <span>  element <span class="op">=</span> <span class="st">"q_norm"</span>,</span>
 <span>  multi.core <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n.cores <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  p.adjust <span class="op">=</span> <span class="st">"BY"</span>,</span>
+<span>  p.adjust <span class="op">=</span> <span class="st">"fdr"</span>,</span>
 <span>  pairwise <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  fc.lim <span class="op">=</span> <span class="fl">1.2</span>,</span>
 <span>  pval.lim.1 <span class="op">=</span> <span class="fl">0.05</span>,</span>
@@ -138,7 +125,7 @@ slide)</p></dd>
 
 <dt>p.adjust</dt>
 <dd><p>Method to use for pvalue adjustment. Choices are "holm",
-"hochberg","hommel","bonferroni","BH","BY","fdr","none". (default is "BY")</p></dd>
+"hochberg","hommel","bonferroni","BH","BY","fdr","none". (default is "BH")</p></dd>
 
 
 <dt>pairwise</dt>
@@ -166,7 +153,7 @@ is 1.2)</p></dd>
     
 
 <p>a list containing mixed model output data frame, grid tables for
-samples and summary of genelists</p>
+samples used in analysis and summary of significant genelists</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -181,11 +168,11 @@ samples and summary of genelists</p>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by First Last.</p>
+  <p></p><p>Developed by Rui He, Maggie Cam, Ned Cauley, Jing Bian, Difei Wang, Chad Highfill, Aleksandra Michalowski.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

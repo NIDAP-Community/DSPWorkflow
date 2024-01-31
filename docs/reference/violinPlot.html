@@ -19,7 +19,7 @@ category"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/ma
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DSPWorkflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
       </span>
     </div>
 
@@ -27,26 +27,13 @@ category"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/ma
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/NIDAP-Community/DSPWorkflow/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
-    <span class="caret"></span>
   </a>
-  <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/Integration_Test_Colon.html">Integration_Test_Human_Colon</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_Kidney.html">Integration_Test_Kidney</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_Mouse_Thymus.html">Integration_Test_Kidney</a>
-    </li>
-    <li>
-      <a href="../articles/Integration_Test_NSCLC.html">Integration_Test_NSCLC</a>
-    </li>
-  </ul></li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -56,7 +43,7 @@ category"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/ma
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Violin plot of spatially profiled genes</h1>
-    
+    <small class="dont-index">Source: <a href="https://github.com/NIDAP-Community/DSPWorkflow/blob/HEAD/R/violin_plot.R" class="external-link"><code>R/violin_plot.R</code></a></small>
     <div class="hidden name"><code>violinPlot.Rd</code></div>
     </div>
 
@@ -67,7 +54,13 @@ category</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">violinPlot</span><span class="op">(</span><span class="va">object</span>, <span class="va">expr.type</span>, <span class="va">genes</span>, <span class="va">group</span>, facet.by <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">violinPlot</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  expr.type <span class="op">=</span> <span class="st">"q_norm"</span>,</span>
+<span>  genes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FOXP3"</span>, <span class="st">"CD4"</span><span class="op">)</span>,</span>
+<span>  group <span class="op">=</span> <span class="st">"CellType"</span>,</span>
+<span>  facet.by <span class="op">=</span> <span class="st">"none"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -114,11 +107,11 @@ group category to be present in object</p>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by First Last.</p>
+  <p></p><p>Developed by Rui He, Maggie Cam, Ned Cauley, Jing Bian, Difei Wang, Chad Highfill, Aleksandra Michalowski.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
