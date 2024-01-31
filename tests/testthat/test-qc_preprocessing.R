@@ -1,25 +1,25 @@
 test_that("Test Human Kidney dataset", {
   kidney.dat <- selectDatasetQC("kidney")
   output <- do.call(qcProc, kidney.dat)
-  expected.elements <- c("object", "plot","table")
+  expected.elements <- c("object", "plot","table","segment.flags","probe.flags")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
 })
 test_that("Test Mouse Thymus Dataset", {
   thymus.dat <- selectDatasetQC("thymus")
   output <- do.call(qcProc, thymus.dat)
-  expected.elements <- c("object", "plot","table")
+  expected.elements <- c("object", "plot","table","segment.flags","probe.flags")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
 })
 test_that("Test Colon Dataset", {
   colon.dat <- selectDatasetQC("colon")
   expect_warning(output <- do.call(qcProc, colon.dat), regexp = NULL)
-  expected.elements <- c("object", "plot","table")
+  expected.elements <- c("object", "plot","table","segment.flags","probe.flags")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
 })
 test_that("Test Human NSCLC Dataset", {
   nsclc.dat <- selectDatasetQC("nsclc") 
   expect_warning(output <- do.call(qcProc, nsclc.dat), regexp = NULL)
-  expected.elements <- c("object", "plot","table")
+  expected.elements <- c("object", "plot","table","segment.flags","probe.flags")
   expect_equal(length(setdiff(expected.elements, names(output))), 0)
 })
 test_that(

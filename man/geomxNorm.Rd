@@ -9,7 +9,7 @@ geomxNorm(object, norm)
 \arguments{
 \item{object}{A NanoStringGeoMxSet dataset}
 
-\item{norm}{A vector with options of c(quant or neg)}
+\item{norm}{A vector with options of c(q3 or neg)}
 }
 \value{
 A list containing the ggplot grid, a boxplot, an normalized dataframe.

@@ -104,7 +104,7 @@ qc.output <-  qcProc(object = sdesign.list$object,
     print(qc.output$segments.qc)
     
     # For creating a fixture RDS
-    create.rds <- TRUE
+    create.rds <- FALSE
     if(create.rds) {
       qc.human.nsclc <- qc.output$object
       saveRDS(qc.human.nsclc, file = "tests/testthat/fixtures/Human_NSCLC/qcHumanNSCLC.RDS")

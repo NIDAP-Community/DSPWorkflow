@@ -157,10 +157,12 @@ diffExpr <- function(object,
   
   # Adjust the number of cores selected within the machine's range
   if (n.cores > available.cores) {
-    print(paste0("The number of cores selected is greater than the number of available cores, reducing number of cores to maximum of ", available.cores))
+    print(paste0("The number of cores selected is greater than the number of 
+                 available cores, reducing number of cores to maximum of ", 
+                 available.cores))
     n.cores <- available.cores
   }
-  
+
   main.group <- sub.group <- Gene <- Subset <- NULL
   
   # convert test variables to factors after checking input
@@ -197,7 +199,7 @@ diffExpr <- function(object,
   param.na <- names(ind.na[ind.na > 0])
   
   if (length(param.na) > 0) {
-    if (param.na[1] == "sub.group") {
+    if ("sub.group" %in% param.na) {
       regdiff <-
         setdiff(unique(Biobase::pData(object)[[region.col]]),
                 unique(levels(Biobase::pData(object)$sub.group)))
@@ -207,7 +209,7 @@ diffExpr <- function(object,
           "At least one of the regions within the Region Column was not selected
             and is excluded: %s\n", regdiff)
       )
-    } else if (param.na[1] == "main.group") {
+    } else if ("main.group" %in% param.na) {
       classdiff <-
         setdiff(unique(Biobase::pData(object)[[group.col]]),
                 unique(levels(Biobase::pData(object)$main.group)))
@@ -228,6 +230,7 @@ diffExpr <- function(object,
   #replace str_wrap(colnames(met.pivot), 10) below
   colnames(met.pivot) <- sapply(strsplit(colnames(met.pivot)," "),paste,collapse = "\n")
   ind <- !(is.na(met.pivot$main.group) | is.na(met.pivot$sub.group))
+  
   met.pivot <- met.pivot[ind,]
   grid.newpage()
   gt <- tableGrob(met.pivot, theme = ttheme_default(base_size = 8))

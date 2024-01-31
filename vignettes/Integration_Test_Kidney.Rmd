@@ -71,7 +71,7 @@ This runs the DSPworkflow package to completion using the Human Kidney Dataset:
                                 nuclei.col = "nuclei")
   
   # For creating fixture RDS
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     study.design.human.kidney <- sdesign.list$object
     saveRDS(study.design.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/studyDesignHumanKidney.RDS")
@@ -100,8 +100,10 @@ qc.output <-  qcProc(object = sdesign.list$object,
                         min.area = 1000,
                         print.plots = TRUE)
     print(qc.output$segments.qc)
+    print(qc.output$segment.flags)
+    print(qc.output$probe.flags)
     
-  create.rds <- TRUE
+  create.rds <- FALSE
   if(create.rds) {
     qc.human.kidney <- qc.output$object
     saveRDS(qc.human.kidney, file = "tests/testthat/fixtures/Human_Kidney/qcHumanKidney.RDS")
@@ -118,11 +120,13 @@ qc.output <-  qcProc(object = sdesign.list$object,
     filtering.output <- filtering(object = qc.output$object,
                             loq.cutoff = 2, 
                             loq.min = 2, 
-                            cut.segment = .1, 
+                            segment.gene.rate.cutoff = 0.05,
+                            study.gene.rate.cutoff = 0.05, 
+                            sankey.exclude.slide = FALSE,  
                             goi = goi)
     
     print(filtering.output$`stacked.bar.plot`)
-    print(filtering.output$`tab`)
+    print(filtering.output$`segment.table`)
     print(filtering.output$`sankey.plot`)
     print(filtering.output$`genes.detected.plot`)
     print(filtering.output$'goi.table', row.names = FALSE)

@@ -1,6 +1,6 @@
 Package: DSPWorkflow
 Title: A Workflow for Analyzing Digital Spatial Profiling RNA Data
-Version: 1.2.0.0
+Version: 1.3.1
 Authors@R: c(person("Rui", "He", email = "rui.he@nih.gov", role = "aut"), 
     person("Maggie", "Cam", email = "maggie.cam@nih.gov", role = "aut", comment = c(ORCID = "0000-0001-8190-9766")), 
     person("Ned", "Cauley", email = "ned.cauley@nih.gov", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-8968-6621")), 
@@ -22,31 +22,31 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 biocViews:
 Suggests: 
-    testthat (== 3.1.4)
+    testthat (>= 3.1.4)
 Depends:
     R (>= 4.1.3)
 Imports:
     Biobase (>= 2.54.0),
-    BiocGenerics (== 0.40.0),
-    cowplot (== 1.1.1),
-    dplyr (== 1.0.9),
-    GeomxTools (== 3.1.1),
-    ggforce (== 0.3.4),
-    ggplot2 (== 3.3.6),
-    gridExtra (== 2.3),
-    grid (== 4.1.3),
-    gtable (== 0.3.0),
-    knitr (== 1.40),
-    NanoStringNCTools (== 1.2.0),
-    patchwork (== 1.1.2),
-    reshape2 (== 1.4.4),
-    Rtsne (== 0.16),
-    scales (== 1.2.1),
-    stats (== 4.1.3),
-    SpatialDecon (== 1.4.3),
-    tibble (== 3.1.8),
-    tidyr (== 1.2.1),
-    umap (== 0.2.9.0),
-    magrittr (== 2.0.3),
-    ComplexHeatmap (== 2.10.0)
+    BiocGenerics (>= 0.40.0),
+    cowplot (>= 1.1.1),
+    dplyr (>= 1.0.9),
+    GeomxTools (>= 3.1.1),
+    ggforce (>= 0.3.4),
+    ggplot2 (>= 3.3.6),
+    gridExtra (>= 2.3),
+    grid (>= 4.1.3),
+    gtable (>= 0.3.0),
+    knitr (>= 1.40),
+    NanoStringNCTools (>= 1.2.0),
+    patchwork (>= 1.1.2),
+    reshape2 (>= 1.4.4),
+    Rtsne (>= 0.16),
+    scales (>= 1.2.1),
+    stats (>= 4.1.3),
+    SpatialDecon (>= 1.4.3),
+    tibble (>= 3.1.8),
+    tidyr (>= 1.2.1),
+    umap (>= 0.2.9.0),
+    magrittr (>= 2.0.3),
+    ComplexHeatmap (>= 2.10.0)
 Config/testthat/edition: 3
