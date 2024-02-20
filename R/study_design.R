@@ -70,19 +70,37 @@ studyDesign <- function(dcc.files,
                         area.col = "area",
                         nuclei.col = "nuclei", 
                         sankey.exclude.slide = FALSE, 
-                        segment.id.length = 4) {
+                        segment.id.length = 4, 
+                        analyte.type) {
   
   # load all input data into a GeoMX object
-  object <-
-    readNanoStringGeoMxSet(
-      dccFiles = dcc.files,
-      pkcFiles = pkc.files,
-      phenoDataFile = pheno.data.file,
-      phenoDataSheet = pheno.data.sheet,
-      phenoDataDccColName = pheno.data.dcc.col.name,
-      protocolDataColNames = protocol.data.col.names,
-      experimentDataColNames = experiment.data.col.names
-    )
+  
+  if(analyte.type == "RNA"){
+    object <-
+      readNanoStringGeoMxSet(
+        dccFiles = dcc.files,
+        pkcFiles = pkc.files,
+        phenoDataFile = pheno.data.file,
+        phenoDataSheet = pheno.data.sheet,
+        phenoDataDccColName = pheno.data.dcc.col.name,
+        protocolDataColNames = protocol.data.col.names,
+        experimentDataColNames = experiment.data.col.names
+      )
+  } else if(analyte.type == "protein"){
+    object <-
+      readNanoStringGeoMxSet(
+        dccFiles = dcc.files,
+        pkcFiles = pkc.files,
+        phenoDataFile = pheno.data.file,
+        phenoDataSheet = pheno.data.sheet,
+        phenoDataDccColName = pheno.data.dcc.col.name,
+        protocolDataColNames = protocol.data.col.names,
+        experimentDataColNames = experiment.data.col.names, 
+        analyte = "protein"
+      ) 
+  } else{
+    stop("Analyte type must be 'rna' or 'protein'")
+  }
   #
   
   # Check the column names for required fields exist in the annotation
