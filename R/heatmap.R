@@ -49,6 +49,8 @@
 #' @param heatmap.color Colors of heatmap to match breaks above 
 #'                      (Default: colorRampPalette(
 #'                       c("blue", "white", "red"))(120))
+#' @param anno.colors A list of named vectors that assigns the levels of each 
+#'                    annotation to a specific color
 #'
 #' @importFrom NanoStringNCTools assayDataApply
 #' @importFrom Biobase assayDataElement
@@ -74,7 +76,8 @@ heatMap <- function(
   clustering.distance.cols = "correlation",
   annotation.row = NA,
   breaks.by.values = seq(-3, 3, 0.05),
-  heatmap.color = colorRampPalette(c("blue", "white", "red"))(120)) {
+  heatmap.color = colorRampPalette(c("blue", "white", "red"))(120), 
+  annotation.colors = NULL) {
 
   # norm.method must be either quant or neg
   if((norm.method != "quant") && (norm.method != "neg")){
@@ -119,6 +122,9 @@ heatMap <- function(
   anno.col <- 
     pData(object)[, annotation.col]
   
+  # annotation colors
+  anno.colors <- annotation.colors
+  
   # make plot
   p <- pheatmap(
     plot.genes[1:ngenes, ],
@@ -134,8 +140,29 @@ heatMap <- function(
     clustering_distance_cols = clustering.distance.cols,
     breaks = breaks.by.values,
     color = col.palette,
-    annotation_col = anno.col
+    annotation_col = anno.col, 
+    annotation_colors = anno.colors
   )
+  
+  p <- pheatmap(
+    plot.genes[1:ngenes, ],
+    main = "Clustering high CV genes",
+    scale = scale.by.row.or.col,
+    show_rownames = show.rownames,
+    show_colnames = show.colnames,
+    border_color = NA,
+    clustering_method = clustering.method,
+    cluster_rows = cluster.rows,
+    cluster_cols = cluster.cols,
+    clustering_distance_rows = clustering.distance.rows,
+    clustering_distance_cols = clustering.distance.cols,
+    breaks = breaks.by.values,
+    color = col.palette,
+    annotation_col = anno.col, 
+    annotation_colors = anno.colors
+  )
+  
+  
   
   ## gene.df converts to data frame
   gene.df <- as.data.frame(plot.genes)
