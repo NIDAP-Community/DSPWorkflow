@@ -195,6 +195,12 @@ qc.output <-  qcProc(object = sdesign.list$object,
  
 ```{r Clustering high CV Genes, echo=TRUE}
     
+    anno.colors = list(
+       class = c(DKD = "yellow", normal = "orange"), 
+       region = c(glomerulus = "purple", tubule = "red"), 
+       segment = c(GeometricSegment = "blue", neg = "coral", PanCK = "green")
+    )
+    
     heatmap.output <- heatMap(object = unsupervised.output$object, 
                         ngenes = 200, 
                         scale.by.row.or.col = "row", 
@@ -209,7 +215,8 @@ qc.output <-  qcProc(object = sdesign.list$object,
                         annotation.col = c("class", "segment", "region"), 
                         breaks.by.values = seq(-3, 3, 0.05), 
                         heatmap.color = colorRampPalette(c("blue", "white", "red"))(120), 
-                        norm.method = "quant")
+                        norm.method = "quant", 
+                        annotation.colors = anno.colors)
 
 
     print(heatmap.output$plot)

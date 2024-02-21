@@ -107,6 +107,8 @@ qcProc <-  function(object,
   ## settings ####
   ## shift counts (useDALogic=TRUE adds 1 only to 0s)
   object <- shiftCountsOne(object, useDALogic = shift.counts.zero)
+  
+  
   ## list of user-defined segment QC params for annotations and variables
   ## expected to be always present in the input object
   qc.params <-
